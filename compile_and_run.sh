@@ -22,10 +22,11 @@ else
 fi
 
 # Compile
-javac -d out -cp .:lib/openjfx-23.0.1_linux-x64_bin-sdk/javafx-sdk-23.0.1/lib/* src/gui/*.java src/Main.java
+javac -d out -cp .:lib/openjfx-23.0.1_linux-x64_bin-sdk/javafx-sdk-23.0.1/lib/* src/gui/*.java  src/gui/ui/*.java src/Main.java
+
 
 # copty the assets
-cp -r src/assets out/assets
+cp -r src/assets/* out/assets
 
 # run the code
 java --module-path ./lib/openjfx-23.0.1_linux-x64_bin-sdk/javafx-sdk-23.0.1/lib --add-modules javafx.controls,javafx.fxml -cp out Main

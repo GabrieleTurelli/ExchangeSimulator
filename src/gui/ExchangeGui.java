@@ -1,18 +1,15 @@
 package gui;
 
+import gui.ui.Section;
+import gui.ui.SubHeader;
+import gui.ui.Header;
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class ExchangeGui extends Application {
@@ -43,18 +40,18 @@ public class ExchangeGui extends Application {
         gridPane.getRowConstraints().addAll(row1, row2, row3, row4);
 
 
-        Section headerSection = new Section(gridPane, 1.0, 0.05);
-        ImageView logo = new ImageView("/assets/logo.png");
-        logo.setFitHeight(20);
-        logo.setPreserveRatio(true);
-        Text title = new Text("Exchange simulator");
-        title.setFill(Color.WHITE);
-        title.setFont(Font.font("Verdana", 18));
-
-        HBox headerContent = new HBox(10);
-        headerContent.getChildren().addAll(logo, title);
-        headerContent.setAlignment(Pos.CENTER);
-        headerSection.getChildren().add(headerContent);
+        Header header = new Header(
+               gridPane,
+               "/assets/logo.png",
+               "Exchange Simulator",
+               Color.BLACK,
+               1.0,
+               0.1);
+        SubHeader subHeader = new SubHeader(
+                gridPane,
+                Color.BLACK,
+                1.0,
+                0.05);
 
         Section subHeaderSection = new Section(gridPane, 1.0, 0.05);
         Section chartSection = new Section(gridPane, 0.6, 0.6);
@@ -62,8 +59,8 @@ public class ExchangeGui extends Application {
         Section orderSection = new Section(gridPane, 0.2, 0.9);
         Section positionSection = new Section(gridPane, 0.6, 0.3);
 
-        gridPane.add(headerSection, 0, 0, 3, 1);
-        gridPane.add(subHeaderSection, 0, 1, 3, 1);
+        gridPane.add(header, 0, 0, 3, 1);
+        gridPane.add(subHeader, 0, 1, 3, 1);
         gridPane.add(chartSection, 0, 2, 1, 1);
         gridPane.add(positionSection, 0, 3, 1, 1);
         gridPane.add(orderBookSection, 1, 2, 1, 2);
@@ -72,6 +69,7 @@ public class ExchangeGui extends Application {
         Scene scene = new Scene(gridPane, 1920, 1080);
         stage.setTitle("Exchange Simulator");
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 
