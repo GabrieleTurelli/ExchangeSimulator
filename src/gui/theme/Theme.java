@@ -24,6 +24,7 @@ public class Theme {
         public static final Color ON_SURFACE = Color.web("#FFFFFF");      // Text on surface
         public static final Color ON_ERROR = Color.web("#000000");        // Text on error
         public static final Color GREEN = Color.web("#5ce65c");
+        public static final Color RED = Color.web("#FF0000");
     }
 
     // Hex color codes for CSS styling
@@ -44,6 +45,7 @@ public class Theme {
         public static final String ON_SURFACE = "#FFFFFF";      // Text on surface
         public static final String ON_ERROR = "#000000";        // Text on error
         public static final String GREEN = "#5ce65c";
+        public static final String RED = "#FF0000";
     }
 
     // Font sizes for text elements

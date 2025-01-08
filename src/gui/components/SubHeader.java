@@ -25,9 +25,9 @@ public class SubHeader extends Section {
                 createSpacer(40),
                 new StatBlock("24h Change", "-12.65%", Theme.COLOR.GREEN),
                 createSpacer(10),
-                new StatBlock("24h Low", "11.653", Theme.COLOR.PRIMARY),
+                new StatBlock("24h Low", "11.653", Theme.COLOR.TEXT_PRIMARY),
                 createSpacer(10),
-                new StatBlock("24h High", "12.813", Theme.COLOR.PRIMARY)
+                new StatBlock("24h High", "12.813", Theme.COLOR.TEXT_PRIMARY)
         );
 
         this.getChildren().add(subHeaderContent);
