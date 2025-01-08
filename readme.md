@@ -9,7 +9,7 @@ The Exchange Simulator is a Java-based application that simulates the core funct
 - Manage virtual user accounts and receive real-time notifications.
 
 ## Key Features
-1. **Order Management**: Place market and limit orders, cancel unfulfilled orders.
+1. **Order Management**: Place market and limit orders.
 2. **Real-Time Order Book**: Displays buy and sell orders, automatically updated.
 3. **Market Simulation**: Simulates price changes for cryptocurrencies.
 4. **Charts and Statistics**: Real-time price trends and trading data.
