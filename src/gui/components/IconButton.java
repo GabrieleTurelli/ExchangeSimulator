@@ -1,7 +1,7 @@
-package gui.ui;
+package gui.components;
 
+import gui.theme.Theme;
 import javafx.scene.control.Button;
-
 import javafx.scene.image.ImageView;
 
 public class IconButton extends Button{ 
@@ -12,12 +12,12 @@ public class IconButton extends Button{
         icon.setFitHeight(size);
         icon.setPreserveRatio(true);
         this.setGraphic(icon);
-        this.updateStyle(THEME.HEX_COLOR.BACKGROUND, 25);
+        this.updateStyle(Theme.HEX_COLOR.BACKGROUND, 25);
         this.setOnMouseEntered( event ->
-                this.updateStyle(THEME.HEX_COLOR.HOVER, 25)
+                this.updateStyle(Theme.HEX_COLOR.SURFACE, 25)
         );
         this.setOnMouseExited( event ->
-                this.updateStyle(THEME.HEX_COLOR.BACKGROUND, 25)
+                this.updateStyle(Theme.HEX_COLOR.BACKGROUND, 25)
         );
     }
     

@@ -1,5 +1,6 @@
-package gui.ui;
+package gui.components;
 
+import gui.theme.Theme;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -47,5 +48,8 @@ public class Header extends Section {
 
         // Add the BorderPane to the header
         this.getChildren().add(headerLayout);
+    }
+    public Header(GridPane gridPane, String logoPath, String Title, double widthMultiplier, double heightMultiplier) {
+        this(gridPane, logoPath, Title, Theme.COLOR.BACKGROUND, widthMultiplier, heightMultiplier);
     }
 }

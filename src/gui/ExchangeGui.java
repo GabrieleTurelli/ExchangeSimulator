@@ -1,9 +1,10 @@
 package gui;
 
-import gui.ui.Section;
-import gui.ui.SubHeader;
-import gui.ui.Header;
-import gui.ui.THEME;
+import gui.components.Section;
+import gui.components.SubHeader;
+import gui.components.Header;
+
+import gui.theme.Theme;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -45,19 +46,17 @@ public class ExchangeGui extends Application {
                gridPane,
                "/assets/logo.png",
                "Exchange Simulator",
-               Color.BLACK,
                1.0,
                0.1);
         SubHeader subHeader = new SubHeader(
                 gridPane,
-                Color.BLACK,
                 1.0,
                 0.05);
 
         Section subHeaderSection = new Section(gridPane, 1.0, 0.05);
         Section chartSection = new Section(gridPane, 0.6, 0.6);
         Section orderBookSection = new Section(gridPane, 0.2, 0.9);
-        Section orderSection = new Section(gridPane, 0.2, 0.9);
+        Section orderSection = new Section(gridPane, Theme.COLOR.SURFACE,0.2, 0.9);
         Section positionSection = new Section(gridPane, 0.6, 0.3);
 
         gridPane.add(header, 0, 0, 3, 1);
