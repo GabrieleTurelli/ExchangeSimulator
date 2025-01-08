@@ -16,16 +16,43 @@ import java.util.Random;
 
 public class CoinMenu extends HBox {
 
-    private final Label coinLabel;
+    private final Label coinTextLabel;
+    private final Label chevronLabel;
     private final ContextMenu dropdownMenu;
     private final List<String> coins;
 
     public CoinMenu(String initialCoin) {
         coins = new ArrayList<>();
-        coinLabel = createLabel(initialCoin, 120, 30, 18, Color.WHITE);
-
         dropdownMenu = new ContextMenu();
         dropdownMenu.setStyle(generateStyle(THEME.HEX_COLOR.HOVER, 5));
+
+        coinTextLabel = new Label(initialCoin);
+        coinTextLabel.setFont(new Font("Arial", 16));
+        coinTextLabel.setTextFill(Color.WHITE);
+        coinTextLabel.setAlignment(Pos.CENTER_LEFT);
+
+        chevronLabel = new Label("▼");
+        chevronLabel.setFont(new Font("Arial", 12));
+        chevronLabel.setTextFill(Color.WHITE);
+        chevronLabel.setAlignment(Pos.CENTER);
+
+        HBox labelContainer = new HBox(coinTextLabel, chevronLabel);
+        labelContainer.setPadding(new Insets(5, 5, 5, 5));
+        labelContainer.setSpacing(25);
+        labelContainer.setAlignment(Pos.CENTER);
+        labelContainer.setStyle(generateStyle(THEME.HEX_COLOR.BACKGROUND, 5));
+        labelContainer.setOnMouseEntered(e -> labelContainer.setStyle(generateStyle(THEME.HEX_COLOR.HOVER, 5)));
+        labelContainer.setOnMouseExited(e -> {
+            if (!dropdownMenu.isShowing()) {
+                labelContainer.setStyle(generateStyle(THEME.HEX_COLOR.BACKGROUND, 5));
+            }
+        });
+
+        dropdownMenu.setOnShowing(event -> chevronLabel.setText("▲"));
+        dropdownMenu.setOnHidden(event -> {
+            chevronLabel.setText("▼");
+            labelContainer.setStyle(generateStyle(THEME.HEX_COLOR.BACKGROUND, 5));
+        });
 
         addCoin("BTC/USDT");
         addCoin("ETH/USDT");
@@ -35,29 +62,32 @@ public class CoinMenu extends HBox {
 
         setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
-                double screenX = localToScreen(getBoundsInLocal()).getMinX() ;
+                double screenX = localToScreen(getBoundsInLocal()).getMinX();
                 double screenY = localToScreen(getBoundsInLocal()).getMaxY();
-                dropdownMenu.show(this, screenX, screenY);
+                if (!dropdownMenu.isShowing()) {
+                    dropdownMenu.show(this, screenX, screenY);
+                    labelContainer.setStyle(generateStyle(THEME.HEX_COLOR.HOVER, 5));
+                }else{
+                    dropdownMenu.hide();
+                    labelContainer.setStyle(generateStyle(THEME.HEX_COLOR.BACKGROUND, 5));
+                }
             }
         });
 
-//        setOnMouseEntered(event -> setStyle(generateStyle(THEME.HEX_COLOR.HOVER, 15)));
-//        setOnMouseExited(event -> setStyle(generateStyle(THEME.HEX_COLOR.BACKGROUND, 15)));
-
         setAlignment(Pos.CENTER);
-        getChildren().add(coinLabel);
+        getChildren().add(labelContainer);
     }
 
     private void addCoin(String coin) {
         coins.add(coin);
-        Label itemLabel = createMenuLabel(coin, coinLabel.getPrefWidth() - 10 , coinLabel.getPrefHeight(), 14, Color.WHITE);
+        Label itemLabel = createMenuLabel(coin, 110, 30, 14, Color.WHITE);
         CustomMenuItem menuItem = new CustomMenuItem(itemLabel, true);
         menuItem.setOnAction(event -> setCoin(coin));
         dropdownMenu.getItems().add(menuItem);
     }
 
     public void setCoin(String coin) {
-        coinLabel.setText(coin);
+        coinTextLabel.setText(coin);
     }
 
     public void setCoin() {
@@ -65,22 +95,9 @@ public class CoinMenu extends HBox {
     }
 
     public String getCurrentCoin() {
-        return coinLabel.getText();
+        return coinTextLabel.getText();
     }
 
-    private Label createLabel(String text, double width, double height, int fontSize, Color textColor) {
-        Label label = new Label(text);
-        label.setFont(new Font("Arial", fontSize));
-        label.setPadding(new Insets(10, 15, 10, 15));
-        label.setTextFill(textColor);
-        label.setPrefWidth(width);
-        label.setPrefHeight(height);
-        label.setAlignment(Pos.CENTER);
-        label.setStyle(generateStyle(THEME.HEX_COLOR.BACKGROUND ,  5));
-        label.setOnMouseEntered(e -> label.setStyle(generateStyle(THEME.HEX_COLOR.HOVER,  5)));
-        label.setOnMouseExited(e -> label.setStyle(generateStyle(THEME.HEX_COLOR.BACKGROUND, 5)));
-        return label;
-    }
     private Label createMenuLabel(String text, double width, double height, int fontSize, Color textColor) {
         Label label = new Label(text);
         label.setFont(new Font("Arial", fontSize));
@@ -91,7 +108,7 @@ public class CoinMenu extends HBox {
         return label;
     }
 
-    private String generateStyle(String backgroundColor,  int radius) {
+    private String generateStyle(String backgroundColor, int radius) {
         return String.format("-fx-background-color: %s; -fx-cursor: hand; -fx-border-radius: %d; -fx-background-radius: %d;", backgroundColor, radius, radius);
     }
 }

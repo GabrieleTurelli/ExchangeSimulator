@@ -3,6 +3,7 @@ package gui;
 import gui.ui.Section;
 import gui.ui.SubHeader;
 import gui.ui.Header;
+import gui.ui.THEME;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -66,10 +67,10 @@ public class ExchangeGui extends Application {
         gridPane.add(orderBookSection, 1, 2, 1, 2);
         gridPane.add(orderSection, 2, 2, 1, 2);
 
-        Scene scene = new Scene(gridPane, 1920, 1080);
+        Scene scene = new Scene(gridPane, 1280, 720);
         stage.setTitle("Exchange Simulator");
         stage.setScene(scene);
-        stage.setResizable(false);
+//        stage.setResizable(false);
         stage.show();
     }
 

@@ -19,7 +19,7 @@ public class THEME {
         public static final String SECONDARY = "#2e2e2e";
         public static final String TERTIARY = "#3e3e3e";
         public static final String ACCENT = "#9b59b6";
-        public static final String HOVER = "#1e1e1e";
+        public static final String HOVER = "#0b0b0b";
         public static final String TEXT_PRIMARY = "#ffffff";
         public static final String TEXT_SECONDARY = "#b2b2b2";
         public static final String BACKGROUND = "#000000";
