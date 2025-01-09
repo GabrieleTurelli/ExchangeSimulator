@@ -2,7 +2,7 @@ package gui.components.layout;
 
 import gui.components.ui.CoinMenu;
 import gui.components.ui.PriceLabel;
-import gui.components.ui.SeparatorLine;
+import gui.components.ui.VerticalSeparator;
 import gui.components.ui.StatBlock;
 import gui.theme.Theme;
 import javafx.geometry.Insets;
@@ -23,7 +23,7 @@ public class SubHeaderSection extends BaseSection {
 
         subHeaderContent.getChildren().addAll(
                 new CoinMenu("BTC/USDT"),
-                new SeparatorLine(20),
+                new VerticalSeparator(20),
                 createSpacer(10),
                 new PriceLabel("12.483"),
                 createSpacer(40),

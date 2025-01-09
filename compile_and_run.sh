@@ -22,7 +22,7 @@ else
 fi
 
 # Compile
-javac -d out -cp .:lib/openjfx-23.0.1_linux-x64_bin-sdk/javafx-sdk-23.0.1/lib/* src/gui/*.java src/gui/components/ui/*.java src/gui/components/ui/chart/*.java src/gui/components/ui/orderbook/*.java src/gui/components/layout/*.java src/gui/utils/*.java src/gui/theme/*.java src/Main.java
+javac -d out -cp .:lib/openjfx-23.0.1_linux-x64_bin-sdk/javafx-sdk-23.0.1/lib/* src/gui/*.java src/gui/components/ui/*.java src/gui/components/ui/chart/*.java src/gui/components/ui/orderbook/*.java src/gui/components/ui/tradepanel/*.java src/gui/components/layout/*.java src/gui/utils/*.java src/gui/theme/*.java src/Main.java
 
 
 # copty the assets

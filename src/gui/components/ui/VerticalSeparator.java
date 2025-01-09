@@ -3,9 +3,9 @@ package gui.components.ui;
 import gui.theme.Theme;
 import javafx.scene.shape.Line;
 
-public class SeparatorLine extends Line {
+public class VerticalSeparator extends Line {
 
-    public SeparatorLine(double height) {
+    public VerticalSeparator(double height) {
         setStartY(0);
         setEndY(height);
         setStroke(Theme.COLOR.BORDER);

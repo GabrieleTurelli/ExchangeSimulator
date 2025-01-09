@@ -12,7 +12,7 @@ public class StatBlock extends VBox {
         setAlignment(Pos.CENTER);
 
         Label titleLabel = new Label(label);
-        titleLabel.setTextFill(Theme.COLOR.TEXT_SECONDARY);
+        titleLabel.setTextFill(Theme.COLOR.ON_SURFACE);
         titleLabel.setFont(new Font(10));
 
         Label valueLabel = new Label(value);
