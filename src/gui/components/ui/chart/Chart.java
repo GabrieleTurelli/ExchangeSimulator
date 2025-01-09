@@ -31,11 +31,6 @@ public class Chart extends LineChart<String, Number> {
         series.getData().clear();
     }
 
-    /**
-     * Sets the background color of the plot area (line chart drawing area).
-     *
-     * @param color The color to set for the plot area background.
-     */
     private void applyPlotBackground(Color color) {
         Node plotBackground = this.lookup(".chart-plot-background");
         if (plotBackground != null) {
@@ -43,9 +38,6 @@ public class Chart extends LineChart<String, Number> {
         }
     }
 
-    /**
-     * Converts a Color object to a HEX string (e.g., #RRGGBB).
-     */
     private String toHexString(Color color) {
         return String.format("#%02X%02X%02X",
                 (int) (color.getRed() * 255),

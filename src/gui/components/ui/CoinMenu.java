@@ -2,6 +2,7 @@ package gui.components.ui;
 
 import gui.theme.Theme;
 import gui.utils.StyleUtils;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
@@ -29,6 +30,7 @@ public class CoinMenu extends HBox {
         this.chevronLabel = createLabel("▼", Theme.FONT_SIZE.SMALL, Color.WHITE, Pos.CENTER);
 
         this.labelContainer = new HBox(coinTextLabel, chevronLabel);
+        setMargin(labelContainer, new Insets(10, 0, 10, 0));
         setupLabelContainer();
         initializeCoins();
         setupClickHandler();
@@ -64,7 +66,7 @@ public class CoinMenu extends HBox {
                     dropdownMenu.hide();
                 } else {
                     dropdownMenu.show(this, localToScreen(getBoundsInLocal()).getMinX(),
-                            localToScreen(getBoundsInLocal()).getMaxY() + 4) ;
+                            localToScreen(getBoundsInLocal()).getMaxY() - 4) ;
                 }
             }
         });

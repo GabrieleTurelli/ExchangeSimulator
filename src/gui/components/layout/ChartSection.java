@@ -1,7 +1,7 @@
 package gui.components.layout;
 
 import gui.components.ui.BarData;
-import gui.components.ui.chart.Chart; // Assuming Chart is your LineChart
+import gui.components.ui.chart.Chart;
 import gui.theme.Theme;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -20,8 +20,13 @@ public class ChartSection extends BaseSection {
     public ChartSection(GridPane gridPane, Color fillColor, double widthMultiplier, double heightMultiplier) {
         super(gridPane, fillColor, widthMultiplier, heightMultiplier);
 
-        CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis();
+//        yAxis.setAutoRanging(true);
+        yAxis.setTickUnit(10);
+
+        CategoryAxis xAxis = new CategoryAxis();
+        xAxis.setTickMarkVisible(false);
+
         chart = new Chart(xAxis, yAxis);
         populateChartWithDummyData();
         this.getChildren().add(chart);
@@ -47,7 +52,7 @@ public class ChartSection extends BaseSection {
     private List<BarData> generateDummyData() {
         List<BarData> bars = new ArrayList<>();
         Date now = new Date();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 20; i++) {
             bars.add(new BarData(new Date(now.getTime() + i * 60000), 200 + i, 205 + i, 195 + i, 202 + i));
         }
         return bars;

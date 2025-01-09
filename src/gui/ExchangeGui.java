@@ -86,10 +86,10 @@ public class ExchangeGui extends Application {
         gridPane.add(orderBookSection, 1, 2, 1, 2);
         gridPane.add(orderSection, 2, 2, 1, 2);
 
-        Scene scene = new Scene(gridPane, 1280, 720);
+        Scene scene = new Scene(gridPane, 1280, 720 );
         stage.setTitle("Exchange Simulator");
         stage.setScene(scene);
-//        stage.setResizable(false);
+        stage.setResizable(false);
         stage.show();
     }
 
