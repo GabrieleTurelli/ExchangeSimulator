@@ -1,7 +1,6 @@
-package gui.components;
+package gui.components.ui;
 
 import gui.theme.Theme;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
 public class SeparatorLine extends Line {

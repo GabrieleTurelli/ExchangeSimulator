@@ -1,8 +1,7 @@
-package gui.components;
+package gui.components.ui;
 
 import gui.theme.Theme;
 import gui.utils.StyleUtils;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;

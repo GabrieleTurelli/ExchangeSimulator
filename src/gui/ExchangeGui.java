@@ -1,9 +1,8 @@
 package gui;
 
-import gui.components.Section;
-import gui.components.SubHeader;
-import gui.components.Header;
+import gui.components.layout.*;
 
+import gui.components.ui.orderbook.OrderBookLevelData;
 import gui.theme.Theme;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -11,8 +10,9 @@ import javafx.scene.Scene;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
 
 public class ExchangeGui extends Application {
 
@@ -42,22 +42,42 @@ public class ExchangeGui extends Application {
         gridPane.getRowConstraints().addAll(row1, row2, row3, row4);
 
 
-        Header header = new Header(
+        HeaderSection header = new HeaderSection(
                gridPane,
-               "/assets/logo.png",
+                "/assets/logo.png",
                "Exchange Simulator",
                1.0,
                0.1);
-        SubHeader subHeader = new SubHeader(
+        SubHeaderSection subHeader = new SubHeaderSection(
                 gridPane,
                 1.0,
                 0.05);
 
-        Section subHeaderSection = new Section(gridPane, 1.0, 0.05);
-        Section chartSection = new Section(gridPane, 0.6, 0.6);
-        Section orderBookSection = new Section(gridPane, 0.2, 0.9);
-        Section orderSection = new Section(gridPane, Theme.COLOR.SURFACE,0.2, 0.9);
-        Section positionSection = new Section(gridPane, 0.6, 0.3);
+        ChartSection chartSection = new ChartSection(
+                gridPane,
+                0.6,
+                0.6
+        );
+//        Section chartSection = new Section(gridPane, 0.6, 0.6);
+
+//        BaseSection orderBookSection = new BaseSection(gridPane, 0.2, 0.9);
+
+        ArrayList<OrderBookLevelData> ask = new ArrayList<>();
+        ask.add(new OrderBookLevelData(10.4, 234.9));
+        ask.add(new OrderBookLevelData(10.3, 204.8));
+        ask.add(new OrderBookLevelData(10.2, 134.1));
+        ask.add(new OrderBookLevelData(10.1, 34.3));
+        ask.add(new OrderBookLevelData(10.0, 4.2));
+
+        ArrayList<OrderBookLevelData> bid = new ArrayList<>();
+        bid.add(new OrderBookLevelData(9.9, 34.9));
+        bid.add(new OrderBookLevelData(9.8, 104.8));
+        bid.add(new OrderBookLevelData(9.7, 234.1));
+        bid.add(new OrderBookLevelData(9.6, 334.3));
+        bid.add(new OrderBookLevelData(9.5, 524.2));
+        OrderBookSection orderBookSection = new OrderBookSection(gridPane, 0.2, 0.9, bid, ask);
+        BaseSection orderSection = new BaseSection(gridPane, Theme.COLOR.SURFACE,0.2, 0.9);
+        BaseSection positionSection = new BaseSection(gridPane, 0.6, 0.3);
 
         gridPane.add(header, 0, 0, 3, 1);
         gridPane.add(subHeader, 0, 1, 3, 1);

@@ -1,5 +1,6 @@
-package gui.components;
+package gui.components.layout;
 
+import gui.components.ui.IconButton;
 import gui.theme.Theme;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -11,8 +12,8 @@ import javafx.scene.text.Text;
 import javafx.geometry.Pos;
 import javafx.geometry.Insets;
 
-public class Header extends Section {
-    public Header(GridPane gridPane, String logoPath, String Title, Color fillColor, double widthMultiplier, double heightMultiplier) {
+public class HeaderSection extends BaseSection {
+    public HeaderSection(GridPane gridPane, String logoPath, String Title, Color fillColor, double widthMultiplier, double heightMultiplier) {
         super(gridPane, fillColor, widthMultiplier, heightMultiplier);
 
         // Logo
@@ -49,7 +50,7 @@ public class Header extends Section {
         // Add the BorderPane to the header
         this.getChildren().add(headerLayout);
     }
-    public Header(GridPane gridPane, String logoPath, String Title, double widthMultiplier, double heightMultiplier) {
+    public HeaderSection(GridPane gridPane, String logoPath, String Title, double widthMultiplier, double heightMultiplier) {
         this(gridPane, logoPath, Title, Theme.COLOR.BACKGROUND, widthMultiplier, heightMultiplier);
     }
 }

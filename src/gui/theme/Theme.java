@@ -8,7 +8,7 @@ import javafx.scene.text.FontWeight;
 public class Theme {
 
     public static class COLOR {
-        public static final Color PRIMARY = Color.web("#BB86FC");         // Primary color (200)
+        public static final Color PRIMARY = Color.web("#F3622D");         // Primary color (200)
         public static final Color PRIMARY_VARIANT = Color.web("#3700B3"); // Primary variant (700)
         public static final Color SECONDARY = Color.web("#03DAC6");       // Secondary color (200)
         public static final Color TEXT_PRIMARY = Color.web("#FFFFFF");       // Secondary color (200)
@@ -29,7 +29,7 @@ public class Theme {
 
     // Hex color codes for CSS styling
     public static class HEX_COLOR {
-        public static final String PRIMARY = "#BB86FC";         // Primary color (200)
+        public static final String PRIMARY = "#F3622D";         // Primary color (200)
         public static final String PRIMARY_VARIANT = "#3700B3"; // Primary variant (700)
         public static final String SECONDARY = "#03DAC6";       // Secondary color (200)
         public static final String TEXT_PRIMARY = "#FFFFFF";       // Secondary color (200)

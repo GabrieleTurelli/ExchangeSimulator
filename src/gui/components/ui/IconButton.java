@@ -1,4 +1,4 @@
-package gui.components;
+package gui.components.ui;
 
 import gui.theme.Theme;
 import javafx.scene.control.Button;

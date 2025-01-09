@@ -1,5 +1,9 @@
-package gui.components;
+package gui.components.layout;
 
+import gui.components.ui.CoinMenu;
+import gui.components.ui.PriceLabel;
+import gui.components.ui.SeparatorLine;
+import gui.components.ui.StatBlock;
 import gui.theme.Theme;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -7,9 +11,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 
-public class SubHeader extends Section {
+public class SubHeaderSection extends BaseSection {
 
-    public SubHeader(GridPane gridPane, double widthMultiplier, double heightMultiplier) {
+    public SubHeaderSection(GridPane gridPane, double widthMultiplier, double heightMultiplier) {
         super(gridPane, Theme.COLOR.BACKGROUND, widthMultiplier, heightMultiplier);
 
         HBox subHeaderContent = new HBox(10);

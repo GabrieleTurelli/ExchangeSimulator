@@ -1,4 +1,4 @@
-package gui.components;
+package gui.components.layout;
 
 import gui.theme.Theme;
 import javafx.scene.layout.StackPane;
@@ -6,9 +6,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class Section extends StackPane {
+public class BaseSection extends StackPane {
 
-    public Section(GridPane gridPane, Color fillColor, double widthMultiplier, double heightMultiplier) {
+    public BaseSection(GridPane gridPane, Color fillColor, double widthMultiplier, double heightMultiplier) {
         Rectangle background = new Rectangle();
         background.setStrokeWidth(0.1);
         background.setStroke(Theme.COLOR.BORDER);
@@ -19,7 +19,7 @@ public class Section extends StackPane {
 
     }
 
-    public Section(GridPane gridPane, double widthMultiplier, double heightMultiplier) {
+    public BaseSection(GridPane gridPane, double widthMultiplier, double heightMultiplier) {
         this(gridPane, Theme.COLOR.BACKGROUND, widthMultiplier, heightMultiplier);
     }
 }
