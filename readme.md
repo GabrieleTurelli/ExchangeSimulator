@@ -17,7 +17,25 @@ The Exchange Simulator is a Java-based application that simulates the core funct
 6. **Real-Time Notifications**: Alerts for order execution and errors.
 
 
-### Run the project 
+### Build the project
 ```bash
-./compile_and_run.sh
+mvn clean install
 ```
+
+### Run the project 
+- on **macOs(aarch64)**
+    ```
+    mvn exec:java -Pjavafx.platform.macosx.aarch64
+    ```
+- on **macOs(x64)**
+    ```
+    mvn exec:java -Pjavafx.platform.macosx.x64
+    ```
+- on **Windows**
+    ```
+    mvn exec:java -Pjava.platform.windows
+    ```
+- on **Linux**
+    ```
+    mvn exec:java -Pjava.platform.linux
+    ```

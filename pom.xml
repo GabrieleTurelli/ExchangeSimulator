@@ -7,7 +7,7 @@
     <artifactId>exchange-simulator</artifactId>
     <version>23.0.1</version>
     <name>exchange-simulator</name>
-    <description>OpenJFX JavaFX Application</description>
+    <description>Exchange simulator</description>
     <url>https://openjdk.java.net/projects/openjfx/</url>
 
     <properties>
@@ -16,7 +16,6 @@
     </properties>
 
     <dependencies>
-        <!-- JavaFX Dependencies -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -32,8 +31,13 @@
     </dependencies>
 
     <build>
+        <sourceDirectory>${project.basedir}/src/exchange</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/exchange/resources</directory>
+            </resource>
+        </resources>
         <plugins>
-            <!-- Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -44,20 +48,18 @@
                 </configuration>
             </plugin>
 
-            <!-- Exec Maven Plugin for Running the Application -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.0.0</version>
                 <configuration>
-                    <mainClass>main.java.Main</mainClass>
+                    <mainClass>exchange.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
     <profiles>
-        <!-- Add your platform-specific profiles here (already provided in your pom.xml) -->
         <profile>
             <id>javafx.platform.macosx.aarch64</id>
             <activation>
@@ -70,6 +72,39 @@
                 <javafx.platform>mac-aarch64</javafx.platform>
             </properties>
         </profile>
-        <!-- Other profiles as per your original pom.xml -->
+        <profile>
+            <id>javafx.platform.macosx.x64</id>
+            <activation>
+                <os>
+                    <name>mac os x</name>
+                    <arch>x86_64</arch>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>mac</javafx.platform>
+            </properties>
+        </profile>
+        <profile>
+            <id>javafx.platform.windows</id>
+            <activation>
+                <os>
+                    <name>windows</name>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>win</javafx.platform>
+            </properties>
+        </profile>
+        <profile>
+            <id>javafx.platform.linux</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>linux</javafx.platform>
+            </properties>
+        </profile>
     </profiles>
 </project>
