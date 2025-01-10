@@ -1,4 +1,4 @@
-package exchange.gui.components.ui;
+package gui.components.ui;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -9,8 +9,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import exchange.gui.theme.Theme;
-import exchange.gui.utils.StyleUtils;
+import gui.theme.Theme;
+import gui.utils.StyleUtils;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package exchange.gui.components.layout;
+package gui.components.layout;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -7,8 +7,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import exchange.gui.components.ui.IconButton;
-import exchange.gui.theme.Theme;
+import gui.components.ui.IconButton;
+import gui.theme.Theme;
 import javafx.geometry.Pos;
 import javafx.geometry.Insets;
 

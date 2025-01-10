@@ -1,8 +1,8 @@
-package exchange.gui.components.ui;
+package gui.components.ui;
 
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
-import exchange.gui.theme.Theme;
+import gui.theme.Theme;
 
 public class IconButton extends Button{ 
    

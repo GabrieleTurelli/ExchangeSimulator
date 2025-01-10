@@ -1,10 +1,10 @@
-package exchange.gui.components.layout;
+package gui.components.layout;
 
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import exchange.gui.theme.Theme;
+import gui.theme.Theme;
 
 public class BaseSection extends StackPane {
 

@@ -1,25 +1,36 @@
-package exchange.gui.components.ui.tradepanel;
+package gui.components.ui.tradepanel;
 
+import gui.components.ui.HorizontalSeparator;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import exchange.gui.components.ui.TextToggleButton;
-import exchange.gui.theme.Theme;
 
 public class TradePanel extends VBox {
+
+    private final ToggleOrderMode toggleOrderMode;
+    private OrderEntry orderEntry;
+    private OrderSideEntry orderSideEntry;
+
     public TradePanel() {
         super();
 
-        HBox orderTypeContainer = new HBox();
-        TextToggleButton marketButton = new TextToggleButton("Market", Theme.HEX_COLOR.ON_SURFACE, Theme.HEX_COLOR.PRIMARY);
-        marketButton.toggle();
-        TextToggleButton limitButton = new TextToggleButton("Limit", Theme.HEX_COLOR.ON_SURFACE, Theme.HEX_COLOR.PRIMARY);
-        orderTypeContainer.setAlignment(Pos.CENTER);
-        orderTypeContainer.setPadding(new Insets(5,0,20,0));
-        orderTypeContainer.getChildren().addAll(marketButton, limitButton);
+        toggleOrderMode = new ToggleOrderMode();
+        orderEntry = new OrderEntry(toggleOrderMode.isLimit());
+        orderSideEntry = new OrderSideEntry();
 
-        getChildren().add(orderTypeContainer);
+
+
+        setSpacing(20);
+        setPadding(new Insets(10));
+
+        getChildren().addAll(toggleOrderMode, orderEntry, orderSideEntry);
+
+        toggleOrderMode.setOnToggleChange(this::rerenderOrderEntry);
+    }
+
+    private void rerenderOrderEntry(boolean isLimit) {
+        getChildren().remove(orderEntry);
+        getChildren().remove(orderSideEntry);
+        orderEntry = new OrderEntry(isLimit);
+        getChildren().addAll(orderEntry, orderSideEntry);
     }
 }
-

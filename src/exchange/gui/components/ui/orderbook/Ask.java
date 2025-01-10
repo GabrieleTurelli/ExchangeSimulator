@@ -1,8 +1,8 @@
-package exchange.gui.components.ui.orderbook;
+package gui.components.ui.orderbook;
 
 import java.util.ArrayList;
 
-import exchange.gui.theme.Theme;
+import gui.theme.Theme;
 
 public class Ask extends OrderBookSide{
 

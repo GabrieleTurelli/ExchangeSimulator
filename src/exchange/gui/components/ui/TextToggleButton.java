@@ -1,4 +1,4 @@
-package exchange.gui.components.ui;
+package gui.components.ui;
 
 import javafx.scene.control.Button;
 import javafx.scene.Cursor;
@@ -20,9 +20,11 @@ public class TextToggleButton extends Button {
         updateStyle();
         setOnMouseEntered(event -> setCursor(Cursor.HAND));
         setOnMouseExited(event -> setCursor(Cursor.DEFAULT));
+
         setOnAction(event -> {
             toggled = !toggled;
             updateStyle();
+
         });
 
         setFont(Font.font("Arial", FontWeight.BOLD, 14));
@@ -37,10 +39,14 @@ public class TextToggleButton extends Button {
     }
 
     public void toggle() {
-        this.toggled = !toggled;
+        toggled = !toggled;
         updateStyle();
     }
+    public void toggle(Boolean status){
+        toggled = status;
+        updateStyle();
 
+    }
     public boolean isToggled() {
         return toggled;
     }

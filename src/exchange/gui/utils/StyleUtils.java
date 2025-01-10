@@ -1,4 +1,4 @@
-package exchange.gui.utils;
+package gui.utils;
 
 
 public class StyleUtils {

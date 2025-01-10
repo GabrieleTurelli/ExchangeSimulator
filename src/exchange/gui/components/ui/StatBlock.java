@@ -1,10 +1,10 @@
-package exchange.gui.components.ui;
+package gui.components.ui;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import exchange.gui.theme.Theme;
+import gui.theme.Theme;
 
 public class StatBlock extends VBox {
 

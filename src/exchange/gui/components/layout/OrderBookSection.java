@@ -1,13 +1,13 @@
-package exchange.gui.components.layout;
+package gui.components.layout;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import exchange.gui.components.ui.orderbook.OrderBook;
-import exchange.gui.components.ui.orderbook.OrderBookLevelData;
-import exchange.gui.theme.Theme;
+import gui.components.ui.orderbook.OrderBook;
+import gui.components.ui.orderbook.OrderBookLevelData;
+import gui.theme.Theme;
 
 import java.util.ArrayList;
 

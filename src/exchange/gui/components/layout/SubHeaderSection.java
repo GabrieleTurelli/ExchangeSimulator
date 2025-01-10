@@ -1,15 +1,15 @@
-package exchange.gui.components.layout;
+package gui.components.layout;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import exchange.gui.components.ui.CoinMenu;
-import exchange.gui.components.ui.PriceLabel;
-import exchange.gui.components.ui.StatBlock;
-import exchange.gui.components.ui.VerticalSeparator;
-import exchange.gui.theme.Theme;
+import gui.components.ui.CoinMenu;
+import gui.components.ui.PriceLabel;
+import gui.components.ui.StatBlock;
+import gui.components.ui.VerticalSeparator;
+import gui.theme.Theme;
 
 public class SubHeaderSection extends BaseSection {
 

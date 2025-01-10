@@ -1,9 +1,9 @@
-package exchange.gui.components.ui;
+package gui.components.ui;
 
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import exchange.gui.theme.Theme;
+import gui.theme.Theme;
 
 public class PriceLabel extends Label {
 

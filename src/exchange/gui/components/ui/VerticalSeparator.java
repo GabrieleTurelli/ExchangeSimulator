@@ -1,7 +1,7 @@
-package exchange.gui.components.ui;
+package gui.components.ui;
 
 import javafx.scene.shape.Line;
-import exchange.gui.theme.Theme;
+import gui.theme.Theme;
 
 public class VerticalSeparator extends Line {
 

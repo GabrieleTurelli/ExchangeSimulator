@@ -1,4 +1,4 @@
-package exchange.gui.components.ui.orderbook;
+package gui.components.ui.orderbook;
 
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;

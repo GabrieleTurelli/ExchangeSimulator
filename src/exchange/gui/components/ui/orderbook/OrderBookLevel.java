@@ -1,11 +1,11 @@
-package exchange.gui.components.ui.orderbook;
+package gui.components.ui.orderbook;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import exchange.gui.theme.Theme;
+import gui.theme.Theme;
 
 public class OrderBookLevel extends StackPane {
 

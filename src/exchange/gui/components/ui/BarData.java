@@ -1,4 +1,4 @@
-package exchange.gui.components.ui;
+package gui.components.ui;
 
 import java.util.Date;
 

@@ -1,12 +1,12 @@
-package exchange.gui.components.layout;
+package gui.components.layout;
 
 import javafx.scene.layout.GridPane;
-import exchange.gui.components.ui.tradepanel.TradePanel;
-import exchange.gui.theme.Theme;
+import gui.components.ui.tradepanel.TradePanel;
+import gui.theme.Theme;
 
 public class TradePanelSection extends BaseSection{
    public TradePanelSection(GridPane gridPane, double widthMultiplier, double heightMultiplier) {
-       super(gridPane, Theme.COLOR.SURFACE, widthMultiplier, heightMultiplier);
+       super(gridPane, Theme.COLOR.BACKGROUND, widthMultiplier, heightMultiplier);
        this.getChildren().add(new TradePanel());
    }
 }

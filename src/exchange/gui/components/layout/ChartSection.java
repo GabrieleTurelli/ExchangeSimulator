@@ -1,12 +1,12 @@
-package exchange.gui.components.layout;
+package gui.components.layout;
 
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import exchange.gui.components.ui.BarData;
-import exchange.gui.components.ui.chart.Chart;
-import exchange.gui.theme.Theme;
+import gui.components.ui.BarData;
+import gui.components.ui.chart.Chart;
+import gui.theme.Theme;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

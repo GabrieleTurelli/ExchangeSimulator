@@ -23,19 +23,39 @@ mvn clean install
 ```
 
 ### Run the project 
-- on **macOs(aarch64)**
-    ```
-    mvn exec:java -Pjavafx.platform.macosx.aarch64
-    ```
-- on **macOs(x64)**
-    ```
-    mvn exec:java -Pjavafx.platform.macosx.x64
-    ```
-- on **Windows**
-    ```
-    mvn exec:java -Pjava.platform.windows
-    ```
-- on **Linux**
-    ```
-    mvn exec:java -Pjava.platform.linux
-    ```
+
+[//]: # (- on **macOs&#40;aarch64&#41;**)
+
+[//]: # (    ```)
+
+[//]: # (    mvn exec:java -Pjavafx.platform.macosx.aarch64)
+
+[//]: # (    ```)
+
+[//]: # (- on **macOs&#40;x64&#41;**)
+
+[//]: # (    ```)
+
+[//]: # (    mvn exec:java -Pjavafx.platform.macosx.x64)
+
+[//]: # (    ```)
+
+[//]: # (- on **Windows**)
+
+[//]: # (    ```)
+
+[//]: # (    mvn exec:java -Pjava.platform.windows)
+
+[//]: # (    ```)
+
+[//]: # (- on **Linux**)
+
+[//]: # (    ```)
+
+[//]: # (    mvn exec:java -Pjava.platform.linux)
+
+[//]: # (    ```)
+  
+```commandline
+mvn exec:java
+```

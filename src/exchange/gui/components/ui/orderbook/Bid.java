@@ -1,6 +1,6 @@
-package exchange.gui.components.ui.orderbook;
+package gui.components.ui.orderbook;
 
-import exchange.gui.theme.Theme;
+import gui.theme.Theme;
 
 import java.util.ArrayList;
 

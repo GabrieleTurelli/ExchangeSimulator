@@ -1,4 +1,4 @@
-package exchange.gui;
+package gui;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -7,8 +7,8 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
-import exchange.gui.components.layout.*;
-import exchange.gui.components.ui.orderbook.OrderBookLevelData;
+import gui.components.layout.*;
+import gui.components.ui.orderbook.OrderBookLevelData;
 
 import java.util.ArrayList;
 

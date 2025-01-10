@@ -1,4 +1,4 @@
-package exchange.gui.components.ui.chart;
+package gui.components.ui.chart;
 
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
@@ -6,7 +6,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
-import exchange.gui.theme.Theme;
+import gui.theme.Theme;
 import javafx.application.Platform;
 
 public class Chart extends LineChart<String, Number> {

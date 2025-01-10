@@ -1,4 +1,4 @@
-package exchange.gui.components.ui.orderbook;
+package gui.components.ui.orderbook;
 
 public class OrderBookLevelData {
     private double price;
