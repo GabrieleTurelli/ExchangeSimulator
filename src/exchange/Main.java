@@ -1,35 +1,26 @@
-//import view.ExchangeGui;
-//
-//import java.util.Arrays;
-//import java.util.Date;
-//import java.util.Objects;
-//
-//public class Main {
-//    public static void main(String[] args) throws  Exception{
-////        ExchangeGui.launch(ExchangeGui.class, args);
-//    }
-//}
 import model.db.DbConnector;
 import model.db.DbInitializer;
+import view.ExchangeGui;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Starting application...");
+//        ExchangeGui.launch(ExchangeGui.class, args);
+        ArrayList<String> coins = new ArrayList<>(Arrays.asList("BTCUSDT", "ETHUSDT", "XRPUSDT"));
 
         try {
-            DbInitializer.initializeDatabase();
-            DbConnector.getConnection() ;
-        } catch (SQLException e) {
-            System.err.println("Database error: " + e.getMessage());
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.err.println("File handling error: " + e.getMessage());
-            e.printStackTrace();
+            DbInitializer.initializeDatabase(coins);
+
+            try (var connection = DbConnector.getConnection()) {
+                DbInitializer.createUsersTable(connection);
+                DbInitializer.createUserTable(connection, "JohnDoe");
+            }
+
+            System.out.println("All tables initialized successfully.");
         } catch (Exception e) {
-            System.err.println("Unexpected error: " + e.getMessage());
+            System.err.println("Error during database initialization: " + e.getMessage());
             e.printStackTrace();
         }
     }

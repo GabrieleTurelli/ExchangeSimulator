@@ -32,3 +32,4 @@ bin/
 ../*
 /lib/*
 /target
+/src/exchange/resources/db/*
