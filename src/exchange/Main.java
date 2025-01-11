@@ -2,7 +2,6 @@ import model.db.CoinDAO;
 import model.db.CoinsDAO;
 import model.db.DbConnector;
 import model.db.DbInitializer;
-import view.ExchangeGui;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -29,11 +28,17 @@ public class Main {
         }
 
 
-        CoinDAO btcdao = new CoinDAO("BTCUSDT");
-        btcdao.deleteAllCoinData();
-        btcdao.populateTable(90000.0, 20);
-        TreeMap<LocalDate, Double> data = btcdao.getCoinData();
-        System.out.println(data);
+//        CoinDAO btcDao = new CoinDAO("BTCUSDT");
+//        btcDao.deleteAllData();
+//        btcDao.populateTable(90000.0, 20);
+//        TreeMap<LocalDate, Double> data = btcDao.getData();
+//        System.out.println(data);
+//
+//        CoinsDAO coinsDao = new CoinsDAO();
+//        coinsDao.addData("BTCUSDT");
+//        coinsDao.addData("ETHUSDT");
+//        coinsDao.addData("XRPUSDT");
+
 
     }
 }

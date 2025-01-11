@@ -25,9 +25,8 @@ public class DbInitializer {
 
         String createCoinsTable = """
             CREATE TABLE IF NOT EXISTS Coins (
-                coin_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                coin_name TEXT NOT NULL UNIQUE,
-                ticker TEXT NOT NULL UNIQUE
+                pair TEXT NOT NULL UNIQUE,
+                PRIMARY KEY (pair)
             );
         """;
         executeStatement(connection, createCoinsTable);
