@@ -13,7 +13,6 @@ public class DbConnector {
 
     public static Connection getConnection() throws IOException, SQLException {
         checkDbExists();
-        System.out.println("Connecting to SQLite database...");
         return DriverManager.getConnection(URL);
     }
 

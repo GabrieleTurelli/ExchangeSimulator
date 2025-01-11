@@ -33,14 +33,14 @@ public class DbInitializer {
         executeStatement(connection, createCoinsTable);
 
     }
-    public static void createCoinTable(Connection connection, String username) {
+    public static void createCoinTable(Connection connection, String coin) {
         String coinTable = """
         CREATE TABLE IF NOT EXISTS coin_%s (
             date TEXT NOT NULL,
             price REAL NOT NULL,
-            PRIMARY KEY (date, price)
+            PRIMARY KEY (date)
         );
-    """.formatted(username);
+    """.formatted(coin);
 
         executeStatement(connection, coinTable);
     }
@@ -83,7 +83,6 @@ public class DbInitializer {
     private static void executeStatement(Connection connection, String sql) {
         try (Statement statement = connection.createStatement()) {
             statement.execute(sql);
-            System.out.println("Executed SQL: " + sql);
         } catch (Exception e) {
             e.printStackTrace();
         }
