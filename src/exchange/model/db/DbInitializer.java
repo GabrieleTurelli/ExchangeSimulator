@@ -47,9 +47,8 @@ public class DbInitializer {
     public static void createUsersTable(Connection connection){
         String usersTable = """
             CREATE TABLE IF NOT EXISTS Users (
-                user_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT NOT NULL UNIQUE,
-                email TEXT
+                password TEXT
             );
         """;
         executeStatement(connection, usersTable);
@@ -85,5 +84,10 @@ public class DbInitializer {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public static void dropTable(Connection connection, String tableName) {
+        String dropTableQuery = "DROP TABLE IF EXISTS " + tableName;
+        executeStatement(connection, dropTableQuery);
+        System.out.println("Table '" + tableName + "' has been removed (if it existed).");
     }
 }

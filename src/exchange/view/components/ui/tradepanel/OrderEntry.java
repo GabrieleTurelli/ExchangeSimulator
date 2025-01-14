@@ -1,7 +1,7 @@
 package view.components.ui.tradepanel;
 
 import view.components.ui.HorizontalSeparator;
-import view.components.ui.InputEntry;
+import view.components.ui.NumericInputEntry;
 import javafx.geometry.Insets;
 import javafx.scene.layout.VBox;
 
@@ -9,10 +9,10 @@ public class OrderEntry extends VBox {
     public OrderEntry(boolean isLimit){
         super();
         setSpacing(10);
-        InputEntry sizeEntry = new InputEntry("Size", "enter size");
+        NumericInputEntry sizeEntry = new NumericInputEntry("Size", "enter size");
 
         if (isLimit) {
-            InputEntry priceEntry = new InputEntry("Price", "enter price");
+            NumericInputEntry priceEntry = new NumericInputEntry("Price", "enter price");
             getChildren().addAll(priceEntry, sizeEntry);
         }else{
             getChildren().add(sizeEntry);

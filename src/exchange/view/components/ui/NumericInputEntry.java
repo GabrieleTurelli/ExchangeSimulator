@@ -13,9 +13,9 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Priority;
 
-public class InputEntry extends HBox {
+public class NumericInputEntry extends HBox {
 
-    public InputEntry(String labelText, String placeholder) {
+    public NumericInputEntry(String labelText, String placeholder) {
         super();
         setSpacing(20);
         setPadding(new Insets(10));
@@ -43,7 +43,7 @@ public class InputEntry extends HBox {
         textField.setAlignment(Pos.CENTER_RIGHT);
 
         textField.addEventFilter(KeyEvent.KEY_TYPED, event -> {
-            if (!event.getCharacter().matches("\\d")) { // Allow only numeric input
+            if (!event.getCharacter().matches("\\d")) {
                 event.consume();
             }
         });
