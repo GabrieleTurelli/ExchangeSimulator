@@ -1,19 +1,18 @@
 package controller;
 
-import model.client.LoginModel;
-import model.client.RegisterModel;
+import javafx.scene.Parent;
+import model.client.RegisterClient;
+import view.screen.ExchangeScreen;
 import view.screen.LoginScreen;
 import view.screen.RegisterScreen;
 import utils.SceneManager;
 
 public class RegisterController {
     private final RegisterScreen registerScreen;
-    private final RegisterModel registerModel;
     private final SceneManager sceneManager;
 
-    public RegisterController(RegisterScreen registerScreen, RegisterModel registerModel, SceneManager sceneManager) {
+    public RegisterController(RegisterScreen registerScreen,  SceneManager sceneManager) {
         this.registerScreen = registerScreen;
-        this.registerModel = registerModel;
         this.sceneManager = sceneManager;
         initialize();
     }
@@ -38,19 +37,43 @@ public class RegisterController {
             return;
         }
 
-        if (registerModel.userExists(username)){
-            registerScreen.setErrorMessage("Username already taken");
+        if(password.length() < 8){
+            registerScreen.setErrorMessage("At least 8 character");
             return;
         }
 
-        registerModel.addUser(username, password);
+        String response = RegisterClient.sendRegisterRequest(username, password);
+        String responseStatus = response.split(";")[0];
+        String responseMessage = response.split(";")[1];
+
+        if (responseStatus.equals("ERROR")){
+            registerScreen.setErrorMessage(responseMessage);
+            return;
+        }
+        switchToExchangeScreen();
+    }
+
+
+    private void switchToLoginScreen() {
+        LoginController loginController = new LoginController(new LoginScreen(), sceneManager);
+        switchToScreen(loginController.getLoginScreen(), "Login Screen", 300, 400, false);
+    }
+
+    private void switchToExchangeScreen(){
+        switchToScreen(new ExchangeScreen(), "Exchange Screen", 1280, 720, true);
 
     }
 
-    private void switchToLoginScreen() {
-        LoginScreen loginScreen = new LoginScreen();
-        LoginModel loginModel = new LoginModel(registerModel.getConnection());
-        LoginController loginController = new LoginController(loginScreen, loginModel, sceneManager);
-        sceneManager.switchScene(loginScreen, "Login Screen", 300, 400);
+    private void switchToScreen(Parent screen, String title, int width, int height, boolean resizable){
+
+        sceneManager.switchScene(screen, title,width,height, resizable);
+
+    }
+    public RegisterScreen getRegisterScreen() {
+        return registerScreen;
+    }
+
+    public SceneManager getSceneManager() {
+        return sceneManager;
     }
 }

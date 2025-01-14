@@ -21,10 +21,11 @@ public class SceneManager {
         return instance;
     }
 
-    public void switchScene(Parent root, String title, int width, int height) {
+    public void switchScene(Parent root, String title, int width, int height, boolean resizable) {
         Scene scene = new Scene(root, width, height);
         primaryStage.setScene(scene);
         primaryStage.setTitle(title);
+        primaryStage.setResizable(resizable);
         primaryStage.show();
     }
 

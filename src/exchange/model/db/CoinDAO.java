@@ -2,6 +2,7 @@ package model.db;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -73,8 +74,66 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Double> {
         return coinData;
     }
 
-    public void populateTable(double initialPrice, int rows) {
+    public void populateCoinTable(double initialPrice, int rows) {
+        try {
+            if (!doesTableExist()) {
+                createTable();
+                populateDataFromStart(initialPrice, rows);
+            } else {
+                LocalDate lastDate = getLastDate();
+                if (lastDate != null) {
+                    populateDataFromLastDate(lastDate, initialPrice);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean doesTableExist() throws SQLException {
+        String checkTableQuery = "SELECT name FROM sqlite_master WHERE type='table' AND name=?";
+        try (PreparedStatement stmt = connection.prepareStatement(checkTableQuery)) {
+            stmt.setString(1, tableName);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    private void createTable() throws SQLException {
+        String createTableQuery = """
+        CREATE TABLE IF NOT EXISTS %s (
+            date TEXT NOT NULL,
+            price REAL NOT NULL,
+            PRIMARY KEY (date)
+        );
+    """.formatted(tableName);
+
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(createTableQuery);
+        }
+    }
+
+    private LocalDate getLastDate() {
+        String getLastDateQuery = "SELECT MAX(date) AS last_date FROM " + tableName;
+        try (PreparedStatement stmt = connection.prepareStatement(getLastDateQuery);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                String lastDateStr = rs.getString("last_date");
+                return lastDateStr != null ? LocalDate.parse(lastDateStr, dateFormatter) : null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private void populateDataFromStart(double initialPrice, int rows) {
         LocalDate initialDate = LocalDate.now().minusDays(rows);
+
+        System.out.printf("Populating %s table since %s ",tableName, initialDate);
+
         Random random = new Random();
 
         for (int i = 0; i <= rows; i++) {
@@ -85,4 +144,23 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Double> {
             addData(date, price);
         }
     }
+
+    private void populateDataFromLastDate(LocalDate lastDate, double initialPrice) {
+
+        LocalDate today = LocalDate.now();
+        Random random = new Random();
+        LocalDate startDate = lastDate.plusDays(1);
+
+        if (lastDate.equals(today)) {return;}
+
+        System.out.printf("Populating %s table from %s to %s\n",tableName, lastDate, today);
+
+        for (LocalDate date = startDate; !date.isAfter(today); date = date.plusDays(1)) {
+            double priceFluctuation = random.nextDouble() * 20 - 10;
+            double price = initialPrice + priceFluctuation;
+            price = Math.round(price * 100.0) / 100.0;
+            addData(date, price);
+        }
+    }
+
 }

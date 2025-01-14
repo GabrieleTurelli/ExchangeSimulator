@@ -1,6 +1,7 @@
 package view.components.layout;
 
 import javafx.scene.layout.GridPane;
+import model.user.User;
 import view.components.ui.tradepanel.TradePanel;
 import view.theme.Theme;
 

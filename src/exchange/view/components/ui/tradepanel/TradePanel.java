@@ -2,12 +2,14 @@ package view.components.ui.tradepanel;
 
 import javafx.geometry.Insets;
 import javafx.scene.layout.VBox;
+import model.user.User;
 
 public class TradePanel extends VBox {
 
     private final ToggleOrderMode toggleOrderMode;
     private OrderEntry orderEntry;
     private OrderSideEntry orderSideEntry;
+    private AvailableCoin availableCoin;
 
     public TradePanel() {
         super();
@@ -15,21 +17,19 @@ public class TradePanel extends VBox {
         toggleOrderMode = new ToggleOrderMode();
         orderEntry = new OrderEntry(toggleOrderMode.isLimit());
         orderSideEntry = new OrderSideEntry();
-
-
+        availableCoin = new AvailableCoin();
 
         setSpacing(20);
         setPadding(new Insets(10));
 
-        getChildren().addAll(toggleOrderMode, orderEntry, orderSideEntry);
+        getChildren().addAll(toggleOrderMode, orderEntry, orderSideEntry, availableCoin);
 
         toggleOrderMode.setOnToggleChange(this::rerenderOrderEntry);
     }
 
     private void rerenderOrderEntry(boolean isLimit) {
-        getChildren().remove(orderEntry);
-        getChildren().remove(orderSideEntry);
+        getChildren().removeAll(orderEntry, orderSideEntry, availableCoin);
         orderEntry = new OrderEntry(isLimit);
-        getChildren().addAll(orderEntry, orderSideEntry);
+        getChildren().addAll(orderEntry, orderSideEntry, availableCoin);
     }
 }

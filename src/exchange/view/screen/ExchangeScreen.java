@@ -4,6 +4,7 @@ import javafx.geometry.Insets;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import model.user.User;
 import view.components.layout.*;
 import view.components.ui.orderbook.OrderBookLevelData;
 

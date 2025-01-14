@@ -1,7 +1,23 @@
-import model.client.LoginModel;
+import controller.LoginController;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import model.client.LoginClient;
+import model.db.CoinDAO;
 import model.db.DbConnector;
+import model.db.DbInitializer;
+import model.db.UsersDAO;
+import model.server.Server;
+import model.user.User;
 import utils.SceneManager;
 import view.screen.LoginScreen;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static javafx.application.Platform.exit;
 
 //public class Main {
 //    public static void main(String[] args) throws SQLException, IOException {
@@ -39,81 +55,54 @@ import view.screen.LoginScreen;
 //    }
 //}
 
-//import javafx.application.Application;
-//import javafx.scene.Scene;
-//import javafx.stage.Stage;
-//import view.screen.ExchangeScreen;
-//import view.screen.LoginScreen;
-//
-//public class Main extends Application {
-//
-//    private Stage primaryStage;
-//
-//    @Override
-//    public void start(Stage stage) {
-//        this.primaryStage = stage;
-//        showLoginScreen();
-//        primaryStage.setTitle("Exchange Simulator");
-//        primaryStage.show();
-//    }
-//
-//    private void showLoginScreen() {
-//        LoginScreen loginScreen = new LoginScreen();
-//
-//        loginScreen.getLoginButton().setOnAction(event -> {
-////            boolean isLoginSuccessful = simulateLogin(
-////                    loginScreen.getUsernameField().getText(),
-////                    loginScreen.getPasswordField().getText()
-////            );
-//
-////            if (isLoginSuccessful) {
-////                showExchangeScreen();
-////            } else {
-////                loginScreen.setErrorMessage("Invalid username or password.");
-////            }
-//        });
-//
-//        primaryStage.setScene(new Scene(loginScreen, 300, 400));
-//    }
-//
-//    private void showExchangeScreen() {
-//        ExchangeScreen exchangeScreen = new ExchangeScreen();
-//        primaryStage.setScene(new Scene(exchangeScreen, 1280, 720));
-//    }
-//
-//    private boolean simulateLogin(String username, String password) {
-//        return "admin".equals(username) && "password".equals(password);
-//    }
-//
-//    public static void main(String[] args) {
-//        launch(args);
-//    }
-//}
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import controller.LoginController;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-
 public class Main extends Application {
+    private static Thread serverThread;
+    private final ArrayList<String> coins = new ArrayList<String>(Arrays.asList("BTC", "ETH"));
 
     @Override
     public void start(Stage primaryStage) throws IOException, SQLException {
+        User user = new User("lillo");
+        user.createWalletFromString("BTC=10.0000,ETH=10.0");
+        exit();
+        DbInitializer.initializeDatabase(coins);
+        CoinDAO btcDAO = new CoinDAO("BTC");
+        CoinDAO ethDAO = new CoinDAO("ETH");
+        btcDAO.populateCoinTable(90.000, 100);
+        ethDAO.populateCoinTable(3000, 100);
+
+        serverThread = new Thread(() -> {
+            try {
+                Server.main(new String[]{});
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        serverThread.setDaemon(true);
+        serverThread.start();
+
         SceneManager sceneManager = new SceneManager(primaryStage);
-        Connection dbConnection = DbConnector.getConnection();
-
         LoginScreen loginScreen = new LoginScreen();
-        LoginModel loginModel = new LoginModel(dbConnection);
+        new LoginController(loginScreen, sceneManager);
 
-        new LoginController(loginScreen, loginModel, sceneManager);
         primaryStage.setScene(new Scene(loginScreen, 300, 400));
         primaryStage.setTitle("Login Screen");
+        primaryStage.setResizable(false);
+        primaryStage.setOnCloseRequest(event -> stopServer());
         primaryStage.show();
-
     }
+
+    @Override
+    public void stop() throws Exception {
+        stopServer();
+        super.stop();
+    }
+
+    private void stopServer() {
+        if (serverThread != null && serverThread.isAlive()) {
+            serverThread.interrupt(); // Interrupt the server thread if necessary
+        }
+    }
+
     public static void main(String[] args) {
         launch(args);
     }

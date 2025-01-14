@@ -1,4 +1,6 @@
 package model.user;
 
-public class Wallet {
+import java.util.HashMap;
+
+public class Wallet extends HashMap<String, Double> {
 }

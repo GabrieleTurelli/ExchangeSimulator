@@ -40,7 +40,7 @@ public class RegisterScreen extends VBox {
         this.registerButton = new Button("Register");
         registerButton.setStyle("-fx-cursor: hand");
 
-        this.loginLink = new Hyperlink("Already have an account? Login here.");
+        this.loginLink = new Hyperlink("Login here.");
         loginLink.setStyle("-fx-text-fill: cyan; -fx-underline: true;");
 
         this.errorLabel = new Label();

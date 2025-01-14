@@ -10,6 +10,7 @@ public class DbInitializer {
         try (Connection connection = DbConnector.getConnection()) {
             createCoinsTables(connection);
 
+            System.out.println("Initializing Database.");
             for (String coin : coins) {
                 createCoinTable(connection, coin);
                 createOrderBookTable(connection, coin);
@@ -56,10 +57,8 @@ public class DbInitializer {
     public static void createUserTable(Connection connection, String username) {
         String userTable = """
             CREATE TABLE IF NOT EXISTS user_%s (
-                user_coin_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                coin_id INTEGER NOT NULL,
+                coin TEXT NOT NULL,
                 quantity REAL NOT NULL,
-                FOREIGN KEY (coin_id) REFERENCES Coins(coin_id)
             );
         """.formatted(username);
 
@@ -78,7 +77,7 @@ public class DbInitializer {
         executeStatement(connection, createCoinOrderBookTable);
     }
 
-    private static void executeStatement(Connection connection, String sql) {
+    static void executeStatement(Connection connection, String sql) {
         try (Statement statement = connection.createStatement()) {
             statement.execute(sql);
         } catch (Exception e) {
