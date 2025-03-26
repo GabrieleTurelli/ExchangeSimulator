@@ -27,7 +27,7 @@ public class User {
         String[] coins = string.split(",");
 
         for(String coin: coins){
-            wallet.put(coin.split("=")[0], Double.parseDouble(coin.split("=")[1]));
+            wallet.put(coin.split("=")[0], Double.valueOf(coin.split("=")[1]));
         }
     }
 }

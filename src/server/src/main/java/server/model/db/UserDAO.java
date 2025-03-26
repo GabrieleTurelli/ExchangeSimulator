@@ -25,11 +25,12 @@ public class UserDAO {
         addCoin("BTC", 0);
         addCoin("ETH", 0);
     }
+
     public void addCoin(String coin, double size) throws SQLException {
         String query = """
-            INSERT INTO %s
-            (coin, quantity) VALUES (?, ?)
-            """.formatted(tableName);
+                INSERT INTO %s
+                (coin, quantity) VALUES (?, ?)
+                """.formatted(tableName);
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, coin);
@@ -61,30 +62,33 @@ public class UserDAO {
 
     public void createUserTable() throws SQLException {
         String userTable = """
-            CREATE TABLE IF NOT EXISTS %s (
-                coin TEXT NOT NULL,
-                quantity REAL NOT NULL
-            );
-        """.formatted(tableName);
+                    CREATE TABLE IF NOT EXISTS %s (
+                        coin TEXT NOT NULL,
+                        quantity REAL NOT NULL
+                    );
+                """.formatted(tableName);
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(userTable)) {
             preparedStatement.executeUpdate();
         }
     }
+
     public String getUser() throws SQLException {
         StringBuilder resultBuilder = new StringBuilder();
         String query = "SELECT coin, quantity FROM " + tableName + ";";
 
         try (PreparedStatement statement = connection.prepareStatement(query);
-             ResultSet result = statement.executeQuery()) {
+                ResultSet result = statement.executeQuery()) {
 
             while (result.next()) {
                 String coinName = result.getString("coin");
-                double size = result.getDouble("quantity");
+                double quantity = result.getDouble("quantity");
                 resultBuilder.append(coinName)
-                        .append("=").append(size).append(",");
+                        .append("=").append(quantity).append(",");
             }
         }
+
+        System.out.println("User data: " + resultBuilder.toString().trim());
         return resultBuilder.toString().trim();
     }
 

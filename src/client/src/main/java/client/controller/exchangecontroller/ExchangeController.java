@@ -14,15 +14,13 @@ public class ExchangeController {
         this.exchangeScreen = exchangeScreen;
         this.user = user;
 
-        initialize();
+        // initialize();
     }
 
-    private void initialize() {
-        // Example: Use user data to populate the screen (e.g., trade panel or
-        // positions)
-        // exchangeScreen.populateUserData(user);
-    }
-
+    // private void initialize() {
+    //     exchangeScreen.getTradePanelSection().getTradePanel().get
+    // }
+        
     public ExchangeScreen getExchangeScreen() {
         return exchangeScreen;
     }

@@ -42,6 +42,7 @@ public class LoginController {
         }
         User user = new User(username);
         user.createWalletFromString(responseMessage);
+        System.out.println("user wallet: " + user.getWallet());
         switchToExchangeScreen(user);
     }
 

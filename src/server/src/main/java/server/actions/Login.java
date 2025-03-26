@@ -16,7 +16,6 @@ public class Login {
             if (UsersDAO.isPasswordCorrect(username, password)) {
                 UserDAO userDAO = new UserDAO(new User(username));
                 String data = userDAO.getUser();
-
                 return "OK;" + data;
             }
             return "ERROR;Password incorrect";
