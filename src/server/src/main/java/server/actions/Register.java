@@ -3,9 +3,10 @@ package server.actions;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import client.model.db.UserDAO;
-import client.model.db.UsersDAO;
-import client.model.user.User;
+import server.model.db.UserDAO;
+import server.model.db.UsersDAO;
+
+import server.model.user.User;
 
 public class Register {
 

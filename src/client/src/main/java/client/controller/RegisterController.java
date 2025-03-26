@@ -1,5 +1,7 @@
 package client.controller;
 
+import java.io.IOException;
+
 import client.model.RegisterClient;
 import client.view.screen.ExchangeScreen;
 import client.view.screen.LoginScreen;
@@ -17,9 +19,16 @@ public class RegisterController {
         initialize();
     }
 
-    private void initialize() {
+    private void initialize()  {
         registerScreen.getRegisterButton().setOnAction(event -> handleRegister());
-        registerScreen.getLoginLink().setOnAction(event -> switchToLoginScreen());
+        registerScreen.getLoginLink().setOnAction(event -> {
+            try {
+                switchToLoginScreen();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
     }
 
     private void handleRegister(){
@@ -54,13 +63,14 @@ public class RegisterController {
     }
 
 
-    private void switchToLoginScreen() {
-        LoginController loginController = new LoginController(new LoginScreen(), sceneManager);
-        switchToScreen(loginController.getLoginScreen(), "Login Screen", 300, 400, false);
+    private void switchToLoginScreen() throws IOException {
+        LoginController loginController;
+        loginController = new LoginController(new LoginScreen(), sceneManager);
+        switchToScreen(loginController.getLoginScreen(), "Login Screen", 300, 450, false);
     }
 
     private void switchToExchangeScreen(){
-        switchToScreen(new ExchangeScreen(), "Exchange Screen", 1280, 720, true);
+        switchToScreen(new ExchangeScreen(), "Exchange simulator", 1280, 720, true);
 
     }
 

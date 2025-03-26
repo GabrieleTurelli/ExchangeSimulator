@@ -3,17 +3,17 @@ package server.actions;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import client.model.db.UserDAO;
-import client.model.db.UsersDAO;
-import client.model.user.User;
+import server.model.db.UserDAO;
+import server.model.db.UsersDAO;
+import server.model.user.User;
 
-public class Login extends UsersDAO {
+public class Login {
 
     public static String handleLogin(String request) throws SQLException, IOException {
         String username = request.split(" ")[1];
         String password = request.split(" ")[2];
-        if (userExists(username)){
-            if (isPasswordCorrect(username, password)){
+        if (UsersDAO.userExists(username)) {
+            if (UsersDAO.isPasswordCorrect(username, password)) {
                 UserDAO userDAO = new UserDAO(new User(username));
                 String data = userDAO.getUser();
 

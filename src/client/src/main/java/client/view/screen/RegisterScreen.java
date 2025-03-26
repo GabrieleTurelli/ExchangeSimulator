@@ -30,7 +30,7 @@ public class RegisterScreen extends VBox {
 
         Image logoImage = new Image("/logo.png");
         ImageView logoImageView = new ImageView(logoImage);
-        logoImageView.setFitWidth(50);
+        logoImageView.setFitWidth(100);
         logoImageView.setPreserveRatio(true);
 
         this.usernameEntry = new TextInputEntry("Username");
@@ -38,7 +38,17 @@ public class RegisterScreen extends VBox {
         this.confirmPasswordEntry = new TextInputEntry("Confirm Password", true);
 
         this.registerButton = new Button("Register");
+        registerButton.setTextFill(Theme.COLOR.ON_PRIMARY);
+        registerButton.setBackground(
+                new Background(new BackgroundFill(Theme.COLOR.PRIMARY, new CornerRadii(5), new Insets(0))));
         registerButton.setStyle("-fx-cursor: hand");
+        registerButton.prefWidthProperty().bind(usernameEntry.widthProperty());
+        registerButton.setOnMouseEntered(e -> registerButton
+                .setBackground(new Background(
+                        new BackgroundFill(Theme.COLOR.PRIMARY_VARIANT, new CornerRadii(5), Insets.EMPTY))));
+        registerButton.setOnMouseExited(e -> registerButton
+                .setBackground(
+                        new Background(new BackgroundFill(Theme.COLOR.PRIMARY, new CornerRadii(5), Insets.EMPTY))));
 
         this.loginLink = new Hyperlink("Login here.");
         loginLink.setStyle("-fx-text-fill: cyan; -fx-underline: true;");
@@ -47,18 +57,22 @@ public class RegisterScreen extends VBox {
         errorLabel.setStyle("-fx-text-fill: red");
 
         addInputListeners();
-        setMargin(logoImageView, new Insets(20));
+        setMargin(logoImageView, new Insets(10,0,0,0));
         setMargin(registerButton, new Insets(10, 0, 0, 0));
         setMargin(loginLink, new Insets(5, 0, 0, 0));
-        setMargin(errorLabel, new Insets(0,0,10,0));
+        setMargin(errorLabel, new Insets(0, 0, 10, 0));
 
-        getChildren().addAll(logoImageView, usernameEntry, passwordEntry, confirmPasswordEntry, registerButton, loginLink, errorLabel);
+        getChildren().addAll(logoImageView, usernameEntry, passwordEntry, confirmPasswordEntry, registerButton,
+                loginLink, errorLabel);
     }
 
     private void addInputListeners() {
-        usernameEntry.getTextField().textProperty().addListener((observable, oldValue, newValue) -> clearErrorMessage());
-        passwordEntry.getTextField().textProperty().addListener((observable, oldValue, newValue) -> clearErrorMessage());
-        confirmPasswordEntry.getTextField().textProperty().addListener((observable, oldValue, newValue) -> clearErrorMessage());
+        usernameEntry.getTextField().textProperty()
+                .addListener((observable, oldValue, newValue) -> clearErrorMessage());
+        passwordEntry.getTextField().textProperty()
+                .addListener((observable, oldValue, newValue) -> clearErrorMessage());
+        confirmPasswordEntry.getTextField().textProperty()
+                .addListener((observable, oldValue, newValue) -> clearErrorMessage());
     }
 
     public String getUsernameEntry() {

@@ -1,25 +1,24 @@
-// import java.io.Console;
+package client;
 
-// import javafx.application.Application;
-// import javafx.scene.Scene;
-// import javafx.stage.Stage;
-// import server.Server;
-// import utils.SceneManager;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-// import java.io.IOException;
-// import java.sql.SQLException;
-// import java.util.ArrayList;
-// import java.util.Arrays;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-// import client.view.screen.LoginScreen;
+import client.view.screen.LoginScreen;
 
-// import client.controller.LoginController;
-// import client.model.LoginClient;
-// import client.model.db.CoinDAO;
-// import client.model.db.DbConnector;
-// import client.model.db.DbInitializer;
-// import client.model.db.UsersDAO;
-// import client.model.user.User;
+import client.controller.LoginController;
+import client.model.LoginClient;
+import client.model.db.CoinDAO;
+import client.model.db.DbConnector;
+import client.model.db.DbInitializer;
+import client.model.db.UsersDAO;
+import client.model.user.User;
+import client.view.utils.SceneManager;
 
 // import static javafx.application.Platform.exit;
 
@@ -59,55 +58,37 @@
 // //    }
 // //}
 
-// public class Main extends Application {
-//     private static Thread serverThread;
-//     private final ArrayList<String> coins = new ArrayList<String>(Arrays.asList("BTC", "ETH"));
+public class Main extends Application {
+    private static Thread serverThread;
+    private final ArrayList<String> coins = new ArrayList<String>(Arrays.asList("BTC", "ETH"));
 
-//     @Override
-//     public void start(Stage primaryStage) throws IOException, SQLException {
-//         User user = new User("lillo");
-//         user.createWalletFromString("BTC=10.0000,ETH=10.0");
-//         DbInitializer.initializeDatabase(coins);
-//         CoinDAO btcDAO = new CoinDAO("BTC");
-//         CoinDAO ethDAO = new CoinDAO("ETH");
-//         btcDAO.populateCoinTable(90.000, 100);
-//         ethDAO.populateCoinTable(3000, 100);
+    @Override
+    public void start(Stage primaryStage) throws IOException, SQLException {
 
-//         serverThread = new Thread(() -> {
-//             try {
-//                 Server.main(new String[]{});
-//             } catch (Exception e) {
-//                 e.printStackTrace();
-//             }
-//         });
-//         serverThread.setDaemon(true);
-//         serverThread.start();
+        SceneManager sceneManager = new SceneManager(primaryStage);
+        LoginScreen loginScreen = new LoginScreen();
+        new LoginController(loginScreen, sceneManager);
 
-//         SceneManager sceneManager = new SceneManager(primaryStage);
-//         LoginScreen loginScreen = new LoginScreen();
-//         new LoginController(loginScreen, sceneManager);
+        primaryStage.setScene(new Scene(loginScreen, 300, 450));
+        primaryStage.setTitle("Login Screen");
+        primaryStage.setResizable(false);
+        primaryStage.setOnCloseRequest(event -> stopServer());
+        primaryStage.show();
+    }
 
-//         primaryStage.setScene(new Scene(loginScreen, 300, 400));
-//         primaryStage.setTitle("Login Screen");
-//         primaryStage.setResizable(false);
-//         primaryStage.setOnCloseRequest(event -> stopServer());
-//         primaryStage.show();
-//         System.out.print("ciao");
-//     }
+    @Override
+    public void stop() throws Exception {
+        stopServer();
+        super.stop();
+    }
 
-//     @Override
-//     public void stop() throws Exception {
-//         stopServer();
-//         super.stop();
-//     }
+    private void stopServer() {
+        if (serverThread != null && serverThread.isAlive()) {
+            serverThread.interrupt(); 
+        }
+    }
 
-//     private void stopServer() {
-//         if (serverThread != null && serverThread.isAlive()) {
-//             serverThread.interrupt(); 
-//         }
-//     }
-
-//     public static void main(String[] args) {
-//         launch(args);
-//     }
-// }
+    public static void main(String[] args) {
+        launch(args);
+    }
+}

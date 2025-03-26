@@ -10,6 +10,7 @@ client/view/components/ui/StatBlock.class
 client/model/ClientConnection.class
 client/view/components/ui/orderbook/OrderBookLevel.class
 client/view/utils/StyleUtils.class
+client/Main.class
 client/view/theme/Theme$COLOR.class
 client/model/db/UsersDAO.class
 client/view/theme/Theme$SHADOW.class

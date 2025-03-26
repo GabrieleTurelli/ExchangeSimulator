@@ -1,5 +1,7 @@
 package client.view.screen;
 
+import java.io.IOException;
+
 import client.view.components.ui.TextInputEntry;
 import client.view.theme.Theme;
 import javafx.geometry.Insets;
@@ -21,7 +23,7 @@ public class LoginScreen extends VBox {
     private final Label errorLabel;
     private final Hyperlink registerLink;
 
-    public LoginScreen() {
+    public LoginScreen() throws IOException {
         super(10);
         setPadding(new Insets(20, 40, 20, 40));
         setAlignment(Pos.CENTER);
@@ -29,14 +31,24 @@ public class LoginScreen extends VBox {
 
         Image logoImage = new Image("/logo.png");
         ImageView logoImageView = new ImageView(logoImage);
-        logoImageView.setFitWidth(50);
         logoImageView.setPreserveRatio(true);
+        logoImageView.setFitWidth(100);
 
         this.usernameEntry = new TextInputEntry("Username");
         this.passwordEntry = new TextInputEntry("Password", true);
 
         this.loginButton = new Button("Login");
+        loginButton.setTextFill(Theme.COLOR.ON_PRIMARY);
+        loginButton.setBackground(
+                new Background(new BackgroundFill(Theme.COLOR.PRIMARY, new CornerRadii(5), new Insets(0))));
         loginButton.setStyle("-fx-cursor: hand");
+        loginButton.prefWidthProperty().bind(usernameEntry.widthProperty());
+        loginButton.setOnMouseEntered(e -> loginButton
+                .setBackground(new Background(
+                        new BackgroundFill(Theme.COLOR.PRIMARY_VARIANT, new CornerRadii(5), Insets.EMPTY))));
+        loginButton.setOnMouseExited(e -> loginButton
+                .setBackground(
+                        new Background(new BackgroundFill(Theme.COLOR.PRIMARY, new CornerRadii(5), Insets.EMPTY))));
 
         this.registerLink = new Hyperlink("Register here.");
         registerLink.setStyle("-fx-text-fill: cyan; -fx-underline: true;");
@@ -45,17 +57,19 @@ public class LoginScreen extends VBox {
         errorLabel.setStyle("-fx-text-fill: red");
 
         addInputListeners();
-        setMargin(logoImageView, new Insets(50));
+        setMargin(logoImageView, new Insets(10));
         setMargin(loginButton, new Insets(10, 0, 0, 0));
         setMargin(registerLink, new Insets(5, 0, 0, 0));
-        setMargin(errorLabel, new Insets(0,0,10,0));
+        setMargin(errorLabel, new Insets(0, 0, 10, 0));
 
         getChildren().addAll(logoImageView, usernameEntry, passwordEntry, loginButton, registerLink, errorLabel);
     }
 
     private void addInputListeners() {
-        usernameEntry.getTextField().textProperty().addListener((observable, oldValue, newValue) -> clearErrorMessage());
-        passwordEntry.getTextField().textProperty().addListener((observable, oldValue, newValue) -> clearErrorMessage());
+        usernameEntry.getTextField().textProperty()
+                .addListener((observable, oldValue, newValue) -> clearErrorMessage());
+        passwordEntry.getTextField().textProperty()
+                .addListener((observable, oldValue, newValue) -> clearErrorMessage());
     }
 
     public String getUsernameEntry() {

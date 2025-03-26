@@ -47,12 +47,12 @@ public class LoginController {
 
     private void switchToRegisterScreen() {
         RegisterController registerController = new RegisterController(new RegisterScreen(), sceneManager);
-        switchToScreen(registerController.getRegisterScreen(), "Register Screen", 300, 400, false);
+        switchToScreen(registerController.getRegisterScreen(), "Register Screen", 300, 450, false);
     }
 
     private void switchToExchangeScreen(User user) {
         ExchangeController exchangeController = new ExchangeController(new ExchangeScreen(), sceneManager, user);
-        switchToScreen(exchangeController.getExchangeScreen(), "Exchange Screen", 1280, 720, true);
+        switchToScreen(exchangeController.getExchangeScreen(), "Exchange simulator", 1280, 720, true);
 
     }
 

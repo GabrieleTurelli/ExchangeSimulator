@@ -1,0 +1,15 @@
+server/actions/Login.class
+server/Server.class
+server/model/db/UsersDAO.class
+server/model/db/KeyValueDAO.class
+server/actions/Register.class
+server/model/db/DbConnector.class
+server/model/db/SingleValueDAO.class
+server/model/db/UserDAO.class
+server/model/db/CoinsDAO.class
+server/model/db/CoinDAO.class
+server/model/db/DbInitializer.class
+server/model/db/OrderBookDAO.class
+server/model/user/User.class
+server/model/db/WalletDAO.class
+server/model/user/Wallet.class
