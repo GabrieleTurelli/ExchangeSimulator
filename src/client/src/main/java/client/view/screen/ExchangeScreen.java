@@ -2,6 +2,7 @@ package client.view.screen;
 
 import java.util.ArrayList;
 
+import client.model.user.User;
 import client.view.components.layout.BaseSection;
 import client.view.components.layout.ChartSection;
 import client.view.components.layout.HeaderSection;
@@ -21,8 +22,12 @@ public class ExchangeScreen extends GridPane {
         private final OrderBookSection orderBookSection;
         private final TradePanelSection tradePanelSection;      
         private final BaseSection positionSection;
+        private final String coin;
+        private final User user;
 
-        public ExchangeScreen() {
+        public ExchangeScreen(User user, String coin) {
+                this.user = user;
+                this.coin = coin;
                 setPadding(new Insets(0));
                 setHgap(0);
                 setVgap(0);
@@ -75,7 +80,7 @@ public class ExchangeScreen extends GridPane {
                 bid.add(new OrderBookLevelData(9.6, 334.3));
                 bid.add(new OrderBookLevelData(9.5, 524.2));
                 this.orderBookSection = new OrderBookSection(this, 0.2, 0.9, bid, ask);
-                this.tradePanelSection = new TradePanelSection(this, 0.2, 0.9);
+                this.tradePanelSection = new TradePanelSection(this, 0.2, 0.9, user.getWallet().getCoin(), user.getWallet().getUsdt());
                 this.positionSection = new BaseSection(this, 0.6, 0.3);
 
                 add(header, 0, 0, 3, 1);

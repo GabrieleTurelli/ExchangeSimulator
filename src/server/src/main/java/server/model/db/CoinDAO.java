@@ -53,13 +53,12 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Double> {
         }
     }
 
-    @Override
-    public TreeMap<LocalDate, Double> getData() {
+    public TreeMap<LocalDate, Double> getCoinData() throws SQLException {
         TreeMap<LocalDate, Double> coinData = new TreeMap<>();
-        String sql = "SELECT date, price FROM " + tableName;
+        String query = "SELECT date, price FROM " + tableName;
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+        try (PreparedStatement statement = connection.prepareStatement(query);
+                ResultSet rs = statement.executeQuery()) {
 
             while (rs.next()) {
                 String dateStr = rs.getString("date");
@@ -69,9 +68,29 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Double> {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw e;
         }
 
         return coinData;
+    }
+
+    public double getLastPrice() throws SQLException {
+        double coinPrice = 0.0;
+        String query = "SELECT price FROM " + tableName + " WHERE date = (SELECT MAX(date) FROM " + tableName + ")";
+
+        try (PreparedStatement statement = connection.prepareStatement(query);
+                ResultSet resultSet = statement.executeQuery()) {
+
+            if (resultSet.next()) {
+                coinPrice = resultSet.getDouble("price");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+        return coinPrice;
     }
 
     public void populateCoinTable(double initialPrice, int rows) {
@@ -102,12 +121,12 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Double> {
 
     private void createTable() throws SQLException {
         String createTableQuery = """
-        CREATE TABLE IF NOT EXISTS %s (
-            date TEXT NOT NULL,
-            price REAL NOT NULL,
-            PRIMARY KEY (date)
-        );
-    """.formatted(tableName);
+                    CREATE TABLE IF NOT EXISTS %s (
+                        date TEXT NOT NULL,
+                        price REAL NOT NULL,
+                        PRIMARY KEY (date)
+                    );
+                """.formatted(tableName);
 
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(createTableQuery);
@@ -117,7 +136,7 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Double> {
     private LocalDate getLastDate() {
         String getLastDateQuery = "SELECT MAX(date) AS last_date FROM " + tableName;
         try (PreparedStatement stmt = connection.prepareStatement(getLastDateQuery);
-             ResultSet rs = stmt.executeQuery()) {
+                ResultSet rs = stmt.executeQuery()) {
 
             if (rs.next()) {
                 String lastDateStr = rs.getString("last_date");
@@ -132,7 +151,7 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Double> {
     private void populateDataFromStart(double initialPrice, int rows) {
         LocalDate initialDate = LocalDate.now().minusDays(rows);
 
-        System.out.printf("Populating %s table since %s ",tableName, initialDate);
+        System.out.printf("Populating %s table since %s ", tableName, initialDate);
 
         Random random = new Random();
 
@@ -151,9 +170,11 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Double> {
         Random random = new Random();
         LocalDate startDate = lastDate.plusDays(1);
 
-        if (lastDate.equals(today)) {return;}
+        if (lastDate.equals(today)) {
+            return;
+        }
 
-        System.out.printf("Populating %s table from %s to %s\n",tableName, lastDate, today);
+        System.out.printf("Populating %s table from %s to %s\n", tableName, lastDate, today);
 
         for (LocalDate date = startDate; !date.isAfter(today); date = date.plusDays(1)) {
             double priceFluctuation = random.nextDouble() * 20 - 10;
@@ -161,6 +182,11 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Double> {
             price = Math.round(price * 100.0) / 100.0;
             addData(date, price);
         }
+    }
+
+    @Override
+    public TreeMap<LocalDate, Double> getData() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

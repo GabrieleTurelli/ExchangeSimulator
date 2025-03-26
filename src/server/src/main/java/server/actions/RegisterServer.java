@@ -5,10 +5,9 @@ import java.sql.SQLException;
 
 import server.model.db.UserDAO;
 import server.model.db.UsersDAO;
-
 import server.model.user.User;
 
-public class Register {
+public class RegisterServer {
 
     public static String handleRegistration(String request) throws SQLException, IOException {
         String username = request.split(" ")[1];

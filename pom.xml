@@ -12,7 +12,7 @@
   <name>Exchange Simulator</name>
 
   <modules>
-    <module>src/client</module>
+    <!-- <module>src/client</module> -->
     <module>src/server</module>
   </modules>
 </project>

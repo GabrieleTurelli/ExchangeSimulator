@@ -7,7 +7,7 @@ import server.model.db.UserDAO;
 import server.model.db.UsersDAO;
 import server.model.user.User;
 
-public class Login {
+public class LoginServer {
 
     public static String handleLogin(String request) throws SQLException, IOException {
         String username = request.split(" ")[1];
