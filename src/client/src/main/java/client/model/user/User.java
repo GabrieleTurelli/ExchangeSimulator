@@ -1,13 +1,19 @@
 package client.model.user;
 
+import java.io.IOException;
+
+import client.model.ClientConnection;
+
 
 public class User {
     private final String username;
     private Wallet wallet;
+    private ClientConnection connection; 
 
-    public User( String username){
+    public User( String username) throws IOException{
         this.username = username;
         this.wallet = new Wallet();
+        this.connection = new ClientConnection();
     }
 
     public String getUsername() {

@@ -7,7 +7,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DbConnector {
-    private static final String DB_DIRECTORY = "src/server/db";
+    private static final String DB_DIRECTORY = "db";
     private static final String DB_PATH = DB_DIRECTORY + "/exchange.db";
     private static final String URL = "jdbc:sqlite:" + DB_PATH;
 

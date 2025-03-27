@@ -20,14 +20,14 @@ public class ExchangeScreen extends GridPane {
         private final SubHeaderSection subHeader;
         private final ChartSection chartSection;
         private final OrderBookSection orderBookSection;
-        private final TradePanelSection tradePanelSection;      
+        private final TradePanelSection tradePanelSection;
         private final BaseSection positionSection;
         private final String coin;
         private final User user;
 
-        public ExchangeScreen(User user, String coin) {
+        public ExchangeScreen(User user) {
                 this.user = user;
-                this.coin = coin;
+                this.coin = "BTC";
                 setPadding(new Insets(0));
                 setHgap(0);
                 setVgap(0);
@@ -56,15 +56,18 @@ public class ExchangeScreen extends GridPane {
                                 "Exchange Simulator",
                                 1.0,
                                 0.1);
+                System.out.println("header");
                 this.subHeader = new SubHeaderSection(
                                 this,
                                 1.0,
                                 0.05);
+                System.out.println("subheader");
 
                 this.chartSection = new ChartSection(
                                 this,
                                 0.6,
                                 0.6);
+                System.out.println("chart");
 
                 ArrayList<OrderBookLevelData> ask = new ArrayList<>();
                 ask.add(new OrderBookLevelData(10.4, 234.9));
@@ -72,6 +75,7 @@ public class ExchangeScreen extends GridPane {
                 ask.add(new OrderBookLevelData(10.2, 134.1));
                 ask.add(new OrderBookLevelData(10.1, 34.3));
                 ask.add(new OrderBookLevelData(10.0, 4.2));
+                System.out.println("ask");
 
                 ArrayList<OrderBookLevelData> bid = new ArrayList<>();
                 bid.add(new OrderBookLevelData(9.9, 34.9));
@@ -79,9 +83,25 @@ public class ExchangeScreen extends GridPane {
                 bid.add(new OrderBookLevelData(9.7, 234.1));
                 bid.add(new OrderBookLevelData(9.6, 334.3));
                 bid.add(new OrderBookLevelData(9.5, 524.2));
-                this.orderBookSection = new OrderBookSection(this, 0.2, 0.9, bid, ask);
-                this.tradePanelSection = new TradePanelSection(this, 0.2, 0.9, user.getWallet().getCoin(), user.getWallet().getUsdt());
-                this.positionSection = new BaseSection(this, 0.6, 0.3);
+                System.out.println("bid");
+
+                this.orderBookSection = new OrderBookSection(this,
+                                0.2,
+                                0.9, bid, ask);
+                System.out.println("order book");
+                
+
+                this.tradePanelSection = new TradePanelSection(this,
+                                0.2,
+                                0.9,
+                                coin,
+                                user.getWallet().getCoin(coin),
+                                user.getWallet().getUsdt());
+                System.out.println("trade panel");
+
+                this.positionSection = new BaseSection(this,
+                                0.6,
+                                0.3);
 
                 add(header, 0, 0, 3, 1);
                 add(subHeader, 0, 1, 3, 1);
@@ -91,22 +111,26 @@ public class ExchangeScreen extends GridPane {
                 add(tradePanelSection, 2, 2, 1, 2);
         }
 
-
         public HeaderSection getHeader() {
                 return header;
         }
+
         public SubHeaderSection getSubHeader() {
                 return subHeader;
         }
+
         public ChartSection getChartSection() {
                 return chartSection;
         }
+
         public OrderBookSection getOrderBookSection() {
                 return orderBookSection;
         }
+
         public TradePanelSection getTradePanelSection() {
                 return tradePanelSection;
         }
+
         public BaseSection getPositionSection() {
                 return positionSection;
         }

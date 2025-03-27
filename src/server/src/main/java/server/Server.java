@@ -38,7 +38,7 @@ public class Server {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input));
                 PrintWriter writer = new PrintWriter(output, true)) {
             String request;
-            while ((request = reader.readLine()) != null) {
+            if ((request = reader.readLine()) != null) {
                 System.out.println("Received request: " + request);
 
                 if (request.startsWith("\\login")) {
@@ -49,7 +49,6 @@ public class Server {
                     writer.println(response);
                 } else if (request.startsWith("\\logout")) {
                     writer.println("OK: Logged out");
-                    break; // break the loop and close the connection
                 } else if (request.startsWith("\\get-last-price")) {
                     String response = MarketServer.handleGetLastPrice(request);
                     writer.println(response);
