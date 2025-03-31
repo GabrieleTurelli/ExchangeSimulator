@@ -8,12 +8,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
 public class AvailableCoin extends HBox {
-    private double usdtAvailable;
-    private double coinAvailable;
 
     public AvailableCoin(double usdtAvailable, double coinAvailable) {
-        this.usdtAvailable = 10.0;
-
         setAlignment(Pos.CENTER_LEFT);
 
         HBox usdtContainer = new HBox();
@@ -40,19 +36,4 @@ public class AvailableCoin extends HBox {
         getChildren().addAll(usdtContainer, spacer, coinContainer);
     }
 
-    public double getUsdtAvailable() {
-        return this.usdtAvailable;
-    }
-
-    public double getCoinAvailable() {
-        return this.coinAvailable;
-    }
-
-    public void setUsdtAvailable(double usdtAvailable) {
-        this.usdtAvailable = usdtAvailable;
-    }
-
-    public void setCoinAvailable(double coinAvailable) {
-        this.coinAvailable = coinAvailable;
-    }
 }

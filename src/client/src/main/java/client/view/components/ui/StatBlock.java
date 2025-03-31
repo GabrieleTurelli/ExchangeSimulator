@@ -21,4 +21,23 @@ public class StatBlock extends VBox {
 
         getChildren().addAll(titleLabel, valueLabel);
     }
+
+    public StatBlock( javafx.scene.paint.Color valueColor) {
+        setAlignment(Pos.CENTER);
+
+        Label titleLabel = new Label("");
+        titleLabel.setTextFill(Theme.COLOR.ON_SURFACE);
+        titleLabel.setFont(new Font(10));
+
+        Label valueLabel = new Label("");
+        valueLabel.setTextFill(valueColor);
+        valueLabel.setFont(new Font(14));
+
+        getChildren().addAll(titleLabel, valueLabel);
+    }
+
+    public void setStatBlock(String label, double value) {
+        ((Label) getChildren().get(0)).setText(label);
+        ((Label) getChildren().get(1)).setText(String.valueOf(value));
+    }
 }

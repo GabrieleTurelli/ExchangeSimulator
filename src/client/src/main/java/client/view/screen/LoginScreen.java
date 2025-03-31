@@ -95,4 +95,9 @@ public class LoginScreen extends VBox {
     public void clearErrorMessage() {
         this.errorLabel.setText("");
     }
+
+    public static void launch(Class<LoginScreen> class1, String[] args) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'launch'");
+    }
 }

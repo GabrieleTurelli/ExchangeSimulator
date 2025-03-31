@@ -23,7 +23,7 @@ public class UserDAO {
         createUserTable();
         addCoin("USDT", 100000);
         addCoin("BTC", 0);
-        addCoin("ETH", 0);
+        // addCoin("ETH", 0);
     }
 
     public void addCoin(String coin, double size) throws SQLException {

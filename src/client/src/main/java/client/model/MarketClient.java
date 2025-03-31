@@ -10,9 +10,13 @@ public class MarketClient {
             connection.sendRequest("\\get-last-price " + coin);
             String response = connection.readResponse();
             System.out.println("Request sent : " + response);
-
-            double price = Double.parseDouble(response.split(" ")[1]);
-            return price;
+            
+            if (response.contains("OK")){
+                double price = Double.parseDouble(response.split(";")[1]);
+                return price;
+            }else {
+                return -1.0;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return -1.0;

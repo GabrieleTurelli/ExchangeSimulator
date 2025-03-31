@@ -52,6 +52,7 @@ public class LoginController {
         User user = new User(username);
         user.createWalletFromString(responseMessage);
         System.out.println("user wallet: " + user.getWallet());
+        System.out.println("user amount: " + user.getWallet().getAmount());
         switchToExchangeScreen(user);
     }
 
@@ -61,11 +62,8 @@ public class LoginController {
     }
 
     private void switchToExchangeScreen(User user) {
-        System.out.println("1");
         ExchangeController exchangeController = new ExchangeController(new ExchangeScreen(user), sceneManager, user);
-        System.out.println("2");
         switchToScreen(exchangeController.getExchangeScreen(), "Exchange simulator", 1280, 720, true);
-        System.out.println("3");
     }
 
     private void switchToScreen(Parent screen, String title, int width, int height, boolean resizable) {

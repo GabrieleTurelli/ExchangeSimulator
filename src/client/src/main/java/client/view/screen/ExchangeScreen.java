@@ -16,123 +16,128 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 
 public class ExchangeScreen extends GridPane {
-        private final HeaderSection header;
-        private final SubHeaderSection subHeader;
-        private final ChartSection chartSection;
-        private final OrderBookSection orderBookSection;
-        private final TradePanelSection tradePanelSection;
-        private final BaseSection positionSection;
-        private final String coin;
-        private final User user;
+    private final HeaderSection header;
+    private final SubHeaderSection subHeader;
+    private final ChartSection chartSection;
+    private final OrderBookSection orderBookSection;
+    private final TradePanelSection tradePanelSection;
+    private final BaseSection positionSection;
+    private final String coin;
+    private final User user;
 
-        public ExchangeScreen(User user) {
-                this.user = user;
-                this.coin = "BTC";
-                setPadding(new Insets(0));
-                setHgap(0);
-                setVgap(0);
+    public ExchangeScreen(User user) {
+        this.user = user;
+        this.coin = "BTC";
+        setPadding(new Insets(0));
+        setHgap(0);
+        setVgap(0);
 
-                ColumnConstraints column1 = new ColumnConstraints();
-                column1.setPercentWidth(60);
-                ColumnConstraints column2 = new ColumnConstraints();
-                column2.setPercentWidth(20);
-                ColumnConstraints column3 = new ColumnConstraints();
-                column3.setPercentWidth(20);
-                getColumnConstraints().addAll(column1, column2, column3);
+        ColumnConstraints column1 = new ColumnConstraints();
+        column1.setPercentWidth(60);
+        ColumnConstraints column2 = new ColumnConstraints();
+        column2.setPercentWidth(20);
+        ColumnConstraints column3 = new ColumnConstraints();
+        column3.setPercentWidth(20);
+        getColumnConstraints().addAll(column1, column2, column3);
 
-                RowConstraints row1 = new RowConstraints();
-                row1.setPercentHeight(5);
-                RowConstraints row2 = new RowConstraints();
-                row2.setPercentHeight(5);
-                RowConstraints row3 = new RowConstraints();
-                row3.setPercentHeight(60);
-                RowConstraints row4 = new RowConstraints();
-                row4.setPercentHeight(30);
-                getRowConstraints().addAll(row1, row2, row3, row4);
+        RowConstraints row1 = new RowConstraints();
+        row1.setPercentHeight(5);
+        RowConstraints row2 = new RowConstraints();
+        row2.setPercentHeight(5);
+        RowConstraints row3 = new RowConstraints();
+        row3.setPercentHeight(60);
+        RowConstraints row4 = new RowConstraints();
+        row4.setPercentHeight(30);
+        getRowConstraints().addAll(row1, row2, row3, row4);
 
-                this.header = new HeaderSection(
-                                this,
-                                "/logo.png",
-                                "Exchange Simulator",
-                                1.0,
-                                0.1);
-                System.out.println("header");
-                this.subHeader = new SubHeaderSection(
-                                this,
-                                1.0,
-                                0.05);
-                System.out.println("subheader");
+        this.header = new HeaderSection(
+                this,
+                "/logo.png",
+                "Exchange Simulator",
+                1.0,
+                0.1);
+        this.subHeader = new SubHeaderSection(
+                this,
+                1.0,
+                0.05);
 
-                this.chartSection = new ChartSection(
-                                this,
-                                0.6,
-                                0.6);
-                System.out.println("chart");
+        this.chartSection = new ChartSection(
+                this,
+                0.6,
+                0.6);
 
-                ArrayList<OrderBookLevelData> ask = new ArrayList<>();
-                ask.add(new OrderBookLevelData(10.4, 234.9));
-                ask.add(new OrderBookLevelData(10.3, 204.8));
-                ask.add(new OrderBookLevelData(10.2, 134.1));
-                ask.add(new OrderBookLevelData(10.1, 34.3));
-                ask.add(new OrderBookLevelData(10.0, 4.2));
-                System.out.println("ask");
+        ArrayList<OrderBookLevelData> ask = new ArrayList<>();
+        ask.add(new OrderBookLevelData(10.4, 234.9));
+        ask.add(new OrderBookLevelData(10.3, 204.8));
+        ask.add(new OrderBookLevelData(10.2, 134.1));
+        ask.add(new OrderBookLevelData(10.1, 34.3));
+        ask.add(new OrderBookLevelData(10.0, 4.2));
 
-                ArrayList<OrderBookLevelData> bid = new ArrayList<>();
-                bid.add(new OrderBookLevelData(9.9, 34.9));
-                bid.add(new OrderBookLevelData(9.8, 104.8));
-                bid.add(new OrderBookLevelData(9.7, 234.1));
-                bid.add(new OrderBookLevelData(9.6, 334.3));
-                bid.add(new OrderBookLevelData(9.5, 524.2));
-                System.out.println("bid");
+        ArrayList<OrderBookLevelData> bid = new ArrayList<>();
+        bid.add(new OrderBookLevelData(9.9, 34.9));
+        bid.add(new OrderBookLevelData(9.8, 104.8));
+        bid.add(new OrderBookLevelData(9.7, 234.1));
+        bid.add(new OrderBookLevelData(9.6, 334.3));
+        bid.add(new OrderBookLevelData(9.5, 524.2));
 
-                this.orderBookSection = new OrderBookSection(this,
-                                0.2,
-                                0.9, bid, ask);
-                System.out.println("order book");
-                
+        this.orderBookSection = new OrderBookSection(this,
+                0.2,
+                0.9, bid, ask);
 
-                this.tradePanelSection = new TradePanelSection(this,
-                                0.2,
-                                0.9,
-                                coin,
-                                user.getWallet().getCoin(coin),
-                                user.getWallet().getUsdt());
-                System.out.println("trade panel");
+        this.tradePanelSection = new TradePanelSection(this,
+                0.2,
+                0.9,
+                coin,
+                user.getWallet().getAmount(),
+                user.getWallet().getCoin(coin));
 
-                this.positionSection = new BaseSection(this,
-                                0.6,
-                                0.3);
+        this.positionSection = new BaseSection(this,
+                0.6,
+                0.3);
 
-                add(header, 0, 0, 3, 1);
-                add(subHeader, 0, 1, 3, 1);
-                add(chartSection, 0, 2, 1, 1);
-                add(positionSection, 0, 3, 1, 1);
-                add(orderBookSection, 1, 2, 1, 2);
-                add(tradePanelSection, 2, 2, 1, 2);
-        }
+        add(header, 0, 0, 3, 1);
+        add(subHeader, 0, 1, 3, 1);
+        add(chartSection, 0, 2, 1, 1);
+        add(positionSection, 0, 3, 1, 1);
+        add(orderBookSection, 1, 2, 1, 2);
+        add(tradePanelSection, 2, 2, 1, 2);
+    }
 
-        public HeaderSection getHeader() {
-                return header;
-        }
+    public HeaderSection getHeader() {
+        return header;
+    }
 
-        public SubHeaderSection getSubHeader() {
-                return subHeader;
-        }
+    public SubHeaderSection getSubHeader() {
+        return subHeader;
+    }
 
-        public ChartSection getChartSection() {
-                return chartSection;
-        }
+    public ChartSection getChartSection() {
+        return chartSection;
+    }
 
-        public OrderBookSection getOrderBookSection() {
-                return orderBookSection;
-        }
+    public OrderBookSection getOrderBookSection() {
+        return orderBookSection;
+    }
 
-        public TradePanelSection getTradePanelSection() {
-                return tradePanelSection;
-        }
+    public TradePanelSection getTradePanelSection() {
+        return tradePanelSection;
+    }
 
-        public BaseSection getPositionSection() {
-                return positionSection;
-        }
+    public BaseSection getPositionSection() {
+        return positionSection;
+    }
+
+    // public void loadMarketData() {
+    //     try {
+    //         MarketData data = MarketClient.getMarketData("BTC");
+    //         exchangeScreen.getSubHeader().setPrice(data.getPrice());
+    //         exchangeScreen.getSubHeader().setDailyChange(data.getDailyChange());
+    //         exchangeScreen.getSubHeader().setDailyLow(data.getDailyLow());
+    //         exchangeScreen.getSubHeader().setDailyHigh(data.getDailyHigh());
+    //         exchangeScreen.getSubHeader().updateStatBlocks();
+    //     } catch (IOException e) {
+    //         System.out.println("Failed to load market data.");
+    //     }
+    //     }
 
 }

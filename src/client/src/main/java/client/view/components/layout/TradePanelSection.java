@@ -10,7 +10,6 @@ public class TradePanelSection extends BaseSection {
     public TradePanelSection(GridPane gridPane, double widthMultiplier, double heightMultiplier, String coin,
             double usdtAvailable, double coinAvailable) {
         super(gridPane, Theme.COLOR.BACKGROUND, widthMultiplier, heightMultiplier);
-        System.out.println("TradePanelSection");
         this.tradePanel = new TradePanel(coin, usdtAvailable, coinAvailable);
         this.getChildren().add(tradePanel);
     }

@@ -11,9 +11,7 @@ public class ExchangeController {
     private final User user;
 
     public ExchangeController(ExchangeScreen exchangeScreen, SceneManager sceneManager, User user) {
-        System.out.println("ex 1");
         this.exchangeScreen = exchangeScreen;
-        System.out.println("ex 2");
         this.user = user;
 
         // initialize();

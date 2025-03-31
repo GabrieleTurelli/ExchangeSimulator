@@ -13,23 +13,44 @@ import java.sql.SQLException;
 import server.actions.LoginServer;
 import server.actions.MarketServer;
 import server.actions.RegisterServer;
+import server.model.db.DbConnector;
+import server.model.db.DbInitializer;
+import server.model.db.UserDAO;
+import server.model.user.User;
 
 public class Server {
     private static final int PORT = 12345;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, SQLException, InterruptedException {
+        DbInitializer dbInitializer = new DbInitializer();
+        // ArrayList<String> coins = new ArrayList<>(Arrays.asList("BTC"));
+        // dbInitializer.initializeDatabase(coins);
+        // dbInitializer.createCoinTable(DbConnector.getConnection(), "BTC");
+        DbInitializer.dropTable(DbConnector.getConnection(), "user_test");
+        UserDAO userDAO = new UserDAO(new User("test"));
+        userDAO.initializeUser();
+        // dbInitializer.createCoinsTable(DbConnector.getConnection());
+        // dbInitializer.addCoinToCoinsTable(DbConnector.getConnection(), "BTC");
+        // dbInitializer.addCoinToCoinsTable(DbConnector.getConnection(), "USDT");
+        // CoinDAO coinDAO = new CoinDAO("BTC");
+        // coinDAO.populateCoinTable(90000, 100);
+
+
+        // exit();
+
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("Server started on port " + PORT);
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Client connected");
-                handleClient(clientSocket);
+                new Thread(() -> handleClient(clientSocket)).start();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     private static void handleClient(Socket clientSocket) {
         try (

@@ -55,4 +55,16 @@ public class MarketServer {
         return "OK;" + coinPrice;
 
     }
+
+    public static String handleGetKline(String request) throws SQLException {
+        String coin; 
+        double price;
+        double change;
+        double low;
+        double high ;
+        return "ciao";
+
+        // return "OK;price=" + price + ";change=" + change + ";low=" + low + ";high=" + high;
+    }
+
 }
