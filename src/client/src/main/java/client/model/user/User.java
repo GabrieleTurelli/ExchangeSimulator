@@ -2,7 +2,7 @@ package client.model.user;
 
 import java.io.IOException;
 
-import client.model.ClientConnection;
+import client.model.clients.ClientConnection;
 
 public class User {
     private final String username;
@@ -15,6 +15,12 @@ public class User {
         this.connection = new ClientConnection();
     }
 
+    public User(String username, String walletData) throws IOException {
+        this.username = username;
+        this.wallet = new Wallet(walletData);
+        this.connection = new ClientConnection();
+    }
+
     public String getUsername() {
         return username;
     }
@@ -23,17 +29,7 @@ public class User {
         return wallet;
     }
 
-
     public void setWallet(Wallet wallet) {
         this.wallet = wallet;
-    }
-
-    public void createWalletFromString(String string) {
-        string = string.replaceAll("\\s+", "");
-        String[] coins = string.split(",");
-
-        for (String coin : coins) {
-            wallet.put(coin.split("=")[0], Double.valueOf(coin.split("=")[1]));
-        }
     }
 }

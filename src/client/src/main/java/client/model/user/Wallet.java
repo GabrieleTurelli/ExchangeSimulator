@@ -2,13 +2,19 @@ package client.model.user;
 
 import java.util.HashMap;
 
-import client.model.MarketClient;
+import client.model.clients.MarketClient;
 
 public final class Wallet extends HashMap<String, Double> {
     private double amount;
 
     public Wallet() {
         super();
+        calculateAmount();
+    }
+
+    public Wallet(String walletData) {
+        super();
+        createWalletFromString(walletData);
         calculateAmount();
     }
 
@@ -64,5 +70,15 @@ public final class Wallet extends HashMap<String, Double> {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    private void createWalletFromString(String string) {
+        string = string.replaceAll("\\s+", "");
+        String[] coins = string.split(",");
+
+        for (String coin : coins) {
+            System.out.println("coin : " + coin);
+            this.put(coin.split("=")[0], Double.valueOf(coin.split("=")[1]));
+        }
     }
 }

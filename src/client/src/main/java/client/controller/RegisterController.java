@@ -2,9 +2,7 @@ package client.controller;
 
 import java.io.IOException;
 
-import client.model.RegisterClient;
-import client.model.user.User;
-import client.view.screen.ExchangeScreen;
+import client.model.clients.RegisterClient;
 import client.view.screen.LoginScreen;
 import client.view.screen.RegisterScreen;
 import client.view.utils.SceneManager;
@@ -68,10 +66,10 @@ public class RegisterController {
             registerScreen.setErrorMessage(responseMessage);
             return;
         }
-        User user = new User(username);
-        user.createWalletFromString(responseMessage);
-        System.out.println("user wallet: " + user.getWallet());
-        switchToExchangeScreen(user);
+        // User user = new User(username, response);
+        // System.out.println("user wallet: " + user.getWallet());
+        // switchToExchangeScreen(user);
+        switchToLoginScreen();
     }
 
     private void switchToLoginScreen() throws IOException {
@@ -80,10 +78,10 @@ public class RegisterController {
         switchToScreen(loginController.getLoginScreen(), "Login Screen", 300, 450, false);
     }
 
-    private void switchToExchangeScreen(User user) {
-        switchToScreen(new ExchangeScreen(user), "Exchange simulator", 1280, 720, true);
+    // private void switchToExchangeScreen(User user) {
+    //     switchToScreen(new ExchangeScreen(user), "Exchange simulator", 1280, 720, true);
 
-    }
+    // }
 
     private void switchToScreen(Parent screen, String title, int width, int height, boolean resizable) {
 

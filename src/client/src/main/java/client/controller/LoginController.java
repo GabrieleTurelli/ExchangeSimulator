@@ -3,7 +3,7 @@ package client.controller;
 import java.io.IOException;
 
 import client.controller.exchangecontroller.ExchangeController;
-import client.model.LoginClient;
+import client.model.clients.LoginClient;
 import client.model.user.User;
 import client.view.screen.ExchangeScreen;
 import client.view.screen.LoginScreen;
@@ -49,8 +49,7 @@ public class LoginController {
             loginScreen.setErrorMessage(responseMessage);
             return;
         }
-        User user = new User(username);
-        user.createWalletFromString(responseMessage);
+        User user = new User(username, responseMessage);
         System.out.println("user wallet: " + user.getWallet());
         System.out.println("user amount: " + user.getWallet().getAmount());
         switchToExchangeScreen(user);

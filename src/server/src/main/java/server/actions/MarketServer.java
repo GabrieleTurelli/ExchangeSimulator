@@ -56,6 +56,27 @@ public class MarketServer {
 
     }
 
+    public static String handleGetDailyMarketData(String request) throws SQLException, IOException{
+        String coin; 
+        CoinDAO coinDAO;
+        try {
+            coin = request.split(" ")[1];
+        } catch (IndexOutOfBoundsException e) {
+            return "ERROR;Invalid request";
+        }
+
+        try {
+            coinDAO = new CoinDAO(coin);
+            coinDAO.getLastPrice();
+        } catch (IOException | SQLException e) {
+            System.out.println("Coin not found in getLastPrice for coin :" + coin);
+            e.printStackTrace();
+            return "ERROR;Coin not found";
+        }
+
+        return "OK;" + coinPrice;
+    }
+
     public static String handleGetKline(String request) throws SQLException {
         String coin; 
         double price;

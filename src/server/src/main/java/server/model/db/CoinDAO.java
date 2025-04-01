@@ -58,9 +58,9 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
         }
     }
 
-    public TreeMap<LocalDate, Double> getCoinData() throws SQLException {
+    public TreeMap<LocalDate, Double> getCoinPrice() throws SQLException {
         TreeMap<LocalDate, Double> coinData = new TreeMap<>();
-        String query = "SELECT date, price FROM " + tableName;
+        String query = "SELECT date, close FROM " + tableName;
 
         try (PreparedStatement statement = connection.prepareStatement(query);
                 ResultSet rs = statement.executeQuery()) {
@@ -77,6 +77,29 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
         }
 
         return coinData;
+    }
+
+    public Kline getDailyData() throws SQLException {
+        String query = "SELECT date, open, high, low, close  FROM " + tableName;
+
+        try (PreparedStatement statement = connection.prepareStatement(query);
+                ResultSet rs = statement.executeQuery()) {
+
+            if (rs.next()) {
+                String dateStr = rs.getString("date");
+                LocalDate date = LocalDate.parse(dateStr, dateFormatter);
+                Double open = rs.getDouble("open");
+                Double high = rs.getDouble("high");
+                Double low = rs.getDouble("low");
+                Double close = rs.getDouble("close");
+                return new Kline(open, high, low, close);
+            }
+            return null;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public double getLastPrice() throws SQLException {
@@ -109,7 +132,7 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
                 LocalDate lastDate = getLastDate();
                 if (lastDate != null) {
                     populateDataFromLastDate(lastDate, initialPrice);
-                }else {
+                } else {
                     System.out.println("No data found in the table, populating from start.");
                     populateDataFromStart(initialPrice, rows);
                 }
