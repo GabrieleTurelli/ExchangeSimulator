@@ -56,11 +56,11 @@ public class Server {
                 } else if (request.startsWith("\\get-last-price")) {
                     String response = MarketServer.handleGetLastPrice(request);
                     writer.println(response);
-                } else if (request.startsWith("\\get-data")) {
-                    String response = MarketServer.handleGetData(request);
+                } else if (request.startsWith("\\get-kline")) {
+                    String response = MarketServer.handleGetKline(request);
                     writer.println(response);
                 } else if (request.startsWith("\\get-daily-market-data")) {
-                    String response = MarketServer.handleGetData(request);
+                    String response = MarketServer.handleGetKline(request);
                     writer.println(response);
                 } else {
                     writer.println("ERROR: Unknown command");

@@ -2,17 +2,16 @@ package server.actions;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.TreeMap;
 
+import server.model.coin.Kline;
 import server.model.db.CoinDAO;
 
 public class MarketServer {
 
-    public static String handleGetData(String request) throws SQLException, IOException {
+    public static String handleGetKline(String request) throws SQLException, IOException {
         String coin;
         CoinDAO coinDAO;
-        TreeMap<LocalDate, Double> coinData;
+        Kline kline;
 
         try {
             coin = request.split(" ")[1];
@@ -22,14 +21,14 @@ public class MarketServer {
 
         try {
             coinDAO = new CoinDAO(coin);
-            coinData = coinDAO.getCoinData();
+            kline = coinDAO.getKline();
         } catch (IOException | SQLException e) {
             System.out.println("Coin not found in getLastPrice for coin :" + coin);
             e.printStackTrace();
             return "ERROR;Coin not found";
         }
 
-        return "OK;" + coinData;
+        return "OK;" + kline;
 
     }
 
@@ -55,37 +54,4 @@ public class MarketServer {
         return "OK;" + coinPrice;
 
     }
-
-    public static String handleGetDailyMarketData(String request) throws SQLException, IOException{
-        String coin; 
-        CoinDAO coinDAO;
-        try {
-            coin = request.split(" ")[1];
-        } catch (IndexOutOfBoundsException e) {
-            return "ERROR;Invalid request";
-        }
-
-        try {
-            coinDAO = new CoinDAO(coin);
-            coinDAO.getLastPrice();
-        } catch (IOException | SQLException e) {
-            System.out.println("Coin not found in getLastPrice for coin :" + coin);
-            e.printStackTrace();
-            return "ERROR;Coin not found";
-        }
-
-        return "OK;" + coinPrice;
-    }
-
-    public static String handleGetKline(String request) throws SQLException {
-        String coin; 
-        double price;
-        double change;
-        double low;
-        double high ;
-        return "ciao";
-
-        // return "OK;price=" + price + ";change=" + change + ";low=" + low + ";high=" + high;
-    }
-
 }

@@ -79,7 +79,7 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
         return coinData;
     }
 
-    public Kline getDailyData() throws SQLException {
+    public Kline getKline() throws SQLException {
         String query = "SELECT date, open, high, low, close  FROM " + tableName;
 
         try (PreparedStatement statement = connection.prepareStatement(query);
