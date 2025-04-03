@@ -1,54 +1,62 @@
+// package client.view.components.layout;
 package client.view.components.layout;
 
+import client.model.market.DailyMarketData; // Import the data model
 import client.view.components.ui.PriceLabel;
 import client.view.components.ui.StatBlock;
 import client.view.components.ui.VerticalSeparator;
 import client.view.theme.Theme;
+import javafx.application.Platform; // Needed if called from non-FX thread, though listener should handle it
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
+
+import java.text.DecimalFormat; 
 
 public class SubHeaderSection extends BaseSection {
     private String initialCoin;
-    private double price;
-    private double dailyChange;
-    private double dailyLow;
-    private double dailyHigh;
-    private StatBlock changeStatBlock;
-    private StatBlock lowStatBlock;
-    private StatBlock highStatBlock;
+    private final Label coinLabel;
+    private final PriceLabel priceLabel; 
+    private final StatBlock changeStatBlock;
+    private final StatBlock lowStatBlock;
+    private final StatBlock highStatBlock;
+
+    private final DecimalFormat priceFormat = new DecimalFormat("#,##0.00");
+    private final DecimalFormat changeFormat = new DecimalFormat("+#,##0.00;-#,##0.00"); // Shows '+' sign
+    private final DecimalFormat percentFormat = new DecimalFormat("+#,##0.00'%';-#,##0.00'%'");
 
     public SubHeaderSection(GridPane gridPane, double widthMultiplier, double heightMultiplier) {
         super(gridPane, Theme.COLOR.BACKGROUND, widthMultiplier, heightMultiplier);
-        this.initialCoin = "BTC/USDT";
-        this.dailyChange = 0.0;
-        this.dailyLow = 0.0;
-        this.dailyHigh = 0.0;
-        this.changeStatBlock = new StatBlock("24h Change", String.valueOf(dailyChange), Theme.COLOR.GREEN);
-        this.lowStatBlock = new StatBlock("24h Low", String.valueOf(dailyLow), Theme.COLOR.TEXT_PRIMARY);
-        this.highStatBlock = new StatBlock("24h High", String.valueOf(dailyHigh), Theme.COLOR.TEXT_PRIMARY);
+        this.initialCoin = "BTC/USDT"; 
+
+        this.coinLabel = new Label(initialCoin);
+        coinLabel.setTextFill(Theme.COLOR.ON_BACKGROUND);
+        coinLabel.setFont(Theme.FONT_STYLE.TITLE);
+        coinLabel.setPadding(new Insets(10, 10, 10, 10));
+
+        this.priceLabel = new PriceLabel("-.--");
+        this.changeStatBlock = new StatBlock("24h Change", "-.-- %", Theme.COLOR.TEXT_PRIMARY);
+        this.lowStatBlock = new StatBlock("24h Low", "-.--", Theme.COLOR.TEXT_PRIMARY);
+        this.highStatBlock = new StatBlock("24h High", "-.--", Theme.COLOR.TEXT_PRIMARY);
 
         HBox subHeaderContent = new HBox(10);
         subHeaderContent.setSpacing(10);
         subHeaderContent.setPadding(new Insets(10));
         subHeaderContent.setAlignment(Pos.CENTER_LEFT);
-        Label coinLabel = new Label(initialCoin);
-        coinLabel.setTextFill(Theme.COLOR.ON_BACKGROUND);
-        coinLabel.setFont(Theme.FONT_STYLE.TITLE);
-        coinLabel.setPadding(new Insets(10, 10, 10, 10));
 
         subHeaderContent.getChildren().addAll(
                 coinLabel,
                 new VerticalSeparator(20),
                 createSpacer(10),
-                new PriceLabel(String.valueOf(price)),
+                priceLabel, 
                 createSpacer(40),
-                this.changeStatBlock,
+                this.changeStatBlock, 
                 createSpacer(10),
-                this.lowStatBlock,
+                this.lowStatBlock, 
                 createSpacer(10),
                 this.highStatBlock);
 
@@ -61,29 +69,40 @@ public class SubHeaderSection extends BaseSection {
         return spacer;
     }
 
+    public void updateDisplay(DailyMarketData data) {
+        if (data == null) {
+            // Handle null data case, maybe show "--" or "Error"
+            priceLabel.setText("Error"); // Assuming PriceLabel has setText
+            changeStatBlock.setStatBlock("24h Change", "Error", Theme.COLOR.RED);
+            lowStatBlock.setStatBlock("24h Low", "Error", Theme.COLOR.TEXT_PRIMARY);
+            highStatBlock.setStatBlock("24h High", "Error", Theme.COLOR.TEXT_PRIMARY);
+            return;
+        }
+
+        // Update the PriceLabel
+        // Assuming PriceLabel is or extends Label and has setText
+        priceLabel.setText(priceFormat.format(data.getPrice()));
+
+        // Update StatBlocks
+        double changeValue = data.getDailyChange(); // Your client calculates this
+        Color changeColor = changeValue >= 0 ? Theme.COLOR.GREEN : Theme.COLOR.RED;
+        // Note: Your client calculates change as `open * 100 / close`. This seems
+        // unusual.
+        // Usually it's ((close - open) / open) * 100 for percentage change.
+        // Adjust formatting/logic here based on what `dailyChange` actually represents.
+        // Assuming it's a percentage value for now:
+        changeStatBlock.setStatBlock("24h Change", percentFormat.format(changeValue), changeColor);
+
+        lowStatBlock.setStatBlock("24h Low", priceFormat.format(data.getDailyLow()), Theme.COLOR.TEXT_PRIMARY);
+        highStatBlock.setStatBlock("24h High", priceFormat.format(data.getDailyHigh()), Theme.COLOR.TEXT_PRIMARY);
+
+    }
+
     public void setInitialCoin(String initialCoin) {
         this.initialCoin = initialCoin;
+        this.coinLabel.setText(initialCoin); // Update the label immediately
     }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public void setDailyChange(double dailyChange) {
-        this.dailyChange = dailyChange;
-    }
-
-    public void setDailyLow(double dailyLow) {
-        this.dailyLow = dailyLow;
-    }
-
-    public void setDailyHigh(double dailyHigh) {
-        this.dailyHigh = dailyHigh;
-    }
-
-    public void updateStatBlocks() {
-        this.changeStatBlock.setStatBlock("24h Change", dailyChange);
-        this.lowStatBlock.setStatBlock("24h Low", dailyLow);
-        this.highStatBlock.setStatBlock("24h High", dailyHigh);
-    }
+    // No longer need individual setters for price/change/low/high if using
+    // updateDisplay
 }

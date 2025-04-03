@@ -13,6 +13,12 @@ public class UserDAO {
     private final String tableName;
     private final Connection connection;
 
+    public UserDAO(String username) throws SQLException, IOException {
+        this.user = new User(username);
+        this.tableName = "user_" + user.getUsername();
+        this.connection = DbConnector.getConnection();
+    }
+
     public UserDAO(User user) throws SQLException, IOException {
         this.user = user;
         this.tableName = "user_" + user.getUsername();
