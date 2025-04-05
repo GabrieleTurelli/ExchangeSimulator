@@ -27,7 +27,7 @@ public class MarketDataUpdateService extends ScheduledService<DailyMarketData> {
                     if (data == null) {
                         throw new Exception("Received null data from MarketClient for " + coin);
                     }
-                    System.out.println("Successfully fetched data: {}" + data);
+                    System.out.println("Successfully fetched data: " + data);
                     updateMessage("Last update: " + java.time.LocalTime.now());
                     return data;
                 } catch (Exception e) {

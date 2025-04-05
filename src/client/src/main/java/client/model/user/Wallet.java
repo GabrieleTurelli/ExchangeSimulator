@@ -81,4 +81,14 @@ public final class Wallet extends HashMap<String, Double> {
             this.put(coin.split("=")[0], Double.valueOf(coin.split("=")[1]));
         }
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (String key : this.keySet()) {
+            sb.append(key).append("=").append(this.get(key)).append(",");
+        }
+        sb.append("amount=").append(this.getAmount());
+        return sb.toString();
+    }
 }

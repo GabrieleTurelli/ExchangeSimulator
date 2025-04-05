@@ -44,14 +44,14 @@ public class LoginController {
         String response = LoginClient.sendLoginRequest(username, password);
         String responseStatus = response.split(";")[0];
         String responseMessage = response.split(";")[1];
+        System.out.println(responseStatus);
+        System.out.println(responseMessage);
 
         if (responseStatus.equals("ERROR")) {
             loginScreen.setErrorMessage(responseMessage);
             return;
         }
-        User user = new User(username, responseMessage);
-        System.out.println("user wallet: " + user.getWallet());
-        System.out.println("user amount: " + user.getWallet().getAmount());
+        User user = new User(username);
         switchToExchangeScreen(user);
     }
 

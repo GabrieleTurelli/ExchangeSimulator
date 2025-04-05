@@ -7,11 +7,12 @@ import javafx.concurrent.Task;
 import javafx.util.Duration;
 
 public class WalletUpdateService extends ScheduledService<Wallet> {
+    private final String username;
 
-    public WalletUpdateService(Duration updateInterval) {
+    public WalletUpdateService(Duration updateInterval, String username) {
         setPeriod(updateInterval);
         setRestartOnFailure(true);
-
+        this.username = username;
     }
 
     @Override
@@ -21,11 +22,11 @@ public class WalletUpdateService extends ScheduledService<Wallet> {
             protected Wallet call() throws Exception {
                 System.out.println("Fetching wallet");
                 try {
-                    Wallet wallet = UserClient.getWallet();
+                    Wallet wallet = UserClient.getWallet(username);
                     if (wallet == null) {
                         throw new Exception("Received null data from UserClient for wallet upate ");
                     }
-                    System.out.println("Successfully fetched wallet: {}");
+                    System.out.println("Successfully fetched wallet:" + wallet);
                     updateMessage("Last update: " + java.time.LocalTime.now());
                     return wallet;
                 } catch (Exception e) {

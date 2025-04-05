@@ -82,22 +82,27 @@ public class UsersDAO {
 
     public static boolean userExists(String username) {
         String query = "SELECT COUNT(*) FROM Users WHERE LOWER(username) = LOWER(?)";
-
+    
         try (PreparedStatement statement = connection.prepareStatement(query)) {
+            System.out.println("Checking username: '" + username + "'");
             statement.setString(1, username);
+    
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     int count = resultSet.getInt(1);
+                    System.out.println("User count: " + count);
                     return count > 0;
+                } else {
+                    System.out.println("No result from query.");
                 }
             }
         } catch (Exception e) {
             System.out.println("An error occurred while checking if the user exists: " + e.getMessage());
         }
-
+    
         return false;
     }
-
+    
 
     public static boolean isPasswordCorrect(String username, String password) {
         String query = "SELECT password FROM Users WHERE username = ?";

@@ -8,7 +8,7 @@ public class TradePanel extends VBox {
     private final ToggleOrderMode toggleOrderMode;
     private OrderEntry orderEntry;
     private final OrderSideEntry orderSideEntry;
-    private final AvailableCoin availableCoin;
+    private final AvailableWallet availableCoin;
 
     public TradePanel(String coin, double usdtAvailable, double coinAvailable) {
         super();
@@ -16,7 +16,7 @@ public class TradePanel extends VBox {
         toggleOrderMode = new ToggleOrderMode();
         orderEntry = new OrderEntry(toggleOrderMode.isLimit());
         orderSideEntry = new OrderSideEntry();
-        availableCoin = new AvailableCoin(usdtAvailable, coinAvailable);
+        availableCoin = new AvailableWallet(usdtAvailable, coinAvailable);
 
         setSpacing(20);
         setPadding(new Insets(10));
@@ -30,6 +30,10 @@ public class TradePanel extends VBox {
         getChildren().removeAll(orderEntry, orderSideEntry, availableCoin);
         orderEntry = new OrderEntry(isLimit);
         getChildren().addAll(orderEntry, orderSideEntry, availableCoin);
+    }
+
+    public AvailableWallet getAvailableCoin() {
+        return availableCoin;
     }
 
 }

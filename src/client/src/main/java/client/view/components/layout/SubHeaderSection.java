@@ -1,12 +1,13 @@
 // package client.view.components.layout;
 package client.view.components.layout;
 
-import client.model.market.DailyMarketData; // Import the data model
+import java.text.DecimalFormat; // Import the data model
+
+import client.model.market.DailyMarketData;
 import client.view.components.ui.PriceLabel;
 import client.view.components.ui.StatBlock;
 import client.view.components.ui.VerticalSeparator;
-import client.view.theme.Theme;
-import javafx.application.Platform; // Needed if called from non-FX thread, though listener should handle it
+import client.view.theme.Theme; // Needed if called from non-FX thread, though listener should handle it
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -14,8 +15,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-
-import java.text.DecimalFormat; 
 
 public class SubHeaderSection extends BaseSection {
     private String initialCoin;
@@ -26,7 +25,7 @@ public class SubHeaderSection extends BaseSection {
     private final StatBlock highStatBlock;
 
     private final DecimalFormat priceFormat = new DecimalFormat("#,##0.00");
-    private final DecimalFormat changeFormat = new DecimalFormat("+#,##0.00;-#,##0.00"); // Shows '+' sign
+    private final DecimalFormat changeFormat = new DecimalFormat("+#,##0.00;-#,##0.00"); 
     private final DecimalFormat percentFormat = new DecimalFormat("+#,##0.00'%';-#,##0.00'%'");
 
     public SubHeaderSection(GridPane gridPane, double widthMultiplier, double heightMultiplier) {
@@ -71,7 +70,6 @@ public class SubHeaderSection extends BaseSection {
 
     public void updateDisplay(DailyMarketData data) {
         if (data == null) {
-            // Handle null data case, maybe show "--" or "Error"
             priceLabel.setText("Error"); // Assuming PriceLabel has setText
             changeStatBlock.setStatBlock("24h Change", "Error", Theme.COLOR.RED);
             lowStatBlock.setStatBlock("24h Low", "Error", Theme.COLOR.TEXT_PRIMARY);
@@ -79,18 +77,10 @@ public class SubHeaderSection extends BaseSection {
             return;
         }
 
-        // Update the PriceLabel
-        // Assuming PriceLabel is or extends Label and has setText
         priceLabel.setText(priceFormat.format(data.getPrice()));
 
-        // Update StatBlocks
-        double changeValue = data.getDailyChange(); // Your client calculates this
+        double changeValue = data.getDailyChange(); 
         Color changeColor = changeValue >= 0 ? Theme.COLOR.GREEN : Theme.COLOR.RED;
-        // Note: Your client calculates change as `open * 100 / close`. This seems
-        // unusual.
-        // Usually it's ((close - open) / open) * 100 for percentage change.
-        // Adjust formatting/logic here based on what `dailyChange` actually represents.
-        // Assuming it's a percentage value for now:
         changeStatBlock.setStatBlock("24h Change", percentFormat.format(changeValue), changeColor);
 
         lowStatBlock.setStatBlock("24h Low", priceFormat.format(data.getDailyLow()), Theme.COLOR.TEXT_PRIMARY);
@@ -100,9 +90,6 @@ public class SubHeaderSection extends BaseSection {
 
     public void setInitialCoin(String initialCoin) {
         this.initialCoin = initialCoin;
-        this.coinLabel.setText(initialCoin); // Update the label immediately
+        this.coinLabel.setText(initialCoin);
     }
-
-    // No longer need individual setters for price/change/low/high if using
-    // updateDisplay
 }
