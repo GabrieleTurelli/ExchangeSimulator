@@ -1,7 +1,9 @@
 package client.controller;
 
+import java.io.IOException;
+
 import client.controller.exchangecontroller.ExchangeController;
-import client.model.LoginClient;
+import client.model.clients.LoginClient;
 import client.model.user.User;
 import client.view.screen.ExchangeScreen;
 import client.view.screen.LoginScreen;
@@ -20,11 +22,18 @@ public class LoginController {
     }
 
     private void initialize() {
-        loginScreen.getLoginButton().setOnAction(event -> handleLogin());
+        loginScreen.getLoginButton().setOnAction(event -> {
+            try {
+                handleLogin();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        });
         loginScreen.getRegisterLink().setOnAction(event -> switchToRegisterScreen());
     }
 
-    public void handleLogin() {
+    public void handleLogin() throws IOException {
         String username = loginScreen.getUsernameEntry();
         String password = loginScreen.getPasswordEntry();
 
@@ -35,25 +44,25 @@ public class LoginController {
         String response = LoginClient.sendLoginRequest(username, password);
         String responseStatus = response.split(";")[0];
         String responseMessage = response.split(";")[1];
+        System.out.println(responseStatus);
+        System.out.println(responseMessage);
 
         if (responseStatus.equals("ERROR")) {
             loginScreen.setErrorMessage(responseMessage);
             return;
         }
         User user = new User(username);
-        user.createWalletFromString(responseMessage);
         switchToExchangeScreen(user);
     }
 
     private void switchToRegisterScreen() {
         RegisterController registerController = new RegisterController(new RegisterScreen(), sceneManager);
-        switchToScreen(registerController.getRegisterScreen(), "Register Screen", 300, 400, false);
+        switchToScreen(registerController.getRegisterScreen(), "Register Screen", 300, 450, false);
     }
 
     private void switchToExchangeScreen(User user) {
-        ExchangeController exchangeController = new ExchangeController(new ExchangeScreen(), sceneManager, user);
-        switchToScreen(exchangeController.getExchangeScreen(), "Exchange Screen", 1280, 720, true);
-
+        ExchangeController exchangeController = new ExchangeController(new ExchangeScreen(user), sceneManager, user);
+        switchToScreen(exchangeController.getExchangeScreen(), "Exchange simulator", 1280, 720, true);
     }
 
     private void switchToScreen(Parent screen, String title, int width, int height, boolean resizable) {

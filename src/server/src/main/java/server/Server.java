@@ -10,55 +10,119 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
 
-import server.actions.Login;
-import server.actions.Register;
+import server.actions.LoginServer;
+import server.actions.MarketServer;
+import server.actions.RegisterServer;
+import server.actions.UserServer;
+import server.model.service.RandomPriceGeneratorService;
 
 public class Server {
     private static final int PORT = 12345;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, SQLException {
+        // DbInitializer.initializeDatabase("BTC");
+        System.out.println("Database Initialized successfully.");
+        RandomPriceGeneratorService priceService = new RandomPriceGeneratorService("BTC");
+        priceService.start(1);
+
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            System.out.println("Login server started on port " + PORT);
+            System.out.println("Server started on port " + PORT);
 
             while (true) {
-                Socket clientSocket = serverSocket.accept();
-                System.out.println("Client connected");
-                handleClient(clientSocket);
+                try {
+                    Socket clientSocket = serverSocket.accept();
+                    System.out.println("Client connected from " +
+                            clientSocket.getRemoteSocketAddress());
+                    new Thread(() -> handleClient(clientSocket)).start();
+                } catch (IOException e) {
+                    System.err.println("Error accepting client connection: " + e.getMessage());
+                    e.printStackTrace();
+                }
             }
         } catch (IOException e) {
+            System.err.println("Server failed to start or run on port " + PORT + ": " +
+                    e.getMessage());
             e.printStackTrace();
         }
     }
+
+    // public static void main(String[] args) throws IOException, SQLException {
+    //     CoinDAO coinDao = new CoinDAO("BTC");
+    //     coinDao.populateCoinTable(80000, 100);
+    //     RandomPriceGenerator randomPriceGenerator = new RandomPriceGenerator("BTC");
+    //     randomPriceGenerator.generateAndUpdatePrice();
+
+    // }
 
     private static void handleClient(Socket clientSocket) {
         try (
                 InputStream input = clientSocket.getInputStream();
                 OutputStream output = clientSocket.getOutputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-                PrintWriter writer = new PrintWriter(output, true)
-        ) {
-            String request = reader.readLine();
-            System.out.println("Received request: " + request);
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(input, java.nio.charset.StandardCharsets.UTF_8));
+                PrintWriter writer = new PrintWriter(output, true, java.nio.charset.StandardCharsets.UTF_8)) { // Auto-flush
+                                                                                                               // true
 
-            if (request.startsWith("\\login")) {
-                String response = Login.handleLogin(request);
-                writer.println(response);
-            } else if (request.startsWith("\\register")) {
-                String response = Register.handleRegistration(request);
-                writer.println(response);
-            } else if (request.startsWith("\\logout")) {
-//                handleLogout(request, writer);
-            } else {
-                writer.println("ERROR: Unknown command");
+            String request;
+            while ((request = reader.readLine()) != null) {
+                System.out.println("Received request from " + clientSocket.getRemoteSocketAddress() + ": " + request);
+
+                String trimmedRequest = request.trim();
+                if (trimmedRequest.isEmpty()) {
+                    System.out.println(
+                            "Received empty request from " + clientSocket.getRemoteSocketAddress() + ", ignoring.");
+                    continue;
+                }
+
+                String[] parts = trimmedRequest.split(" ", 2);
+                String command = parts[0];
+
+                String response = null;
+
+                switch (command) {
+                    case "\\login" -> response = LoginServer.handleLogin(trimmedRequest);
+
+                    case "\\register" -> response = RegisterServer.handleRegistration(trimmedRequest);
+
+                    case "\\logout" -> response = "OK: Logged out";
+
+                    case "\\get-last-price" -> response = MarketServer.handleGetLastPrice(trimmedRequest);
+
+                    case "\\get-kline" -> response = MarketServer.handleGetKline(trimmedRequest);
+
+                    case "\\get-daily-market-data" -> response = MarketServer.handleGetKline(trimmedRequest);
+
+                    case "\\get-history" -> response = MarketServer.handleGetHistory(trimmedRequest);
+
+                    case "\\get-wallet" -> response = UserServer.handleGetWallet(trimmedRequest);
+
+                    default -> {
+                        System.out.println("Received unknown command '" + command + "' from "
+                                + clientSocket.getRemoteSocketAddress());
+                        response = "ERROR: Unknown command '" + command + "'";
+                    }
+                }
+
+                if (response != null) {
+                    writer.println(response);
+                    System.out.println("Sent response to " + clientSocket.getRemoteSocketAddress() + ": " + response);
+                }
             }
-        } catch (IOException e){
 
-            System.out.println("IO EXC");
+            System.out.println("Client disconnected: " + clientSocket.getRemoteSocketAddress());
+
+        } catch (IOException e) {
+            System.err.println(
+                    "IOException handling client " + clientSocket.getRemoteSocketAddress() + ": " + e.getMessage());
             e.printStackTrace();
         } catch (SQLException e) {
-            System.out.println("SQL EXC");
+            System.err.println(
+                    "SQLException handling client " + clientSocket.getRemoteSocketAddress() + ": " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Unexpected error handling client " + clientSocket.getRemoteSocketAddress() + ": "
+                    + e.getMessage());
             e.printStackTrace();
         }
     }
-
 }

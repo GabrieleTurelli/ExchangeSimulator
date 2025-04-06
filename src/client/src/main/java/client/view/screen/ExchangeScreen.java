@@ -2,6 +2,7 @@ package client.view.screen;
 
 import java.util.ArrayList;
 
+import client.model.user.User;
 import client.view.components.layout.BaseSection;
 import client.view.components.layout.ChartSection;
 import client.view.components.layout.HeaderSection;
@@ -15,8 +16,18 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 
 public class ExchangeScreen extends GridPane {
+    private final HeaderSection header;
+    private final SubHeaderSection subHeader;
+    private final ChartSection chartSection;
+    private final OrderBookSection orderBookSection;
+    private final TradePanelSection tradePanelSection;
+    private final BaseSection positionSection;
+    private final String coin;
+    private final User user;
 
-    public ExchangeScreen() {
+    public ExchangeScreen(User user) {
+        this.user = user;
+        this.coin = "BTC";
         setPadding(new Insets(0));
         setHgap(0);
         setVgap(0);
@@ -39,22 +50,21 @@ public class ExchangeScreen extends GridPane {
         row4.setPercentHeight(30);
         getRowConstraints().addAll(row1, row2, row3, row4);
 
-        HeaderSection header = new HeaderSection(
+        this.header = new HeaderSection(
                 this,
                 "/logo.png",
                 "Exchange Simulator",
                 1.0,
                 0.1);
-        SubHeaderSection subHeader = new SubHeaderSection(
+        this.subHeader = new SubHeaderSection(
                 this,
                 1.0,
                 0.05);
 
-        ChartSection chartSection = new ChartSection(
+        this.chartSection = new ChartSection(
                 this,
                 0.6,
-                0.6
-        );
+                0.6);
 
         ArrayList<OrderBookLevelData> ask = new ArrayList<>();
         ask.add(new OrderBookLevelData(10.4, 234.9));
@@ -69,9 +79,21 @@ public class ExchangeScreen extends GridPane {
         bid.add(new OrderBookLevelData(9.7, 234.1));
         bid.add(new OrderBookLevelData(9.6, 334.3));
         bid.add(new OrderBookLevelData(9.5, 524.2));
-        OrderBookSection orderBookSection = new OrderBookSection(this, 0.2, 0.9, bid, ask);
-        TradePanelSection tradePanelSection = new TradePanelSection(this, 0.2, 0.9);
-        BaseSection positionSection = new BaseSection(this, 0.6, 0.3);
+
+        this.orderBookSection = new OrderBookSection(this,
+                0.2,
+                0.9, bid, ask);
+
+        this.tradePanelSection = new TradePanelSection(this,
+                0.2,
+                0.9,
+                coin,
+                user.getWallet().getAmount(),
+                user.getWallet().getCoin(coin));
+
+        this.positionSection = new BaseSection(this,
+                0.6,
+                0.3);
 
         add(header, 0, 0, 3, 1);
         add(subHeader, 0, 1, 3, 1);
@@ -80,4 +102,42 @@ public class ExchangeScreen extends GridPane {
         add(orderBookSection, 1, 2, 1, 2);
         add(tradePanelSection, 2, 2, 1, 2);
     }
+
+    public HeaderSection getHeader() {
+        return header;
+    }
+
+    public SubHeaderSection getSubHeader() {
+        return subHeader;
+    }
+
+    public ChartSection getChartSection() {
+        return chartSection;
+    }
+
+    public OrderBookSection getOrderBookSection() {
+        return orderBookSection;
+    }
+
+    public TradePanelSection getTradePanelSection() {
+        return tradePanelSection;
+    }
+
+    public BaseSection getPositionSection() {
+        return positionSection;
+    }
+
+    // public void loadMarketData() {
+    //     try {
+    //         MarketData data = MarketClient.getMarketData("BTC");
+    //         exchangeScreen.getSubHeader().setPrice(data.getPrice());
+    //         exchangeScreen.getSubHeader().setDailyChange(data.getDailyChange());
+    //         exchangeScreen.getSubHeader().setDailyLow(data.getDailyLow());
+    //         exchangeScreen.getSubHeader().setDailyHigh(data.getDailyHigh());
+    //         exchangeScreen.getSubHeader().updateStatBlocks();
+    //     } catch (IOException e) {
+    //         System.out.println("Failed to load market data.");
+    //     }
+    //     }
+
 }

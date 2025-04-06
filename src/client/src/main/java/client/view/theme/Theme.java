@@ -9,7 +9,7 @@ public class Theme {
 
     public static class COLOR {
         public static final Color PRIMARY = Color.web("#F3622D");
-        public static final Color PRIMARY_VARIANT = Color.web("#3700B3");
+        public static final Color PRIMARY_VARIANT = Color.web("#E3521D");
         public static final Color SECONDARY = Color.web("#03DAC6");
         public static final Color TEXT_PRIMARY = Color.web("#FFFFFF");
         public static final Color TEXT_SECONDARY = Color.web("#B3B3B3");

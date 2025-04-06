@@ -7,7 +7,6 @@ import client.view.components.layout.ChartSection;
 import client.view.components.layout.HeaderSection;
 import client.view.components.layout.OrderBookSection;
 import client.view.components.layout.SubHeaderSection;
-import client.view.components.layout.TradePanelSection;
 import client.view.components.ui.orderbook.OrderBookLevelData;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -80,7 +79,7 @@ public class Client extends Application {
         bid.add(new OrderBookLevelData(9.5, 524.2));
         OrderBookSection orderBookSection = new OrderBookSection(gridPane, 0.2, 0.9, bid, ask);
 //        BaseSection orderSection = new BaseSection(gridPane, Theme.COLOR.SURFACE,0.2, 0.9);
-        TradePanelSection tradePanelSection = new TradePanelSection(gridPane, 0.2, 0.9);
+        // TradePanelSection tradePanelSection = new TradePanelSection(gridPane, 0.2, 0.9);
         BaseSection positionSection = new BaseSection(gridPane, 0.6, 0.3);
 
         gridPane.add(header, 0, 0, 3, 1);
@@ -88,7 +87,7 @@ public class Client extends Application {
         gridPane.add(chartSection, 0, 2, 1, 1);
         gridPane.add(positionSection, 0, 3, 1, 1);
         gridPane.add(orderBookSection, 1, 2, 1, 2);
-        gridPane.add(tradePanelSection, 2, 2, 1, 2);
+        // gridPane.add(tradePanelSection, 2, 2, 1, 2);
 
         Scene scene = new Scene(gridPane, 1280, 720 );
         stage.setTitle("Exchange Simulator");

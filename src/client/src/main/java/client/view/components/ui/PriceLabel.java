@@ -9,7 +9,18 @@ public class PriceLabel extends Label {
 
     public PriceLabel(String price) {
         super(price);
-        setTextFill(Theme.COLOR.GREEN);
+        setTextFill(Theme.COLOR.TEXT_PRIMARY);
         setFont(Font.font("Arial Black", FontWeight.EXTRA_BOLD, 20));
+    }
+
+    public void updatePrice(String priceText, double change) {
+        setText(priceText);
+        if (change > 0) {
+            setTextFill(Theme.COLOR.GREEN);
+        } else if (change < 0) {
+            setTextFill(Theme.COLOR.RED);
+        } else {
+            setTextFill(Theme.COLOR.ON_SURFACE); 
+        }
     }
 }
