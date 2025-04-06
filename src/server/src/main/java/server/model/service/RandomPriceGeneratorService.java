@@ -24,13 +24,16 @@ public class RandomPriceGeneratorService {
 
     private void generateAndUpdatePrice() throws SQLException {
         Kline currentKline = coinDao.getLastKline();
-
+        double fluctuation = random.nextDouble() * 2 - 1; 
+        
+        
         double currentOpen = currentKline.getOpen();
         double currentHigh = currentKline.getHigh();
         double currentLow = currentKline.getLow();
         double currentClose = currentKline.getClose();
-
-        double newClose = currentClose * (1 + (-1 + 2 * random.nextDouble()) / 1000);
+        
+        double newClose = currentClose + fluctuation;
+        newClose = Math.round(newClose * 100.0) / 100.0;
 
         if (newClose > currentHigh) {
             currentHigh = newClose;

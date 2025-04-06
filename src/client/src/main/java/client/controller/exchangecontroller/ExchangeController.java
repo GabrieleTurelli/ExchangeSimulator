@@ -1,7 +1,7 @@
-// package client.controller.exchangecontroller;
 package client.controller.exchangecontroller;
 
-import client.model.service.MarketDataUpdateService;
+import client.model.service.DailyMarketDataUpdateService;
+import client.model.service.HistoricalMarketUpdateService;
 import client.model.service.WalletUpdateService;
 import client.model.user.User;
 import client.view.screen.ExchangeScreen;
@@ -13,7 +13,8 @@ public class ExchangeController {
 
     private final ExchangeScreen exchangeScreen;
     private final User user;
-    private MarketDataUpdateService marketDataUpdateService;
+    private DailyMarketDataUpdateService marketDataUpdateService;
+    private HistoricalMarketUpdateService historicalMarketUpdateService;
     private WalletUpdateService walletUpdateService;
     private String coin = "BTC";
     private final Duration updateInterval = Duration.seconds(1);
@@ -26,6 +27,8 @@ public class ExchangeController {
         initializeMarketUpdates();
         System.out.println("Starting wallet updates");
         initializeWalletUpdates();
+        System.out.println("Starting history updates");
+        initializeHistoryUpdates();
     }
 
     public ExchangeController(ExchangeScreen exchangeScreen, SceneManager sceneManager, User user, String coin) {
@@ -35,6 +38,7 @@ public class ExchangeController {
 
         initializeMarketUpdates();
         initializeWalletUpdates();
+        initializeHistoryUpdates();
     }
 
     private void initializeWalletUpdates() {
@@ -43,7 +47,7 @@ public class ExchangeController {
         walletUpdateService.lastValueProperty().addListener((obs, oldData, newData) -> {
             if (newData != null) {
                 Platform.runLater(() -> {
-                    System.out.println("Updating SubHeader with new data: " + newData);
+                    System.out.println("Updating tradepanel with new data: " + newData);
                     exchangeScreen.getTradePanelSection().updateDisplay(newData);
                 });
             }
@@ -74,7 +78,7 @@ public class ExchangeController {
     }
 
     private void initializeMarketUpdates() {
-        marketDataUpdateService = new MarketDataUpdateService(coin, updateInterval);
+        marketDataUpdateService = new DailyMarketDataUpdateService(coin, updateInterval);
 
         marketDataUpdateService.lastValueProperty().addListener((obs, oldData, newData) -> {
             if (newData != null) {
@@ -108,6 +112,43 @@ public class ExchangeController {
 
         System.out.println("Starting market data update service for {}" + coin);
         marketDataUpdateService.start();
+    }
+
+    private void initializeHistoryUpdates() {
+        historicalMarketUpdateService = new HistoricalMarketUpdateService(coin, updateInterval);
+
+        historicalMarketUpdateService.lastValueProperty().addListener((obs, oldData, newData) -> {
+            if (newData != null) {
+                Platform.runLater(() -> {
+                    System.out.println("Updating chart with new data: " + newData);
+                    exchangeScreen.getChartSection().updateDisplay(newData);
+                });
+            }
+        });
+
+        historicalMarketUpdateService.stateProperty().addListener((obs, oldState, newState) -> {
+            System.out.println("History data service state changed to: " + newState);
+            switch (newState) {
+                case READY:
+                    break;
+                case SCHEDULED:
+                    break;
+                case RUNNING:
+                    break;
+                case SUCCEEDED:
+                    break;
+                case FAILED:
+                    Platform.runLater(() -> {
+                        exchangeScreen.getSubHeader().updateDisplay(null);
+                    });
+                    break;
+                case CANCELLED:
+                    break;
+            }
+        });
+
+        System.out.println("Starting history data update service for {}" + coin);
+        historicalMarketUpdateService.start();
     }
 
     public void shutdown() {

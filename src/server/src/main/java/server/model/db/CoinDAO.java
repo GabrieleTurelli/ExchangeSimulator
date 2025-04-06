@@ -124,6 +124,8 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
                 ResultSet rs = statement.executeQuery()) {
 
             while (rs.next()) {
+                String dateStr = rs.getString("date");
+                LocalDate date = LocalDate.parse(dateStr, dateFormatter);
                 Double open = rs.getDouble("open");
                 Double high = rs.getDouble("high");
                 Double low = rs.getDouble("low");

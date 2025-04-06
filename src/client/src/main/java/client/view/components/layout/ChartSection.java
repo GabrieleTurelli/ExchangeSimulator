@@ -1,11 +1,10 @@
 package client.view.components.layout;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import client.view.components.ui.BarData;
+import client.model.market.Kline;
+import client.model.market.KlineHistory;
 import client.view.components.ui.chart.Chart;
 import client.view.theme.Theme;
 import javafx.scene.chart.CategoryAxis;
@@ -27,7 +26,6 @@ public class ChartSection extends BaseSection {
         xAxis.setTickMarkVisible(false);
 
         chart = new Chart(xAxis, yAxis);
-        populateChartWithDummyData();
         this.getChildren().add(chart);
     }
 
@@ -39,21 +37,17 @@ public class ChartSection extends BaseSection {
         return chart;
     }
 
-    private void populateChartWithDummyData() {
-        List<BarData> data = generateDummyData();
-
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        for (BarData bar : data) {
-            chart.addDataPoint(sdf.format(bar.getDateTime()), bar.getClose());
+    public void updateDisplay(KlineHistory klineHistory) {
+        chart.clearData();
+        List<String> xValues = new ArrayList<>();
+        List<Number> yValues = new ArrayList<>();
+        for (int i = 0; i < klineHistory.size(); i++) {
+            Kline kline = klineHistory.get(i);
+            xValues.add(String.valueOf(i));
+            yValues.add(kline.getClose());
         }
+
+        chart.addAllDataPoints(xValues, yValues);
     }
 
-    private List<BarData> generateDummyData() {
-        List<BarData> bars = new ArrayList<>();
-        Date now = new Date();
-        for (int i = 0; i < 20; i++) {
-            bars.add(new BarData(new Date(now.getTime() + i * 60000), 200 + i, 205 + i, 195 + i, 202 + i));
-        }
-        return bars;
-    }
 }

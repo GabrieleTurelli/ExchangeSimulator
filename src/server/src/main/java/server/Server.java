@@ -47,11 +47,12 @@ public class Server {
     }
 
     // public static void main(String[] args) throws IOException, SQLException {
+    //     DbInitializer.dropTable(DbConnector.getConnection(), "coin_BTC");
+    //     DbInitializer.createCoinTable(DbConnector.getConnection(), "BTC");
     //     CoinDAO coinDao = new CoinDAO("BTC");
     //     coinDao.populateCoinTable(80000, 100);
-    //     RandomPriceGenerator randomPriceGenerator = new RandomPriceGenerator("BTC");
-    //     randomPriceGenerator.generateAndUpdatePrice();
-
+    //     RandomPriceGeneratorService randomPriceGenerator = new RandomPriceGeneratorService("BTC");
+    //     randomPriceGenerator.start(10);
     // }
 
     private static void handleClient(Socket clientSocket) {

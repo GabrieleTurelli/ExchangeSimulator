@@ -59,7 +59,7 @@ public class MarketClient {
     public static KlineHistory getHistory(String coin) throws IOException {
         ClientConnection connection = new ClientConnection();
         System.out.println("Requesting price for " + coin);
-        connection.sendRequest("\\get-daily-market-data " + coin);
+        connection.sendRequest("\\get-history " + coin);
         String response = connection.readResponse();
         System.out.println("Request sent : " + response);
 
@@ -67,7 +67,7 @@ public class MarketClient {
 
         if (response.contains("OK")) {
             String klineHistoryResponse = response.split(";")[1];
-            String[] klineHistoryParts = klineHistoryResponse.split("|");
+            String[] klineHistoryParts = klineHistoryResponse.split("\\|");
 
             for (String kline : klineHistoryParts) {
                 String[] klineParts = kline.split(",");
@@ -82,6 +82,7 @@ public class MarketClient {
 
             return klineHistory;
         } else {
+            
             System.out.println("Error in getHistory: " + response);
             return null;
         }
