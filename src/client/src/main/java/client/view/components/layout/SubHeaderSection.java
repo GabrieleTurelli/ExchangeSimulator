@@ -70,7 +70,7 @@ public class SubHeaderSection extends BaseSection {
 
     public void updateDisplay(DailyMarketData data) {
         if (data == null) {
-            priceLabel.setText("Error"); // Assuming PriceLabel has setText
+            priceLabel.setText("Error"); 
             changeStatBlock.setStatBlock("24h Change", "Error", Theme.COLOR.RED);
             lowStatBlock.setStatBlock("24h Low", "Error", Theme.COLOR.TEXT_PRIMARY);
             highStatBlock.setStatBlock("24h High", "Error", Theme.COLOR.TEXT_PRIMARY);

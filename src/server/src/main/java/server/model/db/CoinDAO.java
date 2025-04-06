@@ -79,6 +79,29 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
         return coinData;
     }
 
+
+    public Kline getLastKline() throws SQLException {
+        String query = "SELECT date, open, high, low, close  FROM " + tableName + " WHERE date = (SELECT MAX(date) FROM " + tableName + ")";
+
+        try (PreparedStatement statement = connection.prepareStatement(query);
+                ResultSet rs = statement.executeQuery()) {
+
+            if (rs.next()) {
+                String dateStr = rs.getString("date");
+                LocalDate date = LocalDate.parse(dateStr, dateFormatter);
+                Double open = rs.getDouble("open");
+                Double high = rs.getDouble("high");
+                Double low = rs.getDouble("low");
+                Double close = rs.getDouble("close");
+                return new Kline(open, high, low, close);
+            }
+            return null;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
     public Kline getKline() throws SQLException {
         String query = "SELECT date, open, high, low, close  FROM " + tableName;
 
@@ -99,6 +122,19 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;
+        }
+    }
+
+    public void updateKline(Kline kline){
+        String query = "UPDATE " + tableName + " SET open = ?, high = ?, low = ?, close = ? WHERE date = (SELECT MAX(date) FROM " + tableName + ")";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setDouble(1, kline.getOpen());
+            statement.setDouble(2, kline.getHigh());
+            statement.setDouble(3, kline.getLow());
+            statement.setDouble(4, kline.getClose());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -259,6 +295,7 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
             previousClose = close;
         }
     }
+
 
     @Override
     public TreeMap<LocalDate, Kline> getData() {

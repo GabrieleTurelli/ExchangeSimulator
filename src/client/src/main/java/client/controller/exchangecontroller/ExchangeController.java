@@ -16,7 +16,7 @@ public class ExchangeController {
     private MarketDataUpdateService marketDataUpdateService;
     private WalletUpdateService walletUpdateService;
     private String coin = "BTC";
-    private final Duration updateInterval = Duration.seconds(5);
+    private final Duration updateInterval = Duration.seconds(1);
 
     public ExchangeController(ExchangeScreen exchangeScreen, SceneManager sceneManager, User user) {
         this.exchangeScreen = exchangeScreen;
@@ -24,8 +24,8 @@ public class ExchangeController {
 
         System.out.println("Starting market updates");
         initializeMarketUpdates();
-        System.out.println("Starting wallet updates");
-        initializeWalletUpdates();
+        // System.out.println("Starting wallet updates");
+        // initializeWalletUpdates();
     }
 
     public ExchangeController(ExchangeScreen exchangeScreen, SceneManager sceneManager, User user, String coin) {
@@ -34,7 +34,7 @@ public class ExchangeController {
         this.user = user;
 
         initializeMarketUpdates();
-        initializeWalletUpdates();
+        // initializeWalletUpdates();
     }
 
     private void initializeWalletUpdates() {
@@ -95,11 +95,11 @@ public class ExchangeController {
                 case RUNNING:
                     break;
                 case SUCCEEDED:
-                    break;
-                case FAILED:
                     Platform.runLater(() -> {
                         exchangeScreen.getSubHeader().updateDisplay(null);
                     });
+                    break;
+                case FAILED:
                     break;
                 case CANCELLED:
                     break;

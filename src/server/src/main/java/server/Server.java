@@ -14,12 +14,16 @@ import server.actions.LoginServer;
 import server.actions.MarketServer;
 import server.actions.RegisterServer;
 import server.actions.UserServer;
+import server.model.service.RandomPriceGeneratorService;
 
 public class Server {
     private static final int PORT = 12345;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, SQLException {
+        // DbInitializer.initializeDatabase("BTC");
         System.out.println("Database Initialized successfully.");
+        RandomPriceGeneratorService priceService = new RandomPriceGeneratorService("BTC");
+        priceService.start(1);
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("Server started on port " + PORT);
@@ -27,7 +31,8 @@ public class Server {
             while (true) {
                 try {
                     Socket clientSocket = serverSocket.accept();
-                    System.out.println("Client connected from " + clientSocket.getRemoteSocketAddress());
+                    System.out.println("Client connected from " +
+                            clientSocket.getRemoteSocketAddress());
                     new Thread(() -> handleClient(clientSocket)).start();
                 } catch (IOException e) {
                     System.err.println("Error accepting client connection: " + e.getMessage());
@@ -35,10 +40,19 @@ public class Server {
                 }
             }
         } catch (IOException e) {
-            System.err.println("Server failed to start or run on port " + PORT + ": " + e.getMessage());
+            System.err.println("Server failed to start or run on port " + PORT + ": " +
+                    e.getMessage());
             e.printStackTrace();
         }
     }
+
+    // public static void main(String[] args) throws IOException, SQLException {
+    //     CoinDAO coinDao = new CoinDAO("BTC");
+    //     coinDao.populateCoinTable(80000, 100);
+    //     RandomPriceGenerator randomPriceGenerator = new RandomPriceGenerator("BTC");
+    //     randomPriceGenerator.generateAndUpdatePrice();
+
+    // }
 
     private static void handleClient(Socket clientSocket) {
         try (

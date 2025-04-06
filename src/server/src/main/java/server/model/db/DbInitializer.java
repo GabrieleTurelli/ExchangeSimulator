@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DbInitializer {
 
@@ -17,11 +18,16 @@ public class DbInitializer {
                 createCoinTable(connection, coin);
                 createOrderBookTable(connection, coin);
             }
+            createUsersTable(connection);
 
             System.out.println("Database initialized successfully.");
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void initializeDatabase(String coin) {
+        initializeDatabase(new ArrayList<>(List.of(coin)));
     }
 
     public static void createCoinsTable(Connection connection) {

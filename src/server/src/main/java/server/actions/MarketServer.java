@@ -21,7 +21,7 @@ public class MarketServer {
 
         try {
             coinDAO = new CoinDAO(coin);
-            kline = coinDAO.getKline();
+            kline = coinDAO.getLastKline();
         } catch (IOException | SQLException e) {
             System.out.println("Coin not found in getLastPrice for coin :" + coin);
             e.printStackTrace();
