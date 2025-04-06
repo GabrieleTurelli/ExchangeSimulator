@@ -1,4 +1,4 @@
-package server.model.coin;
+package server.model.market;
 
 enum KlineType {
     OPEN,

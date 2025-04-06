@@ -1,5 +1,6 @@
 package client.view.components.ui.chart;
 
+import client.model.market.KlineHistory;
 import client.view.theme.Theme;
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -12,6 +13,7 @@ import javafx.scene.paint.Color;
 public class Chart extends LineChart<String, Number> {
 
     private XYChart.Series<String, Number> series;
+    private KlineHistory klineHistory;
 
     public Chart(CategoryAxis xAxis, NumberAxis yAxis) {
         super(xAxis, yAxis);
@@ -43,5 +45,13 @@ public class Chart extends LineChart<String, Number> {
                 (int) (color.getRed() * 255),
                 (int) (color.getGreen() * 255),
                 (int) (color.getBlue() * 255));
+    }
+
+    public void setKlineHistory(KlineHistory klineHistory){
+        this.klineHistory = klineHistory;
+    }
+
+    public KlineHistory getHistory(){
+        return this.klineHistory;
     }
 }

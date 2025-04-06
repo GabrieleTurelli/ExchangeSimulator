@@ -12,17 +12,16 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.TreeMap;
 
-import server.model.coin.Kline;
+import server.model.market.Kline;
+import server.model.market.KlineHistory;
 
 public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
 
-    private final String coin;
     private final String tableName;
     private final Connection connection;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public CoinDAO(String coin) throws SQLException, IOException {
-        this.coin = coin;
         this.tableName = "coin_" + coin.toUpperCase();
         this.connection = DbConnector.getConnection();
     }
@@ -79,31 +78,9 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
         return coinData;
     }
 
-
     public Kline getLastKline() throws SQLException {
-        String query = "SELECT date, open, high, low, close  FROM " + tableName + " WHERE date = (SELECT MAX(date) FROM " + tableName + ")";
-
-        try (PreparedStatement statement = connection.prepareStatement(query);
-                ResultSet rs = statement.executeQuery()) {
-
-            if (rs.next()) {
-                String dateStr = rs.getString("date");
-                LocalDate date = LocalDate.parse(dateStr, dateFormatter);
-                Double open = rs.getDouble("open");
-                Double high = rs.getDouble("high");
-                Double low = rs.getDouble("low");
-                Double close = rs.getDouble("close");
-                return new Kline(open, high, low, close);
-            }
-            return null;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }
-    public Kline getKline() throws SQLException {
-        String query = "SELECT date, open, high, low, close  FROM " + tableName;
+        String query = "SELECT date, open, high, low, close  FROM " + tableName
+                + " WHERE date = (SELECT MAX(date) FROM " + tableName + ")";
 
         try (PreparedStatement statement = connection.prepareStatement(query);
                 ResultSet rs = statement.executeQuery()) {
@@ -125,8 +102,9 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
         }
     }
 
-    public void updateKline(Kline kline){
-        String query = "UPDATE " + tableName + " SET open = ?, high = ?, low = ?, close = ? WHERE date = (SELECT MAX(date) FROM " + tableName + ")";
+    public void updateKline(Kline kline) {
+        String query = "UPDATE " + tableName
+                + " SET open = ?, high = ?, low = ?, close = ? WHERE date = (SELECT MAX(date) FROM " + tableName + ")";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setDouble(1, kline.getOpen());
             statement.setDouble(2, kline.getHigh());
@@ -135,6 +113,28 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public KlineHistory getKlineHistory() throws SQLException {
+        String query = "SELECT *  FROM " + tableName;
+        KlineHistory klineHistory = new KlineHistory();
+
+        try (PreparedStatement statement = connection.prepareStatement(query);
+                ResultSet rs = statement.executeQuery()) {
+
+            while (rs.next()) {
+                Double open = rs.getDouble("open");
+                Double high = rs.getDouble("high");
+                Double low = rs.getDouble("low");
+                Double close = rs.getDouble("close");
+                klineHistory.add(new Kline(open, high, low, close));
+            }
+            return klineHistory;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -295,7 +295,6 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
             previousClose = close;
         }
     }
-
 
     @Override
     public TreeMap<LocalDate, Kline> getData() {

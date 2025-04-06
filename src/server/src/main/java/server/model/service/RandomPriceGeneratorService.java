@@ -7,8 +7,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import server.model.coin.Kline;
 import server.model.db.CoinDAO;
+import server.model.market.Kline;
 
 public class RandomPriceGeneratorService {
     private final CoinDAO coinDao;

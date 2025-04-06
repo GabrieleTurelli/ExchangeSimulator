@@ -92,6 +92,8 @@ public class Server {
 
                     case "\\get-daily-market-data" -> response = MarketServer.handleGetKline(trimmedRequest);
 
+                    case "\\get-history" -> response = MarketServer.handleGetHistory(trimmedRequest);
+
                     case "\\get-wallet" -> response = UserServer.handleGetWallet(trimmedRequest);
 
                     default -> {
