@@ -8,15 +8,15 @@ public class UserClient {
 
         try {
             ClientConnection connection = new ClientConnection();
-            System.out.println("Requesting price for " + username);
+            // System.out.println("Requesting price for " + username);
             connection.sendRequest("\\get-wallet " + username);
             String response = connection.readResponse();
-            System.out.println("Request sent : " + response);
+            // System.out.println("Request sent : " + response);
 
             if (response.contains("OK")) {
                 String walletString = response.split(";")[1];
                 Wallet wallet = new Wallet(walletString); 
-                System.out.println("Wallet received: " + wallet); 
+                // System.out.println("Wallet received: " + wallet); 
                 return wallet;
                 // return new Wallet(walletString);
                 

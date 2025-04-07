@@ -58,10 +58,10 @@ public class MarketClient {
 
     public static KlineHistory getHistory(String coin) throws IOException {
         ClientConnection connection = new ClientConnection();
-        System.out.println("Requesting price for " + coin);
+        // System.out.println("Requesting price for " + coin);
         connection.sendRequest("\\get-history " + coin);
         String response = connection.readResponse();
-        System.out.println("Request sent : " + response);
+        // System.out.println("Request sent : " + response);
 
         KlineHistory klineHistory = new KlineHistory();
 

@@ -44,15 +44,18 @@ public class Server {
                     e.getMessage());
             e.printStackTrace();
         }
-    }
+}
 
     // public static void main(String[] args) throws IOException, SQLException {
-    //     DbInitializer.dropTable(DbConnector.getConnection(), "coin_BTC");
-    //     DbInitializer.createCoinTable(DbConnector.getConnection(), "BTC");
-    //     CoinDAO coinDao = new CoinDAO("BTC");
-    //     coinDao.populateCoinTable(80000, 100);
-    //     RandomPriceGeneratorService randomPriceGenerator = new RandomPriceGeneratorService("BTC");
-    //     randomPriceGenerator.start(10);
+        // DbInitializer.dropTable(DbConnector.getConnection(), "user_test");
+        // DbInitializer.createUserTable(DBConnector.getConnection(), "user_test");
+        // DbInitializer.createCoinTable(DbConnector.getConnection(), "ETH");
+        // CoinDAO coinDao = new CoinDAO("ETH");
+        // UserDAO userDao = new UserDAO("test");
+        // userDao.addCoin("ETH", 50);
+        // coinDao.populateCoinTable(1500, 50);
+        // RandomPriceGeneratorService randomPriceGenerator = new RandomPriceGeneratorService("BTC");
+        // randomPriceGenerator.start(10);
     // }
 
     private static void handleClient(Socket clientSocket) {

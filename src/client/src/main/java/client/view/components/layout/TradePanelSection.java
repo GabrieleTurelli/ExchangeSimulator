@@ -29,7 +29,7 @@ public class TradePanelSection extends BaseSection {
         this.toggleOrderMode = new ToggleOrderMode();
         this.orderEntry = new OrderEntry(toggleOrderMode.isLimit());
         this.orderSideEntry = new OrderSideEntry();
-        this.availableWallet = new AvailableWallet(usdtAvailable, coinAvailable);
+        this.availableWallet = new AvailableWallet(coin, usdtAvailable, coinAvailable);
 
         vbox.setSpacing(20);
         vbox.setPadding(new Insets(10));
@@ -47,11 +47,13 @@ public class TradePanelSection extends BaseSection {
         vbox.getChildren().addAll(orderEntry, orderSideEntry, availableWallet);
     }
 
-    public void updateDisplay(Wallet wallet) {
+    public void updateDisplay(String coin, Wallet wallet) {
         if (wallet != null){
-            availableWallet.setAvailableWallet(wallet.getCoin(coin), wallet.getCoin("USDT"));
+            availableWallet.setAvailableWallet(coin, wallet.getCoin(coin), wallet.getCoin("USDT"));
 
         }
 
     }
+
+
 }

@@ -16,12 +16,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public class CoinMenu extends HBox {
-
+    
+    public interface CoinChangeListener {
+      void onCoinChange(String newCoin);
+    }
+    
+    private final List<CoinChangeListener> listeners = new ArrayList<>();
     private final Label coinTextLabel;
     private final Label chevronLabel;
     private final ContextMenu dropdownMenu;
     private final List<String> coins;
-    private final HBox labelContainer; // Reference to the label container
+    private final HBox labelContainer; 
 
     public CoinMenu(String initialCoin) {
         this.coins = new ArrayList<>();
@@ -108,11 +113,29 @@ public class CoinMenu extends HBox {
         return label;
     }
 
-    public void setCoin(String coin) {
-        coinTextLabel.setText(coin);
-    }
+    // public void setCoin(String coin) {
+        // coinTextLabel.setText(coin);
+    // }
 
     public String getCurrentCoin() {
         return coinTextLabel.getText();
     }
+
+
+    public void addCoinChangeListener(CoinChangeListener listener) {
+        listeners.add(listener);
+        System.out.println("AGGGGGIUNGENDO UN LISTENER");
+    }
+
+    private void notifyCoinChange(String newCoin) {
+        for (CoinChangeListener listener : listeners) {
+            listener.onCoinChange(newCoin);
+        }
+    }
+
+    public void setCoin(String coin) {
+        coinTextLabel.setText(coin);
+        notifyCoinChange(coin);
+    }
+
 }

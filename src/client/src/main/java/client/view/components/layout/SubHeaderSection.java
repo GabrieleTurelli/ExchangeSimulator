@@ -1,13 +1,14 @@
 // package client.view.components.layout;
 package client.view.components.layout;
 
-import java.text.DecimalFormat; // Import the data model
+import java.text.DecimalFormat; 
 
 import client.model.market.DailyMarketData;
+import client.view.components.ui.CoinMenu;
 import client.view.components.ui.PriceLabel;
 import client.view.components.ui.StatBlock;
 import client.view.components.ui.VerticalSeparator;
-import client.view.theme.Theme; // Needed if called from non-FX thread, though listener should handle it
+import client.view.theme.Theme; 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -19,18 +20,19 @@ import javafx.scene.paint.Color;
 public class SubHeaderSection extends BaseSection {
     private String initialCoin;
     private final Label coinLabel;
-    private final PriceLabel priceLabel; 
+    private final PriceLabel priceLabel;
     private final StatBlock changeStatBlock;
     private final StatBlock lowStatBlock;
     private final StatBlock highStatBlock;
+    private final CoinMenu coinMenu;
 
     private final DecimalFormat priceFormat = new DecimalFormat("#,##0.00");
-    private final DecimalFormat changeFormat = new DecimalFormat("+#,##0.00;-#,##0.00"); 
+    private final DecimalFormat changeFormat = new DecimalFormat("+#,##0.00;-#,##0.00");
     private final DecimalFormat percentFormat = new DecimalFormat("+#,##0.00'%';-#,##0.00'%'");
 
     public SubHeaderSection(GridPane gridPane, double widthMultiplier, double heightMultiplier) {
         super(gridPane, Theme.COLOR.BACKGROUND, widthMultiplier, heightMultiplier);
-        this.initialCoin = "BTC/USDT"; 
+        this.initialCoin = "BTC/USDT";
 
         this.coinLabel = new Label(initialCoin);
         coinLabel.setTextFill(Theme.COLOR.ON_BACKGROUND);
@@ -47,15 +49,17 @@ public class SubHeaderSection extends BaseSection {
         subHeaderContent.setPadding(new Insets(10));
         subHeaderContent.setAlignment(Pos.CENTER_LEFT);
 
+        this.coinMenu = new CoinMenu(initialCoin);
+
         subHeaderContent.getChildren().addAll(
-                coinLabel,
+                this.coinMenu,
                 new VerticalSeparator(20),
                 createSpacer(10),
-                priceLabel, 
+                priceLabel,
                 createSpacer(40),
-                this.changeStatBlock, 
+                this.changeStatBlock,
                 createSpacer(10),
-                this.lowStatBlock, 
+                this.lowStatBlock,
                 createSpacer(10),
                 this.highStatBlock);
 
@@ -70,7 +74,7 @@ public class SubHeaderSection extends BaseSection {
 
     public void updateDisplay(DailyMarketData data) {
         if (data == null) {
-            priceLabel.setText("Error"); 
+            priceLabel.setText("Error");
             changeStatBlock.setStatBlock("24h Change", "Error", Theme.COLOR.RED);
             lowStatBlock.setStatBlock("24h Low", "Error", Theme.COLOR.TEXT_PRIMARY);
             highStatBlock.setStatBlock("24h High", "Error", Theme.COLOR.TEXT_PRIMARY);
@@ -79,7 +83,7 @@ public class SubHeaderSection extends BaseSection {
 
         priceLabel.setText(priceFormat.format(data.getPrice()));
 
-        double changeValue = data.getDailyChange(); 
+        double changeValue = data.getDailyChange();
         Color changeColor = changeValue >= 0 ? Theme.COLOR.GREEN : Theme.COLOR.RED;
         changeStatBlock.setStatBlock("24h Change", percentFormat.format(changeValue), changeColor);
 
@@ -92,4 +96,9 @@ public class SubHeaderSection extends BaseSection {
         this.initialCoin = initialCoin;
         this.coinLabel.setText(initialCoin);
     }
+
+    public CoinMenu getCoinMenu() {
+        return this.coinMenu;
+    }
+
 }

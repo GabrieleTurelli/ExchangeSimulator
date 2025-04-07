@@ -11,7 +11,8 @@ import javafx.util.Duration;
 
 public class ExchangeController {
 
-    private final ExchangeScreen exchangeScreen;
+    private ExchangeScreen exchangeScreen;
+    // private final SceneManager sceneManager;
     private final User user;
     private DailyMarketDataUpdateService marketDataUpdateService;
     private HistoricalMarketUpdateService historicalMarketUpdateService;
@@ -21,6 +22,8 @@ public class ExchangeController {
 
     public ExchangeController(ExchangeScreen exchangeScreen, SceneManager sceneManager, User user) {
         this.exchangeScreen = exchangeScreen;
+        this.exchangeScreen.getSubHeader().getCoinMenu().addCoinChangeListener(newCoin -> changeCoin(newCoin.split("/")[0]));
+        // this.sceneManager = sceneManager;
         this.user = user;
 
         System.out.println("Starting market updates");
@@ -33,6 +36,8 @@ public class ExchangeController {
 
     public ExchangeController(ExchangeScreen exchangeScreen, SceneManager sceneManager, User user, String coin) {
         this.exchangeScreen = exchangeScreen;
+        this.exchangeScreen.getSubHeader().getCoinMenu().addCoinChangeListener(newCoin -> changeCoin(newCoin.split("/")[0]));
+
         this.coin = coin;
         this.user = user;
 
@@ -47,32 +52,33 @@ public class ExchangeController {
         walletUpdateService.lastValueProperty().addListener((obs, oldData, newData) -> {
             if (newData != null) {
                 Platform.runLater(() -> {
-                    System.out.println("Updating tradepanel with new data: " + newData);
-                    exchangeScreen.getTradePanelSection().updateDisplay(newData);
+                    // System.out.println("Updating tradepanel with new data: " + newData);
+                    exchangeScreen.getTradePanelSection().updateDisplay(this.coin, newData);
                 });
             }
         });
 
-        walletUpdateService.stateProperty().addListener((obs, oldState, newState) -> {
-            System.out.println("Wallet update service state changed to: " + newState);
-            switch (newState) {
-                case READY:
-                    break;
-                case SCHEDULED:
-                    break;
-                case RUNNING:
-                    break;
-                case SUCCEEDED:
-                    Platform.runLater(() -> {
-                        exchangeScreen.getTradePanelSection().updateDisplay(null);
-                    });
-                    break;
-                case FAILED:
-                    break;
-                case CANCELLED:
-                    break;
-            }
-        });
+        // walletUpdateService.stateProperty().addListener((obs, oldState, newState) ->
+        // {
+        // System.out.println("Wallet update service state changed to: " + newState);
+        // switch (newState) {
+        // case READY:
+        // break;
+        // case SCHEDULED:
+        // break;
+        // case RUNNING:
+        // break;
+        // case SUCCEEDED:
+        // Platform.runLater(() -> {
+        // exchangeScreen.getTradePanelSection().updateDisplay(null);
+        // });
+        // break;
+        // case FAILED:
+        // break;
+        // case CANCELLED:
+        // break;
+        // }
+        // });
         System.out.println("Starting market data update service for {}" + coin);
         walletUpdateService.start();
     }
@@ -83,32 +89,33 @@ public class ExchangeController {
         marketDataUpdateService.lastValueProperty().addListener((obs, oldData, newData) -> {
             if (newData != null) {
                 Platform.runLater(() -> {
-                    System.out.println("Updating SubHeader with new data: " + newData);
+                    // System.out.println("Updating SubHeader with new data: " + newData);
                     exchangeScreen.getSubHeader().updateDisplay(newData);
                 });
             }
         });
 
-        marketDataUpdateService.stateProperty().addListener((obs, oldState, newState) -> {
-            System.out.println("Market data service state changed to: " + newState);
-            switch (newState) {
-                case READY:
-                    break;
-                case SCHEDULED:
-                    break;
-                case RUNNING:
-                    break;
-                case SUCCEEDED:
-                    Platform.runLater(() -> {
-                        exchangeScreen.getSubHeader().updateDisplay(null);
-                    });
-                    break;
-                case FAILED:
-                    break;
-                case CANCELLED:
-                    break;
-            }
-        });
+        // marketDataUpdateService.stateProperty().addListener((obs, oldState, newState)
+        // -> {
+        // System.out.println("Market data service state changed to: " + newState);
+        // switch (newState) {
+        // case READY:
+        // break;
+        // case SCHEDULED:
+        // break;
+        // case RUNNING:
+        // break;
+        // case SUCCEEDED:
+        // Platform.runLater(() -> {
+        // exchangeScreen.getSubHeader().updateDisplay(null);
+        // });
+        // break;
+        // case FAILED:
+        // break;
+        // case CANCELLED:
+        // break;
+        // }
+        // });
 
         System.out.println("Starting market data update service for {}" + coin);
         marketDataUpdateService.start();
@@ -120,32 +127,33 @@ public class ExchangeController {
         historicalMarketUpdateService.lastValueProperty().addListener((obs, oldData, newData) -> {
             if (newData != null) {
                 Platform.runLater(() -> {
-                    System.out.println("Updating chart with new data: " + newData);
+                    // System.out.println("Updating chart with new data: " + newData);
                     exchangeScreen.getChartSection().updateDisplay(newData);
                 });
             }
         });
 
-        historicalMarketUpdateService.stateProperty().addListener((obs, oldState, newState) -> {
-            System.out.println("History data service state changed to: " + newState);
-            switch (newState) {
-                case READY:
-                    break;
-                case SCHEDULED:
-                    break;
-                case RUNNING:
-                    break;
-                case SUCCEEDED:
-                    break;
-                case FAILED:
-                    Platform.runLater(() -> {
-                        exchangeScreen.getSubHeader().updateDisplay(null);
-                    });
-                    break;
-                case CANCELLED:
-                    break;
-            }
-        });
+        // historicalMarketUpdateService.stateProperty().addListener((obs, oldState,
+        // newState) -> {
+        // System.out.println("History data service state changed to: " + newState);
+        // switch (newState) {
+        // case READY:
+        // break;
+        // case SCHEDULED:
+        // break;
+        // case RUNNING:
+        // break;
+        // case SUCCEEDED:
+        // break;
+        // case FAILED:
+        // Platform.runLater(() -> {
+        // exchangeScreen.getSubHeader().updateDisplay(null);
+        // });
+        // break;
+        // case CANCELLED:
+        // break;
+        // }
+        // });
 
         System.out.println("Starting history data update service for {}" + coin);
         historicalMarketUpdateService.start();
@@ -157,14 +165,46 @@ public class ExchangeController {
             marketDataUpdateService.cancel();
             System.out.println("Market data update service cancelled.");
         }
-
+        if (historicalMarketUpdateService != null && historicalMarketUpdateService.isRunning()) {
+            historicalMarketUpdateService.cancel();
+            System.out.println("Market data update service cancelled.");
+        }
         if (walletUpdateService != null && walletUpdateService.isRunning()) {
             walletUpdateService.cancel();
             System.out.println("Market data update service cancelled.");
         }
+
     }
 
     public ExchangeScreen getExchangeScreen() {
         return exchangeScreen;
+    }
+
+    public void changeCoin(String coin) {
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println("STO CAMBIANDO");
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        shutdown();
+
+        this.coin = coin;
+
+        // this.exchangeScreen = new ExchangeScreen(user, coin);
+        // sceneManager.
+        
+
+        initializeHistoryUpdates();
+        initializeMarketUpdates();
+        initializeWalletUpdates();
+
+    }
+
+    public String getCoin() {
+        return coin;
     }
 }

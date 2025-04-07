@@ -61,7 +61,8 @@ public class LoginController {
     }
 
     private void switchToExchangeScreen(User user) {
-        ExchangeController exchangeController = new ExchangeController(new ExchangeScreen(user), sceneManager, user);
+        ExchangeController exchangeController = new ExchangeController(new ExchangeScreen(user, "BTC"), sceneManager,
+                user);
         switchToScreen(exchangeController.getExchangeScreen(), "Exchange simulator", 1280, 720, true);
     }
 

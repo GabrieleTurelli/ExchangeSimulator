@@ -16,7 +16,7 @@ public class TradePanel extends VBox {
         toggleOrderMode = new ToggleOrderMode();
         orderEntry = new OrderEntry(toggleOrderMode.isLimit());
         orderSideEntry = new OrderSideEntry();
-        availableCoin = new AvailableWallet(usdtAvailable, coinAvailable);
+        availableCoin = new AvailableWallet(coin, usdtAvailable, coinAvailable);
 
         setSpacing(20);
         setPadding(new Insets(10));

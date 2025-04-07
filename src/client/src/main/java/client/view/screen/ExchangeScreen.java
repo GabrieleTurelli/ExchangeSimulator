@@ -16,18 +16,28 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 
 public class ExchangeScreen extends GridPane {
-    private final HeaderSection header;
-    private final SubHeaderSection subHeader;
-    private final ChartSection chartSection;
-    private final OrderBookSection orderBookSection;
-    private final TradePanelSection tradePanelSection;
-    private final BaseSection positionSection;
+    private HeaderSection header;
+    private SubHeaderSection subHeader;
+    private ChartSection chartSection;
+    private OrderBookSection orderBookSection;
+    private TradePanelSection tradePanelSection;
+    private BaseSection positionSection;
     private final String coin;
     private final User user;
 
-    public ExchangeScreen(User user) {
+    public ExchangeScreen(User user, String coin) {
         this.user = user;
-        this.coin = "BTC";
+        this.coin = coin;
+        this.header = null;
+        this.subHeader = null;
+        this.chartSection = null;
+        this.orderBookSection = null;
+        this.tradePanelSection = null;
+        this.positionSection = null;
+        initUi();
+    }
+
+    public void initUi(){
         setPadding(new Insets(0));
         setHgap(0);
         setVgap(0);
@@ -103,6 +113,7 @@ public class ExchangeScreen extends GridPane {
         add(tradePanelSection, 2, 2, 1, 2);
     }
 
+
     public HeaderSection getHeader() {
         return header;
     }
@@ -126,18 +137,5 @@ public class ExchangeScreen extends GridPane {
     public BaseSection getPositionSection() {
         return positionSection;
     }
-
-    // public void loadMarketData() {
-    //     try {
-    //         MarketData data = MarketClient.getMarketData("BTC");
-    //         exchangeScreen.getSubHeader().setPrice(data.getPrice());
-    //         exchangeScreen.getSubHeader().setDailyChange(data.getDailyChange());
-    //         exchangeScreen.getSubHeader().setDailyLow(data.getDailyLow());
-    //         exchangeScreen.getSubHeader().setDailyHigh(data.getDailyHigh());
-    //         exchangeScreen.getSubHeader().updateStatBlocks();
-    //     } catch (IOException e) {
-    //         System.out.println("Failed to load market data.");
-    //     }
-    //     }
 
 }
