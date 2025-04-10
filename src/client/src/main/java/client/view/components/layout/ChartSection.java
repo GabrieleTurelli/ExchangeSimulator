@@ -5,16 +5,17 @@ import java.util.List;
 
 import client.model.market.Kline;
 import client.model.market.KlineHistory;
-import client.view.components.ui.chart.Chart;
+import client.view.components.ui.chart.CandleStickChart;
 import client.view.theme.Theme;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
 public class ChartSection extends BaseSection {
 
-    private Chart chart;
+    private CandleStickChart chart;
 
     public ChartSection(GridPane gridPane, Color fillColor, double widthMultiplier, double heightMultiplier) {
         super(gridPane, fillColor, widthMultiplier, heightMultiplier);
@@ -25,7 +26,7 @@ public class ChartSection extends BaseSection {
         CategoryAxis xAxis = new CategoryAxis();
         xAxis.setTickMarkVisible(false);
 
-        chart = new Chart(xAxis, yAxis);
+        chart = new CandleStickChart(xAxis, yAxis);
         this.getChildren().add(chart);
     }
 
@@ -33,21 +34,31 @@ public class ChartSection extends BaseSection {
         this(gridPane, Theme.COLOR.BACKGROUND, widthMultiplier, heightMultiplier);
     }
 
-    public Chart getChart() {
+    public CandleStickChart getChart() {
         return chart;
     }
 
     public void updateDisplay(KlineHistory klineHistory) {
         chart.clearData();
-        List<String> xValues = new ArrayList<>();
-        List<Number> yValues = new ArrayList<>();
+
+        List<XYChart.Data<String, Number>> dataPoints = new ArrayList<>();
+        List<Kline> klines = new ArrayList<>();
+
         for (int i = 0; i < klineHistory.size(); i++) {
             Kline kline = klineHistory.get(i);
-            xValues.add(String.valueOf(i));
-            yValues.add(kline.getClose());
+            klines.add(kline);
+
+            String label = String.valueOf(i); 
+            XYChart.Data<String, Number> data = new XYChart.Data<>(label, kline.getClose());
+            data.setExtraValue(kline);
+            dataPoints.add(data);
         }
 
-        chart.addAllDataPoints(xValues, yValues);
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.getData().addAll(dataPoints);
+        chart.getData().add(series);
+
+        chart.adjustYAxisWithPadding(klines, 2);
     }
 
 }

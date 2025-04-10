@@ -40,7 +40,7 @@ public class Chart extends LineChart<String, Number> {
         double lowerBound = min - padding;
         double upperBound = max + padding;
 
-        NumberAxis yAxis = (NumberAxis) getYAxis();
+        var yAxis = (NumberAxis) getYAxis();
         yAxis.setAutoRanging(false);
         yAxis.setLowerBound(lowerBound);
         yAxis.setUpperBound(upperBound);
