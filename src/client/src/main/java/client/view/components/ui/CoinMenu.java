@@ -16,17 +16,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public class CoinMenu extends HBox {
-    
+
     public interface CoinChangeListener {
-      void onCoinChange(String newCoin);
+        void onCoinChange(String newCoin);
     }
-    
+
     private final List<CoinChangeListener> listeners = new ArrayList<>();
     private final Label coinTextLabel;
     private final Label chevronLabel;
     private final ContextMenu dropdownMenu;
     private final List<String> coins;
-    private final HBox labelContainer; 
+    private final HBox labelContainer;
 
     public CoinMenu(String initialCoin) {
         this.coins = new ArrayList<>();
@@ -46,7 +46,8 @@ public class CoinMenu extends HBox {
         labelContainer.setSpacing(15);
         labelContainer.setAlignment(Pos.CENTER);
         labelContainer.setStyle(StyleUtils.generateStyle(Theme.HEX_COLOR.BACKGROUND, Theme.SPACING.SMALL));
-        labelContainer.setOnMouseEntered(e -> labelContainer.setStyle(StyleUtils.generateStyle(Theme.HEX_COLOR.SURFACE, Theme.SPACING.SMALL)));
+        labelContainer.setOnMouseEntered(
+                e -> labelContainer.setStyle(StyleUtils.generateStyle(Theme.HEX_COLOR.SURFACE, Theme.SPACING.SMALL)));
         labelContainer.setOnMouseExited(e -> resetStyle(labelContainer));
 
         dropdownMenu.setOnShowing(event -> chevronLabel.setText("▲"));
@@ -71,7 +72,7 @@ public class CoinMenu extends HBox {
                     dropdownMenu.hide();
                 } else {
                     dropdownMenu.show(this, localToScreen(getBoundsInLocal()).getMinX(),
-                            localToScreen(getBoundsInLocal()).getMaxY() - 4) ;
+                            localToScreen(getBoundsInLocal()).getMaxY() - 4);
                 }
             }
         });
@@ -84,19 +85,19 @@ public class CoinMenu extends HBox {
     }
 
     private void initializeCoins() {
-        addCoin("BTC/USDT");
-        addCoin("ETH/USDT");
-        addCoin("XRP/USDT");
-        addCoin("CRO/USDT");
-        addCoin("ADA/USDT");
+        // addCoin("BTC/USDT");
+        // addCoin("ETH/USDT");
+        // addCoin("XRP/USDT");
+        // addCoin("CRO/USDT");
+        // addCoin("ADA/USDT");
     }
 
     private void addCoin(String coin) {
         coins.add(coin);
 
         Label itemLabel = createLabel(coin, Theme.FONT_SIZE.MEDIUM, Color.WHITE, Pos.CENTER);
-        itemLabel.setPrefWidth(labelContainer.getPrefWidth() - 10 );
-//        itemLabel.setPadding(new Insets(5));
+        itemLabel.setPrefWidth(labelContainer.getPrefWidth() - 10);
+        // itemLabel.setPadding(new Insets(5));
         itemLabel.setAlignment(Pos.CENTER);
 
         CustomMenuItem menuItem = new CustomMenuItem(itemLabel, true);
@@ -104,6 +105,12 @@ public class CoinMenu extends HBox {
         dropdownMenu.getItems().add(menuItem);
     }
 
+    public void addCoins(String[] coins) {
+        for (String coin : coins) {
+            addCoin(coin + "/USDT");
+        }
+
+    }
 
     private Label createLabel(String text, int fontSize, Color color, Pos alignment) {
         Label label = new Label(text);
@@ -114,13 +121,12 @@ public class CoinMenu extends HBox {
     }
 
     // public void setCoin(String coin) {
-        // coinTextLabel.setText(coin);
+    // coinTextLabel.setText(coin);
     // }
 
     public String getCurrentCoin() {
         return coinTextLabel.getText();
     }
-
 
     public void addCoinChangeListener(CoinChangeListener listener) {
         listeners.add(listener);

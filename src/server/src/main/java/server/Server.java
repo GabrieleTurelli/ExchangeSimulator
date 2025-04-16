@@ -9,17 +9,39 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import server.actions.LoginServer;
 import server.actions.MarketServer;
 import server.actions.RegisterServer;
 import server.actions.UserServer;
+import server.model.db.DbInitializer;
 import server.model.service.RandomPriceGeneratorService;
 
 public class Server {
     private static final int PORT = 12345;
+    private static final HashMap<String, Double> coins = new HashMap<String, Double>(
+            Map.of(
+                    "BTC", 85015.35,
+                    "ETH", 1598.39,
+                    "XRP", 2.10,
+                    "SOL", 113.15));
 
+    // Map.of(),
+    // Map.of());
     public static void main(String[] args) throws IOException, SQLException {
+
+        DbInitializer dbInitializer = new DbInitializer(coins);
+        // dbInitializer.dropTable("Coins");
+        // dbInitializer.dropTable("coin_BTC");
+        // dbInitializer.dropTable("coin_ETH");
+        // dbInitializer.dropTable("coin_XRP");
+        // dbInitializer.dropTable("coin_SOL");
+        // dbInitializer.initializeDatabase();
+
         // DbInitializer.initializeDatabase("BTC");
         System.out.println("Database Initialized successfully.");
         RandomPriceGeneratorService priceService = new RandomPriceGeneratorService("BTC");
@@ -44,18 +66,19 @@ public class Server {
                     e.getMessage());
             e.printStackTrace();
         }
-}
+    }
 
     // public static void main(String[] args) throws IOException, SQLException {
-        // DbInitializer.dropTable(DbConnector.getConnection(), "user_test");
-        // DbInitializer.createUserTable(DBConnector.getConnection(), "user_test");
-        // DbInitializer.createCoinTable(DbConnector.getConnection(), "ETH");
-        // CoinDAO coinDao = new CoinDAO("ETH");
-        // UserDAO userDao = new UserDAO("test");
-        // userDao.addCoin("ETH", 50);
-        // coinDao.populateCoinTable(1500, 50);
-        // RandomPriceGeneratorService randomPriceGenerator = new RandomPriceGeneratorService("BTC");
-        // randomPriceGenerator.start(10);
+    // DbInitializer.dropTable(DbConnector.getConnection(), "user_test");
+    // DbInitializer.createUserTable(DBConnector.getConnection(), "user_test");
+    // DbInitializer.createCoinTable(DbConnector.getConnection(), "ETH");
+    // CoinDAO coinDao = new CoinDAO("ETH");
+    // UserDAO userDao = new UserDAO("test");
+    // userDao.addCoin("ETH", 50);
+    // coinDao.populateCoinTable(1500, 50);
+    // RandomPriceGeneratorService randomPriceGenerator = new
+    // RandomPriceGeneratorService("BTC");
+    // randomPriceGenerator.start(10);
     // }
 
     private static void handleClient(Socket clientSocket) {
@@ -88,7 +111,9 @@ public class Server {
 
                     case "\\register" -> response = RegisterServer.handleRegistration(trimmedRequest);
 
-                    case "\\logout" -> response = "OK: Logged out";
+                    // case "\\logout" -> response =
+
+                    case "\\get-coins" -> response = MarketServer.handleGetCoins();
 
                     case "\\get-last-price" -> response = MarketServer.handleGetLastPrice(trimmedRequest);
 
@@ -99,6 +124,16 @@ public class Server {
                     case "\\get-history" -> response = MarketServer.handleGetHistory(trimmedRequest);
 
                     case "\\get-wallet" -> response = UserServer.handleGetWallet(trimmedRequest);
+
+                    case "\\get-open-position" -> response = UserServer.handleGetWallet(trimmedRequest);
+
+                    case "\\buy-market" -> response = UserServer.handleGetWallet(trimmedRequest);
+
+                    case "\\buy-limit" -> response = UserServer.handleGetWallet(trimmedRequest);
+
+                    case "\\sell-market" -> response = UserServer.handleGetWallet(trimmedRequest);
+
+                    case "\\sell-limit" -> response = UserServer.handleGetWallet(trimmedRequest);
 
                     default -> {
                         System.out.println("Received unknown command '" + command + "' from "

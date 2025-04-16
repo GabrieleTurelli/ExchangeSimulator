@@ -231,14 +231,14 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
 
             double open = previousClose;
 
-            double fluctuation = random.nextDouble() * 20 - 10;
-            double close = open + fluctuation;
+            double percentageFluctuation = (random.nextDouble() * 4 - 2) / 100; 
+            double close = open + (open * percentageFluctuation);
             close = Math.round(close * 100.0) / 100.0;
 
-            double high = Math.max(open, close) + random.nextDouble() * 5;
+            double high = Math.max(open, close) + (random.nextDouble() * 0.02 * open);
             high = Math.round(high * 100.0) / 100.0;
 
-            double low = Math.min(open, close) - random.nextDouble() * 5;
+            double low = Math.min(open, close) - (random.nextDouble() * 0.02 * open); 
             low = Math.round(low * 100.0) / 100.0;
             if (low < 0) {
                 low = 0;

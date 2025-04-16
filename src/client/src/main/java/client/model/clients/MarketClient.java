@@ -8,6 +8,26 @@ import client.model.market.KlineHistory;
 
 public class MarketClient {
 
+    public static String[] getCoins() {
+        try {
+            ClientConnection connection = new ClientConnection();
+            System.out.println("Requesting coins list ");
+            connection.sendRequest("\\get-coins");
+            String response = connection.readResponse();
+            System.out.println("Request sent : " + response);
+
+            if (response.contains("OK")) {
+                return response.split(";")[1].split(",") ;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
     public static double getCoinPrice(String coin) {
         try {
             ClientConnection connection = new ClientConnection();
@@ -45,9 +65,7 @@ public class MarketClient {
             double low = Double.parseDouble(marketDataParts[2].split("=")[1]);
             double close = Double.parseDouble(marketDataParts[3].split("=")[1]);
 
-            // meant like percentage from the open price to the current price
-
-            double dailychange = open * 100 / close;
+            double dailychange = close * 100 / open - 100;
             return new DailyMarketData(close, dailychange, low, high);
         } else {
             System.out.println("Error in getDailyMarketData: " + response);

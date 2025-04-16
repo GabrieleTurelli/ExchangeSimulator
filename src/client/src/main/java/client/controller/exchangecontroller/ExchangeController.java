@@ -1,9 +1,11 @@
 package client.controller.exchangecontroller;
 
+import client.model.clients.MarketClient;
 import client.model.service.DailyMarketDataUpdateService;
 import client.model.service.HistoricalMarketUpdateService;
 import client.model.service.WalletUpdateService;
 import client.model.user.User;
+import client.view.components.ui.CoinMenu;
 import client.view.screen.ExchangeScreen;
 import client.view.utils.SceneManager;
 import javafx.application.Platform;
@@ -17,28 +19,33 @@ public class ExchangeController {
     private DailyMarketDataUpdateService marketDataUpdateService;
     private HistoricalMarketUpdateService historicalMarketUpdateService;
     private WalletUpdateService walletUpdateService;
-    private String coin = "BTC";
+    private final String[] coins;
+    private String currentCoin;
     private final Duration updateInterval = Duration.seconds(1);
+
+    // public ExchangeController(ExchangeScreen exchangeScreen, SceneManager sceneManager, User user) {
+    //     this.exchangeScreen = exchangeScreen;
+    //     this.exchangeScreen.getSubHeader().getCoinMenu().addCoinChangeListener(newCoin -> changeCoin(newCoin.split("/")[0]));
+    //     // this.sceneManager = sceneManager;
+    //     this.user = user;
+
+    //     System.out.println("Starting market updates");
+    //     initializeMarketUpdates();
+    //     System.out.println("Starting wallet updates");
+    //     initializeWalletUpdates();
+    //     System.out.println("Starting history updates");
+    //     initializeHistoryUpdates();
+    // }
 
     public ExchangeController(ExchangeScreen exchangeScreen, SceneManager sceneManager, User user) {
         this.exchangeScreen = exchangeScreen;
-        this.exchangeScreen.getSubHeader().getCoinMenu().addCoinChangeListener(newCoin -> changeCoin(newCoin.split("/")[0]));
-        // this.sceneManager = sceneManager;
-        this.user = user;
+        this.coins = MarketClient.getCoins();
 
-        System.out.println("Starting market updates");
-        initializeMarketUpdates();
-        System.out.println("Starting wallet updates");
-        initializeWalletUpdates();
-        System.out.println("Starting history updates");
-        initializeHistoryUpdates();
-    }
+        CoinMenu coinMenu = this.exchangeScreen.getSubHeader().getCoinMenu();
+        coinMenu.addCoinChangeListener(newCoin -> changeCoin(newCoin.split("/")[0]));
+        coinMenu.addCoins(coins);
 
-    public ExchangeController(ExchangeScreen exchangeScreen, SceneManager sceneManager, User user, String coin) {
-        this.exchangeScreen = exchangeScreen;
-        this.exchangeScreen.getSubHeader().getCoinMenu().addCoinChangeListener(newCoin -> changeCoin(newCoin.split("/")[0]));
-
-        this.coin = coin;
+        this.currentCoin = coins[0];
         this.user = user;
 
         initializeMarketUpdates();
@@ -53,7 +60,7 @@ public class ExchangeController {
             if (newData != null) {
                 Platform.runLater(() -> {
                     // System.out.println("Updating tradepanel with new data: " + newData);
-                    exchangeScreen.getTradePanelSection().updateDisplay(this.coin, newData);
+                    exchangeScreen.getTradePanelSection().updateDisplay(this.currentCoin, newData);
                 });
             }
         });
@@ -79,12 +86,12 @@ public class ExchangeController {
         // break;
         // }
         // });
-        System.out.println("Starting market data update service for {}" + coin);
+        System.out.println("Starting market data update service for {}" + currentCoin);
         walletUpdateService.start();
     }
 
     private void initializeMarketUpdates() {
-        marketDataUpdateService = new DailyMarketDataUpdateService(coin, updateInterval);
+        marketDataUpdateService = new DailyMarketDataUpdateService(currentCoin, updateInterval);
 
         marketDataUpdateService.lastValueProperty().addListener((obs, oldData, newData) -> {
             if (newData != null) {
@@ -117,12 +124,12 @@ public class ExchangeController {
         // }
         // });
 
-        System.out.println("Starting market data update service for {}" + coin);
+        System.out.println("Starting market data update service for {}" + currentCoin);
         marketDataUpdateService.start();
     }
 
     private void initializeHistoryUpdates() {
-        historicalMarketUpdateService = new HistoricalMarketUpdateService(coin, updateInterval);
+        historicalMarketUpdateService = new HistoricalMarketUpdateService(currentCoin, updateInterval);
 
         historicalMarketUpdateService.lastValueProperty().addListener((obs, oldData, newData) -> {
             if (newData != null) {
@@ -155,7 +162,7 @@ public class ExchangeController {
         // }
         // });
 
-        System.out.println("Starting history data update service for {}" + coin);
+        System.out.println("Starting history data update service for {}" + currentCoin);
         historicalMarketUpdateService.start();
     }
 
@@ -186,13 +193,14 @@ public class ExchangeController {
         System.out.println();
         System.out.println();
         System.out.println("STO CAMBIANDO");
+        System.out.println(coin);
         System.out.println();
         System.out.println();
         System.out.println();
         System.out.println();
         shutdown();
 
-        this.coin = coin;
+        this.currentCoin = coin;
 
         // this.exchangeScreen = new ExchangeScreen(user, coin);
         // sceneManager.
@@ -205,6 +213,6 @@ public class ExchangeController {
     }
 
     public String getCoin() {
-        return coin;
+        return currentCoin;
     }
 }

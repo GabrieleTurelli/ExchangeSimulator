@@ -1,36 +1,50 @@
 package server.model.db;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class DbInitializer {
+    private final Connection connection;
+    private final HashMap<String, Double> coins;
+    private final int historyDays = 50;
 
-    public static void initializeDatabase(ArrayList<String> coins) {
-        try (Connection connection = DbConnector.getConnection()) {
-            createCoinsTable(connection);
+    public DbInitializer(HashMap<String, Double> coins) throws IOException, SQLException {
+        this.connection = DbConnector.getConnection();
+        this.coins = coins;
+    }
 
-            System.out.println("Initializing Database.");
-            for (String coin : coins) {
-                createCoinTable(connection, coin);
-                createOrderBookTable(connection, coin);
-            }
-            createUsersTable(connection);
+    public void initializeDatabase() throws SQLException, IOException {
+        System.out.println("Initializing Database.");
 
-            System.out.println("Database initialized successfully.");
-        } catch (Exception e) {
-            e.printStackTrace();
+        System.out.println("Creating coins table");
+        createCoinsTable();
+        System.out.println("Creating users table");
+        createUsersTable();
+
+        for (String coin : coins.keySet()) {
+            System.out.println("Creating coin : " + coin + "  table");
+            addCoinToCoinsTable(coin);
+            createCoinTable(coin);
+            createOrderBookTable(coin);
+
+            System.out.println("Populating the table with random data for: " + coin);
+            CoinDAO coinDao = new CoinDAO(coin);
+            coinDao.populateCoinTable(coins.get(coin), historyDays);
         }
+        // createUsersTable();
+
+        System.out.println("Database initialized successfully.");
     }
 
-    public static void initializeDatabase(String coin) {
-        initializeDatabase(new ArrayList<>(List.of(coin)));
+    public void initializeCoin(String coin, Double initialPrice) {
+
     }
 
-    public static void createCoinsTable(Connection connection) {
+    public void createCoinsTable() {
 
         String createCoinsTable = """
                 CREATE TABLE IF NOT EXISTS Coins (
@@ -38,11 +52,11 @@ public class DbInitializer {
                     PRIMARY KEY (pair)
                     );
                     """;
-        executeStatement(connection, createCoinsTable);
+        executeStatement(createCoinsTable);
 
     }
 
-    public static void addCoinToCoinsTable(Connection connection, String coin) {
+    public void addCoinToCoinsTable(String coin) {
         String insertCoin = """
                     INSERT OR IGNORE INTO Coins (pair)
                     VALUES (?);
@@ -55,7 +69,7 @@ public class DbInitializer {
         }
     }
 
-    public static void createCoinTable(Connection connection, String coin) {
+    public void createCoinTable(String coin) {
         String coinTable = """
                     CREATE TABLE IF NOT EXISTS coin_%s (
                         date TEXT NOT NULL,
@@ -67,20 +81,20 @@ public class DbInitializer {
                     );
                 """.formatted(coin);
 
-        executeStatement(connection, coinTable);
+        executeStatement(coinTable);
     }
 
-    public static void createUsersTable(Connection connection) {
+    public void createUsersTable() {
         String usersTable = """
                     CREATE TABLE IF NOT EXISTS Users (
                         username TEXT NOT NULL UNIQUE,
                         password TEXT
                     );
                 """;
-        executeStatement(connection, usersTable);
+        executeStatement(usersTable);
     }
 
-    public static void createUserTable(Connection connection, String username) {
+    public void createUserTable(Connection connection, String username) {
         String userTable = """
                     CREATE TABLE IF NOT EXISTS user_%s (
                         coin TEXT NOT NULL,
@@ -88,10 +102,10 @@ public class DbInitializer {
                     );
                 """.formatted(username);
 
-        executeStatement(connection, userTable);
+        executeStatement(userTable);
     }
 
-    public static void createOrderBookTable(Connection connection, String coinName) {
+    public void createOrderBookTable(String coinName) {
         String createCoinOrderBookTable = """
                     CREATE TABLE IF NOT EXISTS orderbooks_%s (
                         price REAL PRIMARY KEY,
@@ -100,10 +114,10 @@ public class DbInitializer {
                     );
                 """.formatted(coinName);
 
-        executeStatement(connection, createCoinOrderBookTable);
+        executeStatement(createCoinOrderBookTable);
     }
 
-    static void executeStatement(Connection connection, String sql) {
+    private void executeStatement(String sql) {
         try (Statement statement = connection.createStatement()) {
             statement.execute(sql);
         } catch (Exception e) {
@@ -111,9 +125,9 @@ public class DbInitializer {
         }
     }
 
-    public static void dropTable(Connection connection, String tableName) {
+    public void dropTable(String tableName) {
         String dropTableQuery = "DROP TABLE IF EXISTS " + tableName;
-        executeStatement(connection, dropTableQuery);
+        executeStatement(dropTableQuery);
         System.out.println("Table '" + tableName + "' has been removed (if it existed).");
     }
 }

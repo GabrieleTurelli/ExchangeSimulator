@@ -2,13 +2,31 @@ package server.actions;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import server.model.db.CoinDAO;
+import server.model.db.CoinsDAO;
 import server.model.market.Kline;
 import server.model.market.KlineHistory;
 
 public class MarketServer {
 
+
+    public static String handleGetCoins() throws SQLException, IOException {
+        CoinsDAO coinsDao;
+        List<String> coinsList;
+
+        try {
+            coinsDao = new CoinsDAO();
+            coinsList = coinsDao.getData();
+
+        } catch (IOException | SQLException e) {
+            e.printStackTrace();
+            return "ERROR;Failed to retrieve coins";
+        }
+
+        return "OK;" + coinsList.toString().replace(" ","").replace("[", "").replace("]", "");
+    }
     public static String handleGetHistory(String request) throws SQLException, IOException {
         String coin;
         CoinDAO coinDAO;
@@ -30,7 +48,6 @@ public class MarketServer {
         }
 
         return "OK;" + klineHistory;
-
     }
 
     public static String handleGetKline(String request) throws SQLException, IOException {
@@ -40,6 +57,7 @@ public class MarketServer {
 
         try {
             coin = request.split(" ")[1];
+            System.out.println("Coin in getKline: " + coin);
         } catch (IndexOutOfBoundsException e) {
             return "ERROR;Invalid request";
         }
