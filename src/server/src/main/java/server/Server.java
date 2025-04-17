@@ -8,16 +8,17 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import server.actions.LoginServer;
 import server.actions.MarketServer;
 import server.actions.RegisterServer;
 import server.actions.UserServer;
+import server.model.db.DbConnector;
 import server.model.db.DbInitializer;
 import server.model.service.RandomPriceGeneratorService;
 
@@ -29,25 +30,48 @@ public class Server {
                     "ETH", 1598.39,
                     "XRP", 2.10,
                     "SOL", 113.15));
+    private static Connection dbConnection;
+    private static LoginServer loginServer;
+    private static RegisterServer registerServer;
+    private static UserServer userServer;
+    private static MarketServer marketServer;
 
     // Map.of(),
     // Map.of());
+
     public static void main(String[] args) throws IOException, SQLException {
 
-        DbInitializer dbInitializer = new DbInitializer(coins);
-        // dbInitializer.dropTable("Coins");
-        // dbInitializer.dropTable("coin_BTC");
-        // dbInitializer.dropTable("coin_ETH");
-        // dbInitializer.dropTable("coin_XRP");
-        // dbInitializer.dropTable("coin_SOL");
-        // dbInitializer.initializeDatabase();
+        dbConnection = DbConnector.getConnection();
+        loginServer = new LoginServer(dbConnection);
+        registerServer = new RegisterServer();
+        userServer = new UserServer();
+        marketServer = new MarketServer();
+
+        System.out.println(Arrays.toString(args));
+        boolean initMode = Arrays.stream(args)
+                .anyMatch("--init"::equals);
+        System.out.println("Init mode: " + initMode);
+
+        if (initMode) {
+            DbInitializer dbInitializer = new DbInitializer(coins);
+
+            for (String coin : coins.keySet()) {
+
+                dbInitializer.dropTable("coin_" + coin);
+            }
+            dbInitializer.dropTable("Coins");
+            dbInitializer.initializeDatabase();
+        }
 
         // DbInitializer.initializeDatabase("BTC");
         System.out.println("Database Initialized successfully.");
-        RandomPriceGeneratorService priceService = new RandomPriceGeneratorService("BTC");
+
+        RandomPriceGeneratorService priceService = new RandomPriceGeneratorService(
+                coins.keySet().toArray(String[]::new));
         priceService.start(1);
 
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+        try (
+                ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("Server started on port " + PORT);
 
             while (true) {
@@ -67,19 +91,6 @@ public class Server {
             e.printStackTrace();
         }
     }
-
-    // public static void main(String[] args) throws IOException, SQLException {
-    // DbInitializer.dropTable(DbConnector.getConnection(), "user_test");
-    // DbInitializer.createUserTable(DBConnector.getConnection(), "user_test");
-    // DbInitializer.createCoinTable(DbConnector.getConnection(), "ETH");
-    // CoinDAO coinDao = new CoinDAO("ETH");
-    // UserDAO userDao = new UserDAO("test");
-    // userDao.addCoin("ETH", 50);
-    // coinDao.populateCoinTable(1500, 50);
-    // RandomPriceGeneratorService randomPriceGenerator = new
-    // RandomPriceGeneratorService("BTC");
-    // randomPriceGenerator.start(10);
-    // }
 
     private static void handleClient(Socket clientSocket) {
         try (
@@ -107,33 +118,33 @@ public class Server {
                 String response = null;
 
                 switch (command) {
-                    case "\\login" -> response = LoginServer.handleLogin(trimmedRequest);
+                    case "\\login" -> response = loginServer.handleLogin(trimmedRequest);
 
-                    case "\\register" -> response = RegisterServer.handleRegistration(trimmedRequest);
+                    case "\\register" -> response = registerServer.handleRegistration(trimmedRequest);
 
                     // case "\\logout" -> response =
 
-                    case "\\get-coins" -> response = MarketServer.handleGetCoins();
+                    case "\\get-coins" -> response = marketServer.handleGetCoins();
 
-                    case "\\get-last-price" -> response = MarketServer.handleGetLastPrice(trimmedRequest);
+                    case "\\get-last-price" -> response = marketServer.handleGetLastPrice(trimmedRequest);
 
-                    case "\\get-kline" -> response = MarketServer.handleGetKline(trimmedRequest);
+                    case "\\get-kline" -> response = marketServer.handleGetKline(trimmedRequest);
 
-                    case "\\get-daily-market-data" -> response = MarketServer.handleGetKline(trimmedRequest);
+                    case "\\get-daily-market-data" -> response = marketServer.handleGetKline(trimmedRequest);
 
-                    case "\\get-history" -> response = MarketServer.handleGetHistory(trimmedRequest);
+                    case "\\get-history" -> response = marketServer.handleGetHistory(trimmedRequest);
 
-                    case "\\get-wallet" -> response = UserServer.handleGetWallet(trimmedRequest);
+                    case "\\get-wallet" -> response = userServer.handleGetWallet(trimmedRequest);
 
-                    case "\\get-open-position" -> response = UserServer.handleGetWallet(trimmedRequest);
+                    case "\\get-open-position" -> response = userServer.handleGetWallet(trimmedRequest);
 
-                    case "\\buy-market" -> response = UserServer.handleGetWallet(trimmedRequest);
+                    case "\\buy-market" -> response = userServer.handleGetWallet(trimmedRequest);
 
-                    case "\\buy-limit" -> response = UserServer.handleGetWallet(trimmedRequest);
+                    case "\\buy-limit" -> response = userServer.handleGetWallet(trimmedRequest);
 
-                    case "\\sell-market" -> response = UserServer.handleGetWallet(trimmedRequest);
+                    case "\\sell-market" -> response = userServer.handleGetWallet(trimmedRequest);
 
-                    case "\\sell-limit" -> response = UserServer.handleGetWallet(trimmedRequest);
+                    case "\\sell-limit" -> response = userServer.handleGetWallet(trimmedRequest);
 
                     default -> {
                         System.out.println("Received unknown command '" + command + "' from "

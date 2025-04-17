@@ -2,6 +2,7 @@ package server.model.service;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -11,28 +12,31 @@ import server.model.db.CoinDAO;
 import server.model.market.Kline;
 
 public class RandomPriceGeneratorService {
-    private final CoinDAO coinDao;
+    private final ArrayList<CoinDAO> coinsDao;
     private final Random random;
     private final ScheduledExecutorService scheduler;
 
-    public RandomPriceGeneratorService(String coin) throws IOException, SQLException {
-        this.coinDao = new CoinDAO(coin);
+    public RandomPriceGeneratorService(String[] coins) throws IOException, SQLException {
+        this.coinsDao = new ArrayList<>();
+        for (String coin : coins) {
+            this.coinsDao.add(new CoinDAO(coin));
+        }
+    
         this.random = new Random();
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
-
     }
 
-    private void generateAndUpdatePrice() throws SQLException {
+    private void generateAndUpdatePrice(CoinDAO coinDao) throws SQLException {
+
         Kline currentKline = coinDao.getLastKline();
         double fluctuation = random.nextDouble() * 2 - 1; 
-        
         
         double currentOpen = currentKline.getOpen();
         double currentHigh = currentKline.getHigh();
         double currentLow = currentKline.getLow();
         double currentClose = currentKline.getClose();
         
-        double newClose = currentClose + fluctuation;
+        double newClose = currentClose * (1 + fluctuation / 100);
         newClose = Math.round(newClose * 100.0) / 100.0;
 
         if (newClose > currentHigh) {
@@ -54,7 +58,9 @@ public class RandomPriceGeneratorService {
     public void start(long interval) {
         scheduler.scheduleAtFixedRate(() -> {
             try {
-                generateAndUpdatePrice();
+                for (CoinDAO coinDao : coinsDao) {
+                    generateAndUpdatePrice(coinDao);
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }

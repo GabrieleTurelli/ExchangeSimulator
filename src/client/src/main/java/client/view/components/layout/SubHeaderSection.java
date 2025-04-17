@@ -27,7 +27,7 @@ public class SubHeaderSection extends BaseSection {
     private final CoinMenu coinMenu;
 
     private final DecimalFormat priceFormat = new DecimalFormat("#,##0.00");
-    private final DecimalFormat changeFormat = new DecimalFormat("+#,##0.00;-#,##0.00");
+    // private final DecimalFormat changeFormat = new DecimalFormat("+#,##0.00;-#,##0.00");
     private final DecimalFormat percentFormat = new DecimalFormat("+#,##0.00'%';-#,##0.00'%'");
 
     public SubHeaderSection(GridPane gridPane, double widthMultiplier, double heightMultiplier) {

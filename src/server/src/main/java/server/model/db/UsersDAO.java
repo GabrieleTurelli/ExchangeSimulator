@@ -11,19 +11,21 @@ import java.util.List;
 
 public class UsersDAO {
 
-    private static final Connection connection;
+    private final Connection connection;
 
-    static {
-        try {
-            connection = DbConnector.getConnection();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+
+    public UsersDAO() throws SQLException, IOException {
+        this.connection =  DbConnector.getConnection();
+
     }
 
-    public static boolean addUser(String username, String password) {
+    public UsersDAO(Connection connection){
+        this.connection = connection;
+    }
+
+
+
+    public boolean addUser(String username, String password) {
         String query = """
             INSERT INTO Users (username, password)
             VALUES (?, ?);
@@ -40,7 +42,7 @@ public class UsersDAO {
         }
     }
 
-    public static void removeUser(String username) {
+    public void removeUser(String username) {
         String dropTableQuery = "DROP TABLE IF EXISTS user_" + username;
         String deleteUserQuery = "DELETE FROM Users WHERE username = ?";
 
@@ -63,7 +65,7 @@ public class UsersDAO {
         }
     }
 
-    public static List<String> getAllUsers() {
+    public List<String> getAllUsers() {
         List<String> users = new ArrayList<>();
         String query = "SELECT username FROM Users";
 
@@ -80,7 +82,7 @@ public class UsersDAO {
         return users;
     }
 
-    public static boolean userExists(String username) {
+    public boolean userExists(String username) {
         String query = "SELECT COUNT(*) FROM Users WHERE LOWER(username) = LOWER(?)";
     
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -104,7 +106,7 @@ public class UsersDAO {
     }
     
 
-    public static boolean isPasswordCorrect(String username, String password) {
+    public boolean isPasswordCorrect(String username, String password) {
         String query = "SELECT password FROM Users WHERE username = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {

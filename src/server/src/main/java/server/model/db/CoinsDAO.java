@@ -16,6 +16,10 @@ public class CoinsDAO implements SingleValueDAO<String> {
         this.connection = DbConnector.getConnection();
     }
 
+    public CoinsDAO(Connection connection) throws SQLException, IOException {
+        this.connection = connection; 
+    }
+
     @Override
     public void addData(String coinPair) {
         String sql = "INSERT OR IGNORE INTO " + tableName + "(pair) VALUES (?)";

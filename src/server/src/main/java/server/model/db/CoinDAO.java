@@ -10,23 +10,25 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.TreeMap;
 
 import server.model.market.Kline;
 import server.model.market.KlineHistory;
 
-public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
+public class CoinDAO {
 
     private final String tableName;
     private final Connection connection;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public CoinDAO(String coin) throws SQLException, IOException {
-        this.tableName = "coin_" + coin.toUpperCase();
-        this.connection = DbConnector.getConnection();
+        this(coin, DbConnector.getConnection());
     }
 
-    @Override
+    public CoinDAO(String coin, Connection connection) throws SQLException, IOException {
+        this.tableName = "coin_" + coin.toUpperCase();
+        this.connection = connection;
+    }
+
     public void addData(LocalDate date, Kline kline) {
         String sql = "INSERT OR REPLACE INTO " + tableName + " (date, open, high, low, close) VALUES (?, ?, ?, ?, ?)";
 
@@ -46,7 +48,6 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
         coinData.forEach(this::addData);
     }
 
-    @Override
     public void deleteAllData() {
         String sql = "DELETE FROM " + tableName;
 
@@ -57,26 +58,26 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
         }
     }
 
-    public TreeMap<LocalDate, Double> getCoinPrice() throws SQLException {
-        TreeMap<LocalDate, Double> coinData = new TreeMap<>();
-        String query = "SELECT date, close FROM " + tableName;
+    // public TreeMap<LocalDate, Double> getCoinPrice() throws SQLException {
+    // TreeMap<LocalDate, Double> coinData = new TreeMap<>();
+    // String query = "SELECT date, close FROM " + tableName;
 
-        try (PreparedStatement statement = connection.prepareStatement(query);
-                ResultSet rs = statement.executeQuery()) {
+    // try (PreparedStatement statement = connection.prepareStatement(query);
+    // ResultSet rs = statement.executeQuery()) {
 
-            while (rs.next()) {
-                String dateStr = rs.getString("date");
-                LocalDate date = LocalDate.parse(dateStr, dateFormatter);
-                Double price = rs.getDouble("close");
-                coinData.put(date, price);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-        }
+    // while (rs.next()) {
+    // String dateStr = rs.getString("date");
+    // LocalDate date = LocalDate.parse(dateStr, dateFormatter);
+    // Double price = rs.getDouble("close");
+    // coinData.put(date, price);
+    // }
+    // } catch (SQLException e) {
+    // e.printStackTrace();
+    // throw e;
+    // }
 
-        return coinData;
-    }
+    // return coinData;
+    // }
 
     public Kline getLastKline() throws SQLException {
         String query = "SELECT date, open, high, low, close  FROM " + tableName
@@ -125,7 +126,6 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
 
             while (rs.next()) {
                 String dateStr = rs.getString("date");
-                LocalDate date = LocalDate.parse(dateStr, dateFormatter);
                 Double open = rs.getDouble("open");
                 Double high = rs.getDouble("high");
                 Double low = rs.getDouble("low");
@@ -135,6 +135,8 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
             return klineHistory;
 
         } catch (SQLException e) {
+
+            // TO FIXXXXXXXXX 
             e.printStackTrace();
             throw e;
         }
@@ -231,14 +233,14 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
 
             double open = previousClose;
 
-            double percentageFluctuation = (random.nextDouble() * 4 - 2) / 100; 
+            double percentageFluctuation = (random.nextDouble() * 4 - 2) / 100;
             double close = open + (open * percentageFluctuation);
             close = Math.round(close * 100.0) / 100.0;
 
             double high = Math.max(open, close) + (random.nextDouble() * 0.02 * open);
             high = Math.round(high * 100.0) / 100.0;
 
-            double low = Math.min(open, close) - (random.nextDouble() * 0.02 * open); 
+            double low = Math.min(open, close) - (random.nextDouble() * 0.02 * open);
             low = Math.round(low * 100.0) / 100.0;
             if (low < 0) {
                 low = 0;
@@ -297,10 +299,4 @@ public class CoinDAO implements KeyValueDAO<LocalDate, Kline> {
             previousClose = close;
         }
     }
-
-    @Override
-    public TreeMap<LocalDate, Kline> getData() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

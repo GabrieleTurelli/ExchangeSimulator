@@ -17,6 +17,11 @@ public class DbInitializer {
         this.coins = coins;
     }
 
+    public DbInitializer(HashMap<String, Double> coins, Connection connection) throws IOException, SQLException {
+        this.connection = connection;
+        this.coins = coins;
+    }
+
     public void initializeDatabase() throws SQLException, IOException {
         System.out.println("Initializing Database.");
 
