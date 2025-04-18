@@ -106,7 +106,7 @@ public class OrderBookDAO {
     }
 
     public void insertOrderBook(OrderBook orderBook) {
-        String query = "INSERT INTO " + tableName + " (price, quantity, isBid) VALUES (?, ?, ?)";
+        String query = "INSERT OR REPLACE INTO " + tableName + " (price, quantity, isBid) VALUES (?, ?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             for (OrderBookLevel orderBookLevel : orderBook) {
@@ -130,8 +130,8 @@ public class OrderBookDAO {
         double bidQuantity;
 
         for (int i = 0; i < rows; i++) {
-            bidPrice = Math.round((bidPrice - priceStep) * 100.0) / 100.0;
-            askPrice = Math.round((askPrice + priceStep) * 100.0) / 100.0;
+            bidPrice = Math.max(Math.round((bidPrice - priceStep) * 100.0) / 100.0, 0);
+            askPrice = Math.max(Math.round((askPrice + priceStep) * 100.0) / 100.0, 0);
             bidQuantity = Math.round(Math.random() * 100);
             askQuantity = Math.round(Math.random() * 100);
 

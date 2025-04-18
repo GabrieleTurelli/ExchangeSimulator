@@ -77,7 +77,7 @@ public class Server {
 
         RandomPriceGeneratorService priceService = new RandomPriceGeneratorService(
                 coins.keySet().toArray(String[]::new));
-        priceService.start(1);
+        priceService.start(5);
 
         try (
                 ServerSocket serverSocket = new ServerSocket(PORT)) {
@@ -142,9 +142,9 @@ public class Server {
 
                     case "\\get-history" -> response = marketServer.handleGetHistory(trimmedRequest);
 
-                    case "\\get-order-book" -> response = marketServer.handleGetOrderBook(trimmedRequest);
+                    case "\\get-orderbook" -> response = marketServer.handleGetOrderBook(trimmedRequest);
 
-                    case "\\get-order-book-level" -> response = marketServer.handleGetOrderBookLevel(trimmedRequest);
+                    case "\\get-orderbook-level" -> response = marketServer.handleGetOrderBookLevel(trimmedRequest);
 
                     case "\\get-wallet" -> response = userServer.handleGetWallet(trimmedRequest);
 
