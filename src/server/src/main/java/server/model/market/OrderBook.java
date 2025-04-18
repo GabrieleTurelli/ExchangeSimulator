@@ -3,9 +3,11 @@ package server.model.market;
 import java.util.ArrayList;
 
 public class OrderBook extends ArrayList<OrderBookLevel> {
+    private final String coin;
 
-    public OrderBook() {
+    public OrderBook(String coin) {
         super();
+        this.coin  = coin;
     }
 
     @Override
@@ -18,4 +20,8 @@ public class OrderBook extends ArrayList<OrderBookLevel> {
 
     }
 
+    public String getCoin(){
+        return this.coin;
+
+    }
 }

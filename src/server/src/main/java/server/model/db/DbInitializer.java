@@ -11,6 +11,7 @@ public class DbInitializer {
     private final Connection connection;
     private final HashMap<String, Double> coins;
     private final int historyDays = 50;
+    private final int orderBooklevelsNumber = 10;
 
     public DbInitializer(HashMap<String, Double> coins) throws IOException, SQLException {
         this.connection = DbConnector.getConnection();
@@ -36,9 +37,13 @@ public class DbInitializer {
             createCoinTable(coin);
             createOrderBookTable(coin);
 
-            System.out.println("Populating the table with random data for: " + coin);
+            System.out.println("Populating the coin table with random data for: " + coin);
             CoinDAO coinDao = new CoinDAO(coin);
             coinDao.populateCoinTable(coins.get(coin), historyDays);
+
+            System.out.println("Populating the orderBook table with random data for: " + coin);
+            OrderBookDAO orderBookDAO = new OrderBookDAO(coin);
+            orderBookDAO.populateOrderBookTable(coins.get(coin), orderBooklevelsNumber);
         }
         // createUsersTable();
 
@@ -112,10 +117,10 @@ public class DbInitializer {
 
     public void createOrderBookTable(String coinName) {
         String createCoinOrderBookTable = """
-                    CREATE TABLE IF NOT EXISTS orderbooks_%s (
+                    CREATE TABLE IF NOT EXISTS orderbook_%s (
                         price REAL PRIMARY KEY,
                         quantity REAL NOT NULL,
-                        is_bid BOOLEAN NOT NULL
+                        isBid BOOLEAN NOT NULL
                     );
                 """.formatted(coinName);
 

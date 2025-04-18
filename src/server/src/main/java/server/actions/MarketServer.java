@@ -8,8 +8,11 @@ import java.util.List;
 import server.model.db.CoinDAO;
 import server.model.db.CoinsDAO;
 import server.model.db.DbConnector;
+import server.model.db.OrderBookDAO;
 import server.model.market.Kline;
 import server.model.market.KlineHistory;
+import server.model.market.OrderBook;
+import server.model.market.OrderBookLevel;
 
 public class MarketServer {
 
@@ -34,6 +37,47 @@ public class MarketServer {
         } catch (IOException | SQLException e) {
             e.printStackTrace();
             return "ERROR;Failed to retrieve coins";
+        }
+    }
+
+    public String handleGetOrderBook(String request) {
+        String[] parts = request.trim().split(" ", 2);
+        if (parts.length < 2) {
+            return "ERROR;Invalid request";
+        }
+        String coin = parts[1];
+
+        try {
+            OrderBookDAO orderBookDAO = new OrderBookDAO(coin, connection);
+            OrderBook orderBook = orderBookDAO.getOrderBook();
+            return "OK;" + orderBook.toString();
+        } catch (SQLException e) {
+            System.err.println("Coin not found in getOrderBook for coin: " + coin);
+            e.printStackTrace();
+            return "ERROR;Coin not found";
+        }
+    }
+
+    public String handleGetOrderBookLevel(String request) {
+        String[] parts = request.trim().split(" ");
+        if (parts.length < 2) {
+            return "ERROR;Invalid request";
+        }
+        String coin = parts[1];
+        Double price = Double.valueOf(parts[2]);
+
+        try {
+            OrderBookDAO orderBookDAO = new OrderBookDAO(coin, connection);
+            OrderBookLevel orderBookLevel = orderBookDAO.getOrderBookLevel(price);
+
+            if (orderBookLevel == null) {
+                return "ERROR;Order book level not found";
+            }
+            return "OK;" + orderBookLevel.toString();
+        } catch (SQLException e) {
+            System.err.println("Coin not found in getOrderBookLevel for coin: " + coin);
+            e.printStackTrace();
+            return "ERROR;Coin not found";
         }
     }
 

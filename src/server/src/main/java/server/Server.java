@@ -60,6 +60,15 @@ public class Server {
                 dbInitializer.dropTable("coin_" + coin);
             }
             dbInitializer.dropTable("Coins");
+            dbInitializer.dropTable("coin_BTC");
+            dbInitializer.dropTable("coin_SOL");
+            dbInitializer.dropTable("coin_ETH");
+            dbInitializer.dropTable("coin_XRP");
+            dbInitializer.dropTable("orderbook_BTC");
+            dbInitializer.dropTable("orderbook_SOL");
+            dbInitializer.dropTable("orderbook_ETH");
+            dbInitializer.dropTable("orderbook_XRP");
+            dbInitializer.dropTable("Coins");
             dbInitializer.initializeDatabase();
         }
 
@@ -98,8 +107,7 @@ public class Server {
                 OutputStream output = clientSocket.getOutputStream();
                 BufferedReader reader = new BufferedReader(
                         new InputStreamReader(input, java.nio.charset.StandardCharsets.UTF_8));
-                PrintWriter writer = new PrintWriter(output, true, java.nio.charset.StandardCharsets.UTF_8)) { // Auto-flush
-                                                                                                               // true
+                PrintWriter writer = new PrintWriter(output, true, java.nio.charset.StandardCharsets.UTF_8)) {
 
             String request;
             while ((request = reader.readLine()) != null) {
@@ -133,6 +141,10 @@ public class Server {
                     case "\\get-daily-market-data" -> response = marketServer.handleGetKline(trimmedRequest);
 
                     case "\\get-history" -> response = marketServer.handleGetHistory(trimmedRequest);
+
+                    case "\\get-order-book" -> response = marketServer.handleGetOrderBook(trimmedRequest);
+
+                    case "\\get-order-book-level" -> response = marketServer.handleGetOrderBookLevel(trimmedRequest);
 
                     case "\\get-wallet" -> response = userServer.handleGetWallet(trimmedRequest);
 

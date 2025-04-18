@@ -58,27 +58,6 @@ public class CoinDAO {
         }
     }
 
-    // public TreeMap<LocalDate, Double> getCoinPrice() throws SQLException {
-    // TreeMap<LocalDate, Double> coinData = new TreeMap<>();
-    // String query = "SELECT date, close FROM " + tableName;
-
-    // try (PreparedStatement statement = connection.prepareStatement(query);
-    // ResultSet rs = statement.executeQuery()) {
-
-    // while (rs.next()) {
-    // String dateStr = rs.getString("date");
-    // LocalDate date = LocalDate.parse(dateStr, dateFormatter);
-    // Double price = rs.getDouble("close");
-    // coinData.put(date, price);
-    // }
-    // } catch (SQLException e) {
-    // e.printStackTrace();
-    // throw e;
-    // }
-
-    // return coinData;
-    // }
-
     public Kline getLastKline() throws SQLException {
         String query = "SELECT date, open, high, low, close  FROM " + tableName
                 + " WHERE date = (SELECT MAX(date) FROM " + tableName + ")";
@@ -125,7 +104,6 @@ public class CoinDAO {
                 ResultSet rs = statement.executeQuery()) {
 
             while (rs.next()) {
-                String dateStr = rs.getString("date");
                 Double open = rs.getDouble("open");
                 Double high = rs.getDouble("high");
                 Double low = rs.getDouble("low");
@@ -136,7 +114,7 @@ public class CoinDAO {
 
         } catch (SQLException e) {
 
-            // TO FIXXXXXXXXX 
+            // TO FIXXXXXXXXX
             e.printStackTrace();
             throw e;
         }
@@ -222,81 +200,89 @@ public class CoinDAO {
     }
 
     private void populateDataFromStart(double initialPrice, int rows) {
-        LocalDate initialDate = LocalDate.now().minusDays(rows);
-        System.out.printf("Populating %s table since %s%n", tableName, initialDate);
-        Random random = new Random();
+        LocalDate start = LocalDate.now().minusDays(rows);
+        Random rnd = new Random();
+        double price = initialPrice;
 
-        double previousClose = initialPrice;
+        String sql = "INSERT OR REPLACE INTO " + tableName +
+                " (date, open, high, low, close) VALUES (?,?,?,?,?)";
 
-        for (int i = 0; i <= rows; i++) {
-            LocalDate date = initialDate.plusDays(i);
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            connection.setAutoCommit(false);
 
-            double open = previousClose;
-
-            double percentageFluctuation = (random.nextDouble() * 4 - 2) / 100;
-            double close = open + (open * percentageFluctuation);
-            close = Math.round(close * 100.0) / 100.0;
-
-            double high = Math.max(open, close) + (random.nextDouble() * 0.02 * open);
-            high = Math.round(high * 100.0) / 100.0;
-
-            double low = Math.min(open, close) - (random.nextDouble() * 0.02 * open);
-            low = Math.round(low * 100.0) / 100.0;
-            if (low < 0) {
-                low = 0;
+            for (int i = 0; i < rows; i++) {
+                LocalDate date = start.plusDays(i);
+                price = addKlineBatch(ps, date, price, rnd);
             }
 
-            if (high < Math.max(open, close)) {
-                high = Math.max(open, close);
+            ps.executeBatch();
+            connection.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException ignored) {
             }
-
-            Kline kline = new Kline(open, high, low, close);
-            addData(date, kline);
-
-            previousClose = close;
         }
     }
 
-    private void populateDataFromLastDate(LocalDate lastDate, double initialPrice) throws SQLException {
+    private void populateDataFromLastDate(LocalDate lastDate, double fallbackPrice) {
         LocalDate today = LocalDate.now();
-
-        if (lastDate.equals(today)) {
-            System.out.println("today is the date");
+        if (lastDate.isEqual(today))
             return;
-        }
 
-        System.out.printf("Populating %s table from %s to %s%n", tableName, lastDate, today);
-        Random random = new Random();
+        Random rnd = new Random();
+        double price = (getLastPriceSafely(fallbackPrice));
 
-        double previousClose = getLastPrice();
+        String sql = "INSERT OR REPLACE INTO " + tableName +
+                " (date, open, high, low, close) VALUES (?,?,?,?,?)";
 
-        if (previousClose == 0.0) {
-            previousClose = initialPrice;
-        }
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            connection.setAutoCommit(false);
 
-        for (LocalDate date = lastDate.plusDays(1); !date.isAfter(today); date = date.plusDays(1)) {
-            double open = previousClose;
-
-            double fluctuation = random.nextDouble() * 20 - 10;
-            double close = open + fluctuation;
-            close = Math.round(close * 100.0) / 100.0;
-
-            double high = Math.max(open, close) + random.nextDouble() * 5;
-            high = Math.round(high * 100.0) / 100.0;
-
-            double low = Math.min(open, close) - random.nextDouble() * 5;
-            low = Math.round(low * 100.0) / 100.0;
-            if (low < 0) {
-                low = 0;
-            }
-            if (high < Math.max(open, close)) {
-                high = Math.max(open, close);
+            for (LocalDate d = lastDate.plusDays(1); !d.isAfter(today); d = d.plusDays(1)) {
+                price = addKlineBatch(ps, d, price, rnd);
             }
 
-            Kline kline = new Kline(open, high, low, close);
-            addData(date, kline);
+            ps.executeBatch();
+            connection.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException ignored) {
+            }
+        }
+    }
 
-            previousClose = close;
+    private double addKlineBatch(PreparedStatement ps, LocalDate date,
+            double previousClose, Random rnd) throws SQLException {
+
+        double open = previousClose;
+        double close = round2(open * (1 + (rnd.nextDouble() * 6 - 3) / 100));
+        double high = round2(Math.max(open, close) * (1 + rnd.nextDouble() * 0.02));
+        double low = round2(Math.min(open, close) * (1 - rnd.nextDouble() * 0.02));
+        low = Math.max(low, 0);
+
+        ps.setString(1, date.format(dateFormatter));
+        ps.setDouble(2, open);
+        ps.setDouble(3, high);
+        ps.setDouble(4, low);
+        ps.setDouble(5, close);
+        ps.addBatch();
+
+        return close;
+    }
+
+    private static double round2(double v) {
+        return Math.round(v * 100.0) / 100.0;
+    }
+
+    private double getLastPriceSafely(double fallback) {
+        try {
+            return getLastPrice();
+        } catch (SQLException e) {
+            return fallback;
         }
     }
 }

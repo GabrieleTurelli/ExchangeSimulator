@@ -26,7 +26,7 @@ public class RandomPriceGeneratorService {
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
     }
 
-    private void generateAndUpdatePrice(CoinDAO coinDao) throws SQLException {
+    private void generateAndUpdate(CoinDAO coinDao) throws SQLException {
 
         Kline currentKline = coinDao.getLastKline();
         double fluctuation = random.nextDouble() * 2 - 1; 
@@ -59,7 +59,7 @@ public class RandomPriceGeneratorService {
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 for (CoinDAO coinDao : coinsDao) {
-                    generateAndUpdatePrice(coinDao);
+                    generateAndUpdate(coinDao);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
