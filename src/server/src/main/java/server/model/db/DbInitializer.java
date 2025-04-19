@@ -5,139 +5,102 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
+import java.util.Map;
+import javax.sql.DataSource;
 
 public class DbInitializer {
-    private final Connection connection;
-    private final HashMap<String, Double> coins;
-    private final int historyDays = 50;
-    private final int orderBooklevelsNumber = 10;
+    private final DataSource dataSource;
+    private final Map<String, Double> coins;
+    private final int historyDays          = 50;
+    private final int orderBookLevelsNumber = 10;
 
-    public DbInitializer(HashMap<String, Double> coins) throws IOException, SQLException {
-        this.connection = DbConnector.getConnection();
-        this.coins = coins;
-    }
-
-    public DbInitializer(HashMap<String, Double> coins, Connection connection) throws IOException, SQLException {
-        this.connection = connection;
-        this.coins = coins;
+    public DbInitializer(Map<String, Double> coins, DataSource dataSource) {
+        this.coins        = coins;
+        this.dataSource   = dataSource;
     }
 
     public void initializeDatabase() throws SQLException, IOException {
-        System.out.println("Initializing Database.");
-
-        System.out.println("Creating coins table");
         createCoinsTable();
-        System.out.println("Creating users table");
         createUsersTable();
-
         for (String coin : coins.keySet()) {
-            System.out.println("Creating coin : " + coin + "  table");
             addCoinToCoinsTable(coin);
             createCoinTable(coin);
             createOrderBookTable(coin);
 
-            System.out.println("Populating the coin table with random data for: " + coin);
-            CoinDAO coinDao = new CoinDAO(coin);
-            coinDao.populateCoinTable(coins.get(coin), historyDays);
+            new CoinDAO(coin, dataSource)
+                .populateCoinTable(coins.get(coin), historyDays);
 
-            System.out.println("Populating the orderBook table with random data for: " + coin);
-            OrderBookDAO orderBookDAO = new OrderBookDAO(coin);
-            orderBookDAO.populateOrderBookTable(coins.get(coin), orderBooklevelsNumber);
-        }
-        // createUsersTable();
-
-        System.out.println("Database initialized successfully.");
-    }
-
-    public void initializeCoin(String coin, Double initialPrice) {
-
-    }
-
-    public void createCoinsTable() {
-
-        String createCoinsTable = """
-                CREATE TABLE IF NOT EXISTS Coins (
-                    pair TEXT NOT NULL UNIQUE,
-                    PRIMARY KEY (pair)
-                    );
-                    """;
-        executeStatement(createCoinsTable);
-
-    }
-
-    public void addCoinToCoinsTable(String coin) {
-        String insertCoin = """
-                    INSERT OR IGNORE INTO Coins (pair)
-                    VALUES (?);
-                """;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(insertCoin)) {
-            preparedStatement.setString(1, coin);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            new OrderBookDAO(coin, dataSource)
+                .populateOrderBookTable(coins.get(coin), orderBookLevelsNumber);
         }
     }
 
-    public void createCoinTable(String coin) {
-        String coinTable = """
-                    CREATE TABLE IF NOT EXISTS coin_%s (
-                        date TEXT NOT NULL,
-                        open REAL NOT NULL,
-                        high REAL NOT NULL,
-                        low REAL NOT NULL,
-                        close REAL NOT NULL,
-                        PRIMARY KEY (date)
-                    );
-                """.formatted(coin);
-
-        executeStatement(coinTable);
-    }
-
-    public void createUsersTable() {
-        String usersTable = """
-                    CREATE TABLE IF NOT EXISTS Users (
-                        username TEXT NOT NULL UNIQUE,
-                        password TEXT
-                    );
-                """;
-        executeStatement(usersTable);
-    }
-
-    public void createUserTable(Connection connection, String username) {
-        String userTable = """
-                    CREATE TABLE IF NOT EXISTS user_%s (
-                        coin TEXT NOT NULL,
-                        quantity REAL NOT NULL,
-                    );
-                """.formatted(username);
-
-        executeStatement(userTable);
-    }
-
-    public void createOrderBookTable(String coinName) {
-        String createCoinOrderBookTable = """
-                    CREATE TABLE IF NOT EXISTS orderbook_%s (
-                        price REAL PRIMARY KEY,
-                        quantity REAL NOT NULL,
-                        isBid BOOLEAN NOT NULL
-                    );
-                """.formatted(coinName);
-
-        executeStatement(createCoinOrderBookTable);
-    }
-
-    private void executeStatement(String sql) {
-        try (Statement statement = connection.createStatement()) {
-            statement.execute(sql);
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void createCoinsTable() throws SQLException {
+        String sql = "CREATE TABLE IF NOT EXISTS Coins ("
+                   + "pair TEXT NOT NULL UNIQUE, PRIMARY KEY(pair));";
+        try (Connection conn = dataSource.getConnection();
+             Statement stmt   = conn.createStatement()) {
+            stmt.execute(sql);
         }
     }
 
-    public void dropTable(String tableName) {
-        String dropTableQuery = "DROP TABLE IF EXISTS " + tableName;
-        executeStatement(dropTableQuery);
-        System.out.println("Table '" + tableName + "' has been removed (if it existed).");
+    public void addCoinToCoinsTable(String coin) throws SQLException {
+        String sql = "INSERT OR IGNORE INTO Coins (pair) VALUES (?);";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, coin);
+            ps.executeUpdate();
+        }
+    }
+
+    public void createCoinTable(String coin) throws SQLException {
+        String sql = String.format(
+            "CREATE TABLE IF NOT EXISTS coin_%s ("
+          + "date TEXT NOT NULL, open REAL NOT NULL, high REAL NOT NULL,"
+          + "low REAL NOT NULL, close REAL NOT NULL, PRIMARY KEY(date));",
+            coin);
+        try (Connection conn = dataSource.getConnection();
+             Statement stmt   = conn.createStatement()) {
+            stmt.execute(sql);
+        }
+    }
+
+    public void createUsersTable() throws SQLException {
+        String sql = "CREATE TABLE IF NOT EXISTS Users ("
+                   + "username TEXT NOT NULL UNIQUE, password TEXT);";
+        try (Connection conn = dataSource.getConnection();
+             Statement stmt   = conn.createStatement()) {
+            stmt.execute(sql);
+        }
+    }
+
+    public void createUserTable(String username) throws SQLException {
+        String sql = String.format(
+            "CREATE TABLE IF NOT EXISTS user_%s ("
+          + "coin TEXT NOT NULL, quantity REAL NOT NULL);",
+            username);
+        try (Connection conn = dataSource.getConnection();
+             Statement stmt   = conn.createStatement()) {
+            stmt.execute(sql);
+        }
+    }
+
+    public void createOrderBookTable(String coinName) throws SQLException {
+        String sql = String.format(
+            "CREATE TABLE IF NOT EXISTS orderbook_%s ("
+          + "price REAL PRIMARY KEY, quantity REAL NOT NULL, isBid BOOLEAN NOT NULL);",
+            coinName);
+        try (Connection conn = dataSource.getConnection();
+             Statement stmt   = conn.createStatement()) {
+            stmt.execute(sql);
+        }
+    }
+
+    public void dropTable(String tableName) throws SQLException {
+        String sql = "DROP TABLE IF EXISTS " + tableName;
+        try (Connection conn = dataSource.getConnection();
+             Statement stmt   = conn.createStatement()) {
+            stmt.execute(sql);
+        }
     }
 }

@@ -1,129 +1,98 @@
 package server.model.db;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import javax.sql.DataSource;
 import server.model.market.OrderBook;
 import server.model.market.OrderBookLevel;
 
 public class OrderBookDAO {
-    private final Connection connection;
-    private final String coin;
+    private final DataSource dataSource;
     private final String tableName;
-    private final Double priceStep = 0.2;
+    private final double priceStep = 0.2;
 
-    public OrderBookDAO(String coin) throws IOException, SQLException {
-        this(coin, DbConnector.getConnection());
-    }
-
-    public OrderBookDAO(String coin, Connection connection) {
-        this.coin = coin;
+    public OrderBookDAO(String coin, DataSource dataSource) {
+        this.dataSource = dataSource;
         this.tableName = "orderbook_" + coin;
-        this.connection = connection;
     }
 
     public OrderBook getOrderBook() throws SQLException {
-        String query = "SELECT * FROM " + tableName;
-        OrderBook orderBook = new OrderBook(coin);
-
-        try (PreparedStatement statement = connection.prepareStatement(query);
-                ResultSet rs = statement.executeQuery()) {
-
+        String sql = "SELECT price, quantity, isBid FROM " + tableName;
+        OrderBook orderBook = new OrderBook(tableName.replace("orderbook_", ""));
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                Double price = rs.getDouble("price");
-                Double quantity = rs.getDouble("quantity");
-                Boolean isBid = rs.getBoolean("isBid");
-                orderBook.add(new OrderBookLevel(price, quantity, isBid));
+                OrderBookLevel lvl = new OrderBookLevel(
+                        rs.getDouble("price"),
+                        rs.getDouble("quantity"),
+                        rs.getBoolean("isBid"));
+                orderBook.add(lvl);
             }
-
-            return orderBook;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-
         }
+        return orderBook;
     }
 
-    public OrderBookLevel getOrderBookLevel(Double priceTarget) throws SQLException {
-        String query = "SELECT * FROM " + tableName + " WHERE price = ?";
-        Double price;
-        Double quantity;
-        Boolean isBid;
-
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setDouble(1, priceTarget);
-            try (ResultSet rs = statement.executeQuery()) {
+    public OrderBookLevel getOrderBookLevel(double priceTarget) throws SQLException {
+        String sql = "SELECT price, quantity, isBid FROM " + tableName + " WHERE price = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDouble(1, priceTarget);
+            try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    price = rs.getDouble("price");
-                    quantity = rs.getDouble("quantity");
-                    isBid = rs.getBoolean("isBid");
-                    return new OrderBookLevel(price, quantity, isBid);
-                } else {
-                    return null;
+                    return new OrderBookLevel(
+                            rs.getDouble("price"),
+                            rs.getDouble("quantity"),
+                            rs.getBoolean("isBid"));
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
         }
+        return null;
     }
 
-    public void updateOrderBookLevel(OrderBookLevel orderBookLevel) throws SQLException {
-
-        String query = "UPDATE " + tableName + " SET quantity = ?, isBid = ? WHERE price = ?";
-
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setDouble(1, orderBookLevel.getQuantity());
-            statement.setBoolean(2, orderBookLevel.getIsBid());
-            statement.setDouble(3, orderBookLevel.getPrice());
-            int updatedRows = statement.executeUpdate();
-
-            if (updatedRows == 0) {
-                insertOrderBookLevel(orderBookLevel);
+    public void updateOrderBookLevel(OrderBookLevel lvl) throws SQLException {
+        String sql = "UPDATE " + tableName + " SET quantity = ?, isBid = ? WHERE price = ?";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDouble(1, lvl.getQuantity());
+            ps.setBoolean(2, lvl.getIsBid());
+            ps.setDouble(3, lvl.getPrice());
+            int updated = ps.executeUpdate();
+            if (updated == 0) {
+                insertOrderBookLevel(lvl);
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
         }
     }
 
-    public void insertOrderBookLevel(OrderBookLevel orderBookLevel) throws SQLException {
-        String query = "INSERT INTO " + tableName + " (price, quantity, isBid) VALUES (?, ?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setDouble(1, orderBookLevel.getPrice());
-            statement.setDouble(2, orderBookLevel.getQuantity());
-            statement.setBoolean(3, orderBookLevel.getIsBid());
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public void insertOrderBookLevel(OrderBookLevel lvl) throws SQLException {
+        String sql = "INSERT INTO " + tableName + " (price, quantity, isBid) VALUES (?, ?, ?)";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDouble(1, lvl.getPrice());
+            ps.setDouble(2, lvl.getQuantity());
+            ps.setBoolean(3, lvl.getIsBid());
+            ps.executeUpdate();
         }
-
     }
 
-    public void insertOrderBook(OrderBook orderBook) {
-        String query = "INSERT OR REPLACE INTO " + tableName + " (price, quantity, isBid) VALUES (?, ?, ?)";
-
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            for (OrderBookLevel orderBookLevel : orderBook) {
-                statement.setDouble(1, orderBookLevel.getPrice());
-                statement.setDouble(2, orderBookLevel.getQuantity());
-                statement.setBoolean(3, orderBookLevel.getIsBid());
-                statement.addBatch();
+    public void insertOrderBook(OrderBook orderBook) throws SQLException {
+        String sql = "INSERT OR REPLACE INTO " + tableName + " (price, quantity, isBid) VALUES (?, ?, ?)";
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (OrderBookLevel lvl : orderBook) {
+                ps.setDouble(1, lvl.getPrice());
+                ps.setDouble(2, lvl.getQuantity());
+                ps.setBoolean(3, lvl.getIsBid());
+                ps.addBatch();
             }
-            statement.executeBatch();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            ps.executeBatch();
         }
-
     }
 
-    public void populateOrderBookTable(Double initialPrice, int rows) {
-        OrderBook orderBook = new OrderBook(coin);
+    public void populateOrderBookTable(Double initialPrice, int rows) throws SQLException {
+        OrderBook orderBook = new OrderBook(tableName.replace("orderbook_", ""));
         double bidPrice = initialPrice - 0.2;
         double askPrice = initialPrice + 0.2;
         double askQuantity;
@@ -141,5 +110,4 @@ public class OrderBookDAO {
 
         insertOrderBook(orderBook);
     }
-
 }

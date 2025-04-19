@@ -1,37 +1,47 @@
 package server.model.db;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 public class DbConnector {
-    private static final String DB_DIRECTORY = "db";
-    private static final String DB_PATH = DB_DIRECTORY + "/exchange.db";
-    private static final String URL = "jdbc:sqlite:" + DB_PATH;
+    private static final String DB_DIR  = "db";
+    private static final String DB_FILE = "exchange.db";
+    // enforce WAL, shared cache, 5 s busy-timeout
+    private static final String URL = "jdbc:sqlite:" + DB_DIR + "/" + DB_FILE
+        + "?journal_mode=WAL&cache=shared&busy_timeout=5000";
 
-    public static Connection getConnection() throws IOException, SQLException {
-        checkDbExists();
-        return DriverManager.getConnection(URL);
+    private static final HikariDataSource DS;
+    static {
+        try {
+            ensureDbExists();
+        } catch (IOException e) {
+            throw new RuntimeException("Could not create DB file", e);
+        }
+        HikariConfig cfg = new HikariConfig();
+        cfg.setJdbcUrl(URL);
+        cfg.setMaximumPoolSize(5);
+        cfg.setMinimumIdle(1);
+        cfg.setPoolName("SqlitePool");
+        // you can tune leakDetectionThreshold, connectionTimeout, etc.
+        DS = new HikariDataSource(cfg);
     }
 
-    private static void checkDbExists() throws IOException {
-        File dbDirectory = new File(DB_DIRECTORY);
-        System.out.println("Database directory: " + dbDirectory.getAbsolutePath());
-        if (!dbDirectory.exists()) {
-            boolean dirCreated = dbDirectory.mkdirs();
-            if (dirCreated) {
-                System.out.println("Database directory created: " + DB_DIRECTORY);
-            }
-        }
+    public static DataSource getDataSource() {
+        return DS;
+    }
 
-        File dbFile = new File(DB_PATH);
-        if (!dbFile.exists()) {
-            boolean fileCreated = dbFile.createNewFile();
-            if (fileCreated) {
-                System.out.println("Database file created: " + DB_PATH);
-            }
+    private static void ensureDbExists() throws IOException {
+        File dir = new File(DB_DIR);
+        if (!dir.exists() && !dir.mkdirs()) {
+            throw new IOException("Failed to create directory " + DB_DIR);
+        }
+        File db = new File(dir, DB_FILE);
+        if (!db.exists() && !db.createNewFile()) {
+            throw new IOException("Failed to create file " + db.getPath());
         }
     }
 }
+

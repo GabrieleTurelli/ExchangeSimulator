@@ -1,130 +1,103 @@
 package server.model.db;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.sql.DataSource;
+import server.model.market.OrderBook;
+import server.model.market.OrderBookLevel;
 
-
+/**
+ * DAO for user operations using a DataSource.
+ */
 public class UsersDAO {
+    private final DataSource dataSource;
 
-    private final Connection connection;
-
-
-    public UsersDAO() throws SQLException, IOException {
-        this.connection =  DbConnector.getConnection();
-
+    public UsersDAO(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
-
-    public UsersDAO(Connection connection){
-        this.connection = connection;
-    }
-
-
 
     public boolean addUser(String username, String password) {
-        String query = """
-            INSERT INTO Users (username, password)
-            VALUES (?, ?);
-        """;
-
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, username);
-            statement.setString(2, password);
-            statement.executeUpdate();
+        String sql = "INSERT INTO Users (username, password) VALUES (?, ?)";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            ps.setString(2, password);
+            ps.executeUpdate();
             return true;
-        } catch (Exception e) {
-            System.out.println("Failed to add user");
+        } catch (SQLException e) {
+            System.err.println("Failed to add user: " + e.getMessage());
             return false;
         }
     }
 
-    public void removeUser(String username) {
-        String dropTableQuery = "DROP TABLE IF EXISTS user_" + username;
-        String deleteUserQuery = "DELETE FROM Users WHERE username = ?";
-
-        try {
-            connection.setAutoCommit(false);
-
-            try (PreparedStatement dropTableStatement = connection.prepareStatement(dropTableQuery)) {
-                dropTableStatement.executeUpdate();
+    public boolean removeUser(String username) {
+        String dropTableSql   = "DROP TABLE IF EXISTS user_" + username;
+        String deleteUserSql  = "DELETE FROM Users WHERE username = ?";
+        try (Connection conn = dataSource.getConnection()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement dropStmt = conn.prepareStatement(dropTableSql);
+                 PreparedStatement delStmt  = conn.prepareStatement(deleteUserSql)) {
+                dropStmt.executeUpdate();
+                delStmt.setString(1, username);
+                delStmt.executeUpdate();
             }
-
-            try (PreparedStatement deleteUserStatement = connection.prepareStatement(deleteUserQuery)) {
-                deleteUserStatement.setString(1, username);
-                deleteUserStatement.executeUpdate();
-            }
-
-            connection.commit();
-
-        } catch (Exception e) {
-            System.out.println("Failed to remove user: " + e.getMessage());
+            conn.commit();
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Failed to remove user: " + e.getMessage());
+            return false;
         }
     }
 
     public List<String> getAllUsers() {
         List<String> users = new ArrayList<>();
-        String query = "SELECT username FROM Users";
-
-        try (PreparedStatement statement = connection.prepareStatement(query);
-             ResultSet resultSet = statement.executeQuery()) {
-
-            while (resultSet.next()) {
-                users.add(resultSet.getString("username"));
+        String sql = "SELECT username FROM Users";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                users.add(rs.getString("username"));
             }
-        } catch (Exception e) {
-            System.out.println("User doesn't exists");
+        } catch (SQLException e) {
+            System.err.println("Failed to fetch users: " + e.getMessage());
         }
-
         return users;
     }
 
     public boolean userExists(String username) {
-        String query = "SELECT COUNT(*) FROM Users WHERE LOWER(username) = LOWER(?)";
-    
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            System.out.println("Checking username: '" + username + "'");
-            statement.setString(1, username);
-    
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    int count = resultSet.getInt(1);
-                    System.out.println("User count: " + count);
-                    return count > 0;
-                } else {
-                    System.out.println("No result from query.");
+        String sql = "SELECT COUNT(*) FROM Users WHERE LOWER(username)=LOWER(?)";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
                 }
             }
-        } catch (Exception e) {
-            System.out.println("An error occurred while checking if the user exists: " + e.getMessage());
+        } catch (SQLException e) {
+            System.err.println("Error checking user existence: " + e.getMessage());
         }
-    
         return false;
     }
-    
 
     public boolean isPasswordCorrect(String username, String password) {
-        String query = "SELECT password FROM Users WHERE username = ?";
-
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, username);
-
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                String storedPassword = resultSet.getString("password");
-                return storedPassword.equals(password);
+        String sql = "SELECT password FROM Users WHERE username = ?";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return password.equals(rs.getString("password"));
+                }
             }
-        } catch (Exception e) {
-            System.out.println("Password incorrect");
+        } catch (SQLException e) {
+            System.err.println("Error validating password: " + e.getMessage());
         }
-
         return false;
     }
-
-    public Connection getConnection(){
-        return connection;
-    }
 }
+

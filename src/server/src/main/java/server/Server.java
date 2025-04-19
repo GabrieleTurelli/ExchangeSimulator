@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
 import server.actions.LoginServer;
 import server.actions.MarketServer;
 import server.actions.RegisterServer;
@@ -30,6 +32,7 @@ public class Server {
                     "ETH", 1598.39,
                     "XRP", 2.10,
                     "SOL", 113.15));
+
     private static Connection dbConnection;
     private static LoginServer loginServer;
     private static RegisterServer registerServer;
@@ -40,54 +43,40 @@ public class Server {
     // Map.of());
 
     public static void main(String[] args) throws IOException, SQLException {
+        DataSource ds = DbConnector.getDataSource();
 
-        dbConnection = DbConnector.getConnection();
-        loginServer = new LoginServer(dbConnection);
-        registerServer = new RegisterServer();
-        userServer = new UserServer();
-        marketServer = new MarketServer();
 
-        System.out.println(Arrays.toString(args));
+        loginServer = new LoginServer(ds);
+        registerServer = new RegisterServer(ds);
+        userServer = new UserServer(ds);
+        marketServer = new MarketServer(ds);
+
+        // Controlla se viene passsato il flag --init dall run.sh ed in caso inizializza
+        // il db
         boolean initMode = Arrays.stream(args)
                 .anyMatch("--init"::equals);
-        System.out.println("Init mode: " + initMode);
 
         if (initMode) {
-            DbInitializer dbInitializer = new DbInitializer(coins);
+            init();
 
-            for (String coin : coins.keySet()) {
-
-                dbInitializer.dropTable("coin_" + coin);
-            }
-            dbInitializer.dropTable("Coins");
-            dbInitializer.dropTable("coin_BTC");
-            dbInitializer.dropTable("coin_SOL");
-            dbInitializer.dropTable("coin_ETH");
-            dbInitializer.dropTable("coin_XRP");
-            dbInitializer.dropTable("orderbook_BTC");
-            dbInitializer.dropTable("orderbook_SOL");
-            dbInitializer.dropTable("orderbook_ETH");
-            dbInitializer.dropTable("orderbook_XRP");
-            dbInitializer.dropTable("Coins");
-            dbInitializer.initializeDatabase();
         }
 
-        // DbInitializer.initializeDatabase("BTC");
-        System.out.println("Database Initialized successfully.");
-
+        // Start del service per la creazione dei prezzi delle kline e dell'orderbook
+        // Necessito la generazione a random dei prezzi perche senza interazione con
+        // altri utenti i prezzi non si muoverebbero e sarebbe tutto fermo
         RandomPriceGeneratorService priceService = new RandomPriceGeneratorService(
                 coins.keySet().toArray(String[]::new));
         priceService.start(5);
 
+        // inizilizzazione del server socket sulla porta 12345
         try (
                 ServerSocket serverSocket = new ServerSocket(PORT)) {
-            System.out.println("Server started on port " + PORT);
 
             while (true) {
                 try {
+                    // creazioe e start di un nuovo thread per ogni client che richiedere la
+                    // connessione
                     Socket clientSocket = serverSocket.accept();
-                    System.out.println("Client connected from " +
-                            clientSocket.getRemoteSocketAddress());
                     new Thread(() -> handleClient(clientSocket)).start();
                 } catch (IOException e) {
                     System.err.println("Error accepting client connection: " + e.getMessage());
@@ -186,5 +175,26 @@ public class Server {
                     + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public static void init() throws IOException, SQLException {
+        DbInitializer dbInitializer = new DbInitializer(coins);
+
+        for (String coin : coins.keySet()) {
+
+            dbInitializer.dropTable("coin_" + coin);
+        }
+        dbInitializer.dropTable("Coins");
+        dbInitializer.dropTable("coin_BTC");
+        dbInitializer.dropTable("coin_SOL");
+        dbInitializer.dropTable("coin_ETH");
+        dbInitializer.dropTable("coin_XRP");
+        dbInitializer.dropTable("orderbook_BTC");
+        dbInitializer.dropTable("orderbook_SOL");
+        dbInitializer.dropTable("orderbook_ETH");
+        dbInitializer.dropTable("orderbook_XRP");
+        dbInitializer.dropTable("Coins");
+        dbInitializer.initializeDatabase();
+
     }
 }
