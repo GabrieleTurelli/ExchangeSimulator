@@ -5,6 +5,7 @@ import java.io.IOException;
 import client.model.market.DailyMarketData;
 import client.model.market.Kline;
 import client.model.market.KlineHistory;
+import client.model.market.OrderBook;
 
 public class MarketClient {
 
@@ -17,7 +18,7 @@ public class MarketClient {
             System.out.println("Request sent : " + response);
 
             if (response.contains("OK")) {
-                return response.split(";")[1].split(",") ;
+                return response.split(";")[1].split(",");
             } else {
                 return null;
             }
@@ -83,27 +84,54 @@ public class MarketClient {
 
         KlineHistory klineHistory = new KlineHistory();
 
-        if (response.contains("OK")) {
-            String klineHistoryResponse = response.split(";")[1];
-            String[] klineHistoryParts = klineHistoryResponse.split("\\|");
-
-            for (String kline : klineHistoryParts) {
-                String[] klineParts = kline.split(",");
-                double open = Double.parseDouble(klineParts[0].split("=")[1]);
-                double high = Double.parseDouble(klineParts[1].split("=")[1]);
-                double low = Double.parseDouble(klineParts[2].split("=")[1]);
-                double close = Double.parseDouble(klineParts[3].split("=")[1]);
-
-                klineHistory.add(new Kline(open, high, low, close));
-
-            }
-
-            return klineHistory;
-        } else {
-            
+        if (!response.contains("OK")) {
             System.out.println("Error in getHistory: " + response);
             return null;
         }
+
+        // if (response.contains("OK")) {
+        String klineHistoryResponse = response.split(";")[1];
+        String[] klineHistoryParts = klineHistoryResponse.split("\\|");
+
+        for (String kline : klineHistoryParts) {
+            String[] klineParts = kline.split(",");
+            double open = Double.parseDouble(klineParts[0].split("=")[1]);
+            double high = Double.parseDouble(klineParts[1].split("=")[1]);
+            double low = Double.parseDouble(klineParts[2].split("=")[1]);
+            double close = Double.parseDouble(klineParts[3].split("=")[1]);
+
+            klineHistory.add(new Kline(open, high, low, close));
+
+        }
+        return klineHistory;
+
+        // } else {
+
+        // System.out.println("Error in getHistory: " + response);
+        // return null;
+        // }
+
+    }
+
+    public static getOrderBook(String coin) throws IOException{
+        ClientConnection connection = new ClientConnection();
+        connection.sendRequest("\\get-order-book " + coin);
+        String response = connection.readResponse();
+
+        OrderBook orderBook = new OrderBook(coin);
+
+        if (!response.contains("OK")) {
+            System.out.println("Error in getOrderBook: " + response);
+            return null;
+        }
+
+        String orderBookResponse = response.split(";")[1];
+        String[] orderBookParts = orderBookResponse.split("\\|");
+
+        for(String )
+
+
+
 
     }
 }

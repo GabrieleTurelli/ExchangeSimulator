@@ -1,6 +1,5 @@
 package server.model.db;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,68 +8,57 @@ import java.util.ArrayList;
 
 public class CoinsDAO implements SingleValueDAO<String> {
 
-    private final String tableName = "Coins";
     private final Connection connection;
+    private static final String TABLE_NAME = "Coins";
 
-    public CoinsDAO() throws SQLException, IOException {
-        this.connection = DbConnector.getConnection();
-    }
-
-    public CoinsDAO(Connection connection) throws SQLException, IOException {
-        this.connection = connection; 
+    public CoinsDAO(Connection connection) {
+        this.connection = connection;
     }
 
     @Override
     public void addData(String coinPair) {
-        String sql = "INSERT OR IGNORE INTO " + tableName + "(pair) VALUES (?)";
-
+        String sql = "INSERT OR IGNORE INTO " + TABLE_NAME + " (pair) VALUES (?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, coinPair);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Failed to add coin pair: " + e.getMessage());
         }
     }
 
     @Override
     public ArrayList<String> getData() {
-        ArrayList<String> coins = new ArrayList<String>();
-        String sql = "SELECT pair FROM " + tableName;
-
+        ArrayList<String> coins = new ArrayList<>();
+        String sql = "SELECT pair FROM " + TABLE_NAME;
         try (PreparedStatement stmt = connection.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                String coinPair = rs.getString("pair");
-                coins.add(coinPair);
+                coins.add(rs.getString("pair"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Failed to fetch coin pairs: " + e.getMessage());
         }
-
         return coins;
     }
 
     @Override
     public void deleteAllData() {
-        String sql = "DELETE FROM " + tableName;
-
+        String sql = "DELETE FROM " + TABLE_NAME;
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Failed to delete all coin pairs: " + e.getMessage());
         }
     }
 
-
     public void deleteCoinPair(String coinPair) {
-        String sql = "DELETE FROM " + tableName+ " WHERE pair = ?";
-
+        String sql = "DELETE FROM " + TABLE_NAME + " WHERE pair = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, coinPair);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Failed to delete coin pair '" + coinPair + "': " + e.getMessage());
         }
     }
 }

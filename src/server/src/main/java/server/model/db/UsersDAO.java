@@ -6,24 +6,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.sql.DataSource;
-import server.model.market.OrderBook;
-import server.model.market.OrderBookLevel;
 
-/**
- * DAO for user operations using a DataSource.
- */
 public class UsersDAO {
-    private final DataSource dataSource;
+    private final Connection connection;
 
-    public UsersDAO(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public UsersDAO(Connection connection) {
+        this.connection = connection;
     }
 
     public boolean addUser(String username, String password) {
         String sql = "INSERT INTO Users (username, password) VALUES (?, ?)";
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, username);
             ps.setString(2, password);
             ps.executeUpdate();
@@ -35,29 +28,38 @@ public class UsersDAO {
     }
 
     public boolean removeUser(String username) {
-        String dropTableSql   = "DROP TABLE IF EXISTS user_" + username;
-        String deleteUserSql  = "DELETE FROM Users WHERE username = ?";
-        try (Connection conn = dataSource.getConnection()) {
-            conn.setAutoCommit(false);
-            try (PreparedStatement dropStmt = conn.prepareStatement(dropTableSql);
-                 PreparedStatement delStmt  = conn.prepareStatement(deleteUserSql)) {
-                dropStmt.executeUpdate();
-                delStmt.setString(1, username);
-                delStmt.executeUpdate();
-            }
-            conn.commit();
+        String dropTableSql = "DROP TABLE IF EXISTS user_" + username;
+        String deleteUserSql = "DELETE FROM Users WHERE username = ?";
+        try (PreparedStatement dropStmt = connection.prepareStatement(dropTableSql);
+             PreparedStatement delStmt = connection.prepareStatement(deleteUserSql)) {
+
+            connection.setAutoCommit(false);
+            dropStmt.executeUpdate();
+            delStmt.setString(1, username);
+            delStmt.executeUpdate();
+            connection.commit();
             return true;
         } catch (SQLException e) {
             System.err.println("Failed to remove user: " + e.getMessage());
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                System.err.println("Rollback failed: " + rollbackEx.getMessage());
+            }
             return false;
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                System.err.println("Could not reset auto-commit: " + ex.getMessage());
+            }
         }
     }
 
     public List<String> getAllUsers() {
         List<String> users = new ArrayList<>();
         String sql = "SELECT username FROM Users";
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
+        try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 users.add(rs.getString("username"));
@@ -70,8 +72,7 @@ public class UsersDAO {
 
     public boolean userExists(String username) {
         String sql = "SELECT COUNT(*) FROM Users WHERE LOWER(username)=LOWER(?)";
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, username);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -86,8 +87,7 @@ public class UsersDAO {
 
     public boolean isPasswordCorrect(String username, String password) {
         String sql = "SELECT password FROM Users WHERE username = ?";
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, username);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -100,4 +100,3 @@ public class UsersDAO {
         return false;
     }
 }
-

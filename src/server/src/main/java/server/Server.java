@@ -26,14 +26,16 @@ import server.model.service.RandomPriceGeneratorService;
 
 public class Server {
     private static final int PORT = 12345;
-    private static final HashMap<String, Double> coins = new HashMap<String, Double>(
+    private static final HashMap<String, Double> coins = new HashMap<>(
             Map.of(
                     "BTC", 85015.35,
                     "ETH", 1598.39,
                     "XRP", 2.10,
                     "SOL", 113.15));
 
-    private static Connection dbConnection;
+    private static Connection generatorConnection;
+    private static Connection userConnection;
+    private static Connection marketConnection;
     private static LoginServer loginServer;
     private static RegisterServer registerServer;
     private static UserServer userServer;
@@ -44,12 +46,14 @@ public class Server {
 
     public static void main(String[] args) throws IOException, SQLException {
         DataSource ds = DbConnector.getDataSource();
+        userConnection = ds.getConnection();
+        marketConnection = ds.getConnection();
+        generatorConnection = ds.getConnection();
 
-
-        loginServer = new LoginServer(ds);
-        registerServer = new RegisterServer(ds);
-        userServer = new UserServer(ds);
-        marketServer = new MarketServer(ds);
+        loginServer = new LoginServer(userConnection);
+        registerServer = new RegisterServer(userConnection);
+        userServer = new UserServer(userConnection);
+        marketServer = new MarketServer(marketConnection);
 
         // Controlla se viene passsato il flag --init dall run.sh ed in caso inizializza
         // il db
@@ -65,8 +69,8 @@ public class Server {
         // Necessito la generazione a random dei prezzi perche senza interazione con
         // altri utenti i prezzi non si muoverebbero e sarebbe tutto fermo
         RandomPriceGeneratorService priceService = new RandomPriceGeneratorService(
-                coins.keySet().toArray(String[]::new));
-        priceService.start(5);
+                coins.keySet().toArray(String[]::new), generatorConnection);
+        priceService.start(1);
 
         // inizilizzazione del server socket sulla porta 12345
         try (
@@ -178,7 +182,7 @@ public class Server {
     }
 
     public static void init() throws IOException, SQLException {
-        DbInitializer dbInitializer = new DbInitializer(coins);
+        DbInitializer dbInitializer = new DbInitializer(coins, DbConnector.getConnection());
 
         for (String coin : coins.keySet()) {
 

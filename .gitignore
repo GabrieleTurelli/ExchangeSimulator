@@ -1,2 +1,3 @@
 src/client/target/*
 src/server/target/*
+db/exchange.db

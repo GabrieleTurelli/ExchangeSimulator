@@ -1,6 +1,7 @@
 package server.model.service;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -18,12 +19,12 @@ public class RandomPriceGeneratorService {
     private final Random random;
     private final ScheduledExecutorService scheduler;
 
-    public RandomPriceGeneratorService(String[] coins) throws IOException, SQLException {
+    public RandomPriceGeneratorService(String[] coins, Connection connection) throws IOException, SQLException {
         this.coinsDao = new ArrayList<>();
         this.orderBooksDao = new ArrayList<>();
         for (String coin : coins) {
-            this.coinsDao.add(new CoinDAO(coin));
-            this.orderBooksDao.add(new OrderBookDAO(coin));
+            this.coinsDao.add(new CoinDAO(coin, connection));
+            this.orderBooksDao.add(new OrderBookDAO(coin, connection));
         }
 
         this.random = new Random();

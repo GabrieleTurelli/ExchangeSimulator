@@ -4,16 +4,14 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
-
-import server.model.db.DbConnector;
 import server.model.db.UsersDAO;
 
 public class LoginServer {
-    private final DataSource dataSource;
+    private final Connection connection;
 
-    public LoginServer(DataSource ds) {
-        this.dataSource = ds;
+    public LoginServer(Connection connection) {
+        this.connection = connection;
+        // this.dataSource = ds;
     }
 
     public String handleLogin(String request) throws SQLException, IOException {

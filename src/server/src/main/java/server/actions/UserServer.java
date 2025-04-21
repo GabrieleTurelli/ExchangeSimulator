@@ -11,10 +11,6 @@ import server.model.db.UsersDAO;
 public class UserServer {
     private final Connection connection;
 
-    public UserServer() throws IOException, SQLException{
-        this(DbConnector.getConnection());
-
-    }
 
     public UserServer(Connection connection) {
         this.connection = connection;
@@ -22,10 +18,10 @@ public class UserServer {
 
     public String handleGetWallet(String request) throws SQLException, IOException {
         String username = request.split(" ")[1];
-        UsersDAO usersDao = new UsersDAO();
+        UsersDAO usersDao = new UsersDAO(connection);
 
         if (usersDao.userExists(username)) {
-            UserDAO userDao = new UserDAO(username);
+            UserDAO userDao = new UserDAO(username, connection);
             return "OK;"+ userDao.getUser();
         }else{
             return "ERROR;User " + username + " does not exist";

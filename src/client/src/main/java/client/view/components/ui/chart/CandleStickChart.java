@@ -29,6 +29,11 @@ public class CandleStickChart extends XYChart<String, Number> {
     @Override
     protected void layoutPlotChildren() {
         getPlotChildren().clear();
+        double open;
+        double close = 0;
+        double high;
+        double low;
+        Color color = Theme.COLOR.GREEN;
 
         for (Series<String, Number> series : getData()) {
             for (Data<String, Number> item : series.getData()) {
@@ -37,15 +42,15 @@ public class CandleStickChart extends XYChart<String, Number> {
                 if (kline == null)
                     continue;
 
-                double open = getYAxis().getDisplayPosition(kline.getOpen());
-                double close = getYAxis().getDisplayPosition(kline.getClose());
-                double high = getYAxis().getDisplayPosition(kline.getHigh());
-                double low = getYAxis().getDisplayPosition(kline.getLow());
-                Color color = kline.getClose() >= kline.getOpen() ? Theme.COLOR.GREEN : Theme.COLOR.RED;
+                open = getYAxis().getDisplayPosition(kline.getOpen());
+                close = getYAxis().getDisplayPosition(kline.getClose());
+                high = getYAxis().getDisplayPosition(kline.getHigh());
+                low = getYAxis().getDisplayPosition(kline.getLow());
+                color = kline.getClose() >= kline.getOpen() ? Theme.COLOR.GREEN : Theme.COLOR.RED;
 
                 double candleWidth = 10;
 
-                Line wick = new Line(x, high, x , low);
+                Line wick = new Line(x, high, x, low);
                 wick.setFill(color);
                 wick.setStroke(color);
                 wick.setStrokeWidth(1);
@@ -60,7 +65,14 @@ public class CandleStickChart extends XYChart<String, Number> {
                 getPlotChildren().addAll(wick, body);
             }
         }
-
+        Line hLine = new Line();
+        hLine.setStrokeWidth(1);
+        hLine.setStroke(color);
+        hLine.setStartX(0);
+        hLine.setStartY(close);
+        hLine.setEndX(getWidth());
+        hLine.setEndY(close);
+        getPlotChildren().add(hLine);
     }
 
     public void adjustYAxisWithPadding(List<Kline> klines, double percentage) {
@@ -120,15 +132,12 @@ public class CandleStickChart extends XYChart<String, Number> {
         if (plotBackground != null) {
             plotBackground.setStyle("-fx-background-color: " + toHexString(color) + ";");
         }
-    
-        this.lookupAll(".chart-vertical-grid-lines").forEach(node ->
-            node.setStyle("-fx-stroke: #444444; -fx-stroke-width: 0.5;")
-        );
-        this.lookupAll(".chart-horizontal-grid-lines").forEach(node ->
-            node.setStyle("-fx-stroke: #444444; -fx-stroke-width: 0.5;")
-        );
+
+        this.lookupAll(".chart-vertical-grid-lines")
+                .forEach(node -> node.setStyle("-fx-stroke: #444444; -fx-stroke-width: 0.5;"));
+        this.lookupAll(".chart-horizontal-grid-lines")
+                .forEach(node -> node.setStyle("-fx-stroke: #444444; -fx-stroke-width: 0.5;"));
     }
-    
 
     private String toHexString(Color color) {
         return String.format("#%02X%02X%02X",

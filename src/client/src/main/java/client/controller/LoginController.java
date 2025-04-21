@@ -2,7 +2,6 @@ package client.controller;
 
 import java.io.IOException;
 
-import client.controller.exchangecontroller.ExchangeController;
 import client.model.clients.LoginClient;
 import client.model.user.User;
 import client.view.screen.ExchangeScreen;
