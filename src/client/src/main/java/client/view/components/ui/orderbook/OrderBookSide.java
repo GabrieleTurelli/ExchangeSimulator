@@ -1,20 +1,20 @@
 package client.view.components.ui.orderbook;
 
-import java.util.ArrayList;
-
+import client.model.market.OrderBookData;
+import client.model.market.OrderBookLevelData;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 public class OrderBookSide extends VBox {
 
-    public OrderBookSide(ArrayList<OrderBookLevelData> data, Color color) {
+    public OrderBookSide(OrderBookData orderBookData, Color color) {
         // Find the maximum size for proportionality
-        double maxSize = data.stream()
-                .mapToDouble(OrderBookLevelData::getSize)
+        double maxSize = orderBookData.stream()
+                .mapToDouble(OrderBookLevelData::getQuantity)
                 .max()
                 .orElse(1); // Default to 1 if no data
 
-        for (OrderBookLevelData levelData : data) {
+        for (OrderBookLevelData levelData : orderBookData) {
             getChildren().add(new OrderBookLevel(levelData, color, maxSize));
         }
     }

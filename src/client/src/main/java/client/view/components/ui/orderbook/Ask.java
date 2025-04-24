@@ -3,10 +3,11 @@ import java.util.ArrayList;
 
 
 import client.view.theme.Theme;
+import client.model.market.OrderBookData;
 
 public class Ask extends OrderBookSide{
 
-    public Ask(ArrayList<OrderBookLevelData> data){
-        super(data, Theme.COLOR.RED);
+    public Ask(OrderBookData orderBookdata){
+        super(orderBookdata, Theme.COLOR.RED);
     }
 }

@@ -5,7 +5,8 @@ import java.io.IOException;
 import client.model.market.DailyMarketData;
 import client.model.market.Kline;
 import client.model.market.KlineHistory;
-import client.model.market.OrderBook;
+import client.model.market.OrderBookData;
+import client.model.market.OrderBookLevelData;
 
 public class MarketClient {
 
@@ -113,12 +114,12 @@ public class MarketClient {
 
     }
 
-    public static getOrderBook(String coin) throws IOException{
+    public static OrderBookData getOrderBook(String coin) throws IOException {
         ClientConnection connection = new ClientConnection();
         connection.sendRequest("\\get-order-book " + coin);
         String response = connection.readResponse();
 
-        OrderBook orderBook = new OrderBook(coin);
+        OrderBookData orderBook = new OrderBookData(coin);
 
         if (!response.contains("OK")) {
             System.out.println("Error in getOrderBook: " + response);
@@ -128,10 +129,15 @@ public class MarketClient {
         String orderBookResponse = response.split(";")[1];
         String[] orderBookParts = orderBookResponse.split("\\|");
 
-        for(String )
+        for (String orderBookString : orderBookParts) {
+            String[] orderBookData = orderBookString.replace(" ","").split(",");
+            double price = Double.parseDouble(orderBookData[0].split("=")[1]);
+            double quantity = Double.parseDouble(orderBookData[1].split("=")[1]);
+            Boolean isBid = Boolean.parseBoolean(orderBookData[2].split("=")[1]);
+            orderBook.add(new OrderBookLevelData(price, quantity, isBid));
 
-
-
+        }
+        return orderBook;
 
     }
 }

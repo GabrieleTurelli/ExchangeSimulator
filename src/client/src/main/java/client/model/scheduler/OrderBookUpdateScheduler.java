@@ -1,35 +1,32 @@
 package client.model.scheduler;
 
-import java.time.Duration;
-import java.util.ArrayList;
+import java.util.Optional;
 
 import client.model.clients.MarketClient;
-import client.model.market.OrderBook;
+import client.model.market.OrderBookData;
 import javafx.concurrent.Task;
+import javafx.util.Duration;
 
-public class OrderBookUpdateScheduler extends BaseUpdateScheduler<OrderBook> {
-
+public class OrderBookUpdateScheduler extends BaseUpdateScheduler<OrderBookData> {
 
     private final String coin;
 
-    public OrderBookUpdateScheduler(String coin, Duration updateInterval){
-        // super("Order book update for " + coin, updateInterval);
+    public OrderBookUpdateScheduler(String coin, Duration updateInterval) {
         super("Order book update for " + coin, updateInterval);
         this.coin = coin;
 
-    } 
+    }
 
     @Override
-    protected Task<OrderBook> createTask(){
-        return new Task<>(){
+    protected Task<OrderBookData> createTask() {
+        return new Task<>() {
             @Override
-            protected OrderBook call() throws Exception {
+            protected OrderBookData call() throws Exception {
                 System.out.println("Fetching order book for " + coin);
                 try {
-                    OrderBook orderBook = MarketClient.getOrderBook(coin);
-                    if (orderBook == null) {
-                        throw new Exception("Null data from MarketClient for order book");
-                    }
+                    OrderBookData orderBook = Optional
+                            .ofNullable(MarketClient.getOrderBook(coin))
+                            .orElseThrow(() -> new Exception("Null data from MarketClient for order book"));
                     updateMessage("Last update: " + java.time.LocalTime.now());
                     return orderBook;
                 } catch (Exception e) {
@@ -37,12 +34,10 @@ public class OrderBookUpdateScheduler extends BaseUpdateScheduler<OrderBook> {
                     throw e;
                 }
 
-                return new OrderBook( coin);
             }
-
 
         };
 
     }
-    
+
 }

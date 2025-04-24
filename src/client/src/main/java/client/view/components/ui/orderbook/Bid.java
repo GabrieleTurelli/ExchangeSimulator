@@ -1,12 +1,11 @@
 package client.view.components.ui.orderbook;
 
-import java.util.ArrayList;
-
+import client.model.market.OrderBookData;
 import client.view.theme.Theme;
 
 public class Bid extends OrderBookSide{
 
-    public Bid(ArrayList<OrderBookLevelData> data){
+    public Bid(OrderBookData data){
         super(data, Theme.COLOR.GREEN);
     }
 }

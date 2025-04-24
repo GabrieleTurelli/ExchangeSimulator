@@ -23,13 +23,9 @@ public class HistoricalMarketUpdateScheduler extends BaseUpdateScheduler<KlineHi
             protected KlineHistory call() throws Exception {
                 System.out.println("Fetching historical data for " + coin);
                 try {
-                    // KlineHistory data = MarketClient.getHistory(coin);
-                    // if (data == null) {
-                    //     throw new Exception("Null data from MarketClient for " + coin);
-                    // }
                     KlineHistory data = Optional
                             .ofNullable(MarketClient.getHistory(coin))
-                            .orElseThrow(() -> new Exception("Null data from MarketClinet"));
+                            .orElseThrow(() -> new Exception("Null data from MarketClinet for Historical Data"));
                     updateMessage("Last update: " + java.time.LocalTime.now());
                     return data;
                 } catch (Exception e) {

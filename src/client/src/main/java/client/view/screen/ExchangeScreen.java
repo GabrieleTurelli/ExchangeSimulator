@@ -1,7 +1,6 @@
 package client.view.screen;
 
-import java.util.ArrayList;
-
+import client.model.market.OrderBookData;
 import client.model.user.User;
 import client.view.components.layout.BaseSection;
 import client.view.components.layout.ChartSection;
@@ -9,7 +8,6 @@ import client.view.components.layout.HeaderSection;
 import client.view.components.layout.OrderBookSection;
 import client.view.components.layout.SubHeaderSection;
 import client.view.components.layout.TradePanelSection;
-import client.view.components.ui.orderbook.OrderBookLevelData;
 import javafx.geometry.Insets;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -37,7 +35,7 @@ public class ExchangeScreen extends GridPane {
         initUi();
     }
 
-    public void initUi(){
+    public void initUi() {
         setPadding(new Insets(0));
         setHgap(0);
         setVgap(0);
@@ -76,23 +74,25 @@ public class ExchangeScreen extends GridPane {
                 0.6,
                 0.6);
 
-        ArrayList<OrderBookLevelData> ask = new ArrayList<>();
-        ask.add(new OrderBookLevelData(10.4, 234.9));
-        ask.add(new OrderBookLevelData(10.3, 204.8));
-        ask.add(new OrderBookLevelData(10.2, 134.1));
-        ask.add(new OrderBookLevelData(10.1, 34.3));
-        ask.add(new OrderBookLevelData(10.0, 4.2));
+        // ArrayList<OrderBookLevelData> ask = new ArrayList<>();
+        // ask.add(new OrderBookLevelData(10.4, 234.9));
+        // ask.add(new OrderBookLevelData(10.3, 204.8));
+        // ask.add(new OrderBookLevelData(10.2, 134.1));
+        // ask.add(new OrderBookLevelData(10.1, 34.3));
+        // ask.add(new OrderBookLevelData(10.0, 4.2));
 
-        ArrayList<OrderBookLevelData> bid = new ArrayList<>();
-        bid.add(new OrderBookLevelData(9.9, 34.9));
-        bid.add(new OrderBookLevelData(9.8, 104.8));
-        bid.add(new OrderBookLevelData(9.7, 234.1));
-        bid.add(new OrderBookLevelData(9.6, 334.3));
-        bid.add(new OrderBookLevelData(9.5, 524.2));
+        // ArrayList<OrderBookLevelData> bid = new ArrayList<>();
+        // bid.add(new OrderBookLevelData(9.9, 34.9));
+        // bid.add(new OrderBookLevelData(9.8, 104.8));
+        // bid.add(new OrderBookLevelData(9.7, 234.1));
+        // bid.add(new OrderBookLevelData(9.6, 334.3));
+        // bid.add(new OrderBookLevelData(9.5, 524.2));
 
         this.orderBookSection = new OrderBookSection(this,
                 0.2,
-                0.9, bid, ask);
+                0.9,
+                new OrderBookData(coin),
+                new OrderBookData(coin));
 
         this.tradePanelSection = new TradePanelSection(this,
                 0.2,
@@ -112,7 +112,6 @@ public class ExchangeScreen extends GridPane {
         add(orderBookSection, 1, 2, 1, 2);
         add(tradePanelSection, 2, 2, 1, 2);
     }
-
 
     public HeaderSection getHeader() {
         return header;

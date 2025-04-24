@@ -7,7 +7,7 @@ import client.view.components.layout.ChartSection;
 import client.view.components.layout.HeaderSection;
 import client.view.components.layout.OrderBookSection;
 import client.view.components.layout.SubHeaderSection;
-import client.view.components.ui.orderbook.OrderBookLevelData;
+import client.model.market.OrderBookLevelData;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -64,19 +64,19 @@ public class Client extends Application {
 
 //        BaseSection orderBookSection = new BaseSection(gridPane, 0.2, 0.9);
 
-        ArrayList<OrderBookLevelData> ask = new ArrayList<>();
-        ask.add(new OrderBookLevelData(10.4, 234.9));
-        ask.add(new OrderBookLevelData(10.3, 204.8));
-        ask.add(new OrderBookLevelData(10.2, 134.1));
-        ask.add(new OrderBookLevelData(10.1, 34.3));
-        ask.add(new OrderBookLevelData(10.0, 4.2));
+        // ArrayList<OrderBookLevelData> ask = new ArrayList<>();
+        // ask.add(new OrderBookLevelData(10.4, 234.9));
+        // ask.add(new OrderBookLevelData(10.3, 204.8));
+        // ask.add(new OrderBookLevelData(10.2, 134.1));
+        // ask.add(new OrderBookLevelData(10.1, 34.3));
+        // ask.add(new OrderBookLevelData(10.0, 4.2));
 
-        ArrayList<OrderBookLevelData> bid = new ArrayList<>();
-        bid.add(new OrderBookLevelData(9.9, 34.9));
-        bid.add(new OrderBookLevelData(9.8, 104.8));
-        bid.add(new OrderBookLevelData(9.7, 234.1));
-        bid.add(new OrderBookLevelData(9.6, 334.3));
-        bid.add(new OrderBookLevelData(9.5, 524.2));
+        // ArrayList<OrderBookLevelData> bid = new ArrayList<>();
+        // bid.add(new OrderBookLevelData(9.9, 34.9));
+        // bid.add(new OrderBookLevelData(9.8, 104.8));
+        // bid.add(new OrderBookLevelData(9.7, 234.1));
+        // bid.add(new OrderBookLevelData(9.6, 334.3));
+        // bid.add(new OrderBookLevelData(9.5, 524.2));
         OrderBookSection orderBookSection = new OrderBookSection(gridPane, 0.2, 0.9, bid, ask);
 //        BaseSection orderSection = new BaseSection(gridPane, Theme.COLOR.SURFACE,0.2, 0.9);
         // TradePanelSection tradePanelSection = new TradePanelSection(gridPane, 0.2, 0.9);

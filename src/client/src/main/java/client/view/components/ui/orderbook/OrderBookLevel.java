@@ -1,5 +1,6 @@
 package client.view.components.ui.orderbook;
 
+import client.model.market.OrderBookLevelData;
 import client.view.theme.Theme;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -22,15 +23,22 @@ public class OrderBookLevel extends StackPane {
         getChildren().addAll(backgroundContainer, labels);
         setAlignment(backgroundContainer, Pos.CENTER_RIGHT);
 
-        layoutBoundsProperty().addListener((observable, oldBounds, newBounds) -> updateBackgroundWidth(background, newBounds.getWidth(), data.getSize(), maxSize));
+        layoutBoundsProperty().addListener(
+                (observable, oldBounds, newBounds) -> updateBackgroundWidth(
+                        background,
+                        newBounds.getWidth(),
+                        data.getAmount(),
+                        maxSize));
     }
 
     private GridPane createLabelsGrid(OrderBookLevelData data, Color labelColor) {
         GridPane labels = new GridPane();
 
         Label price = createLabel(String.format("%.2f", data.getPrice()), labelColor, Pos.CENTER_LEFT);
-        Label size = createLabel(String.format("%.2f", data.getSize()), Theme.COLOR.ON_BACKGROUND.darker(), Pos.CENTER_LEFT);
-        Label sum = createLabel(String.format("%.2f", data.getSum()), Theme.COLOR.ON_BACKGROUND.darker(), Pos.CENTER_LEFT);
+        Label size = createLabel(String.format("%.2f", data.getQuantity()), Theme.COLOR.ON_BACKGROUND.darker(),
+                Pos.CENTER_LEFT);
+        var sum = createLabel(String.format("%.2f", data.getAmount()), Theme.COLOR.ON_BACKGROUND.darker(),
+                Pos.CENTER_LEFT);
 
         labels.add(price, 0, 0);
         labels.add(size, 1, 0);
@@ -39,8 +47,7 @@ public class OrderBookLevel extends StackPane {
         labels.getColumnConstraints().addAll(
                 createColumnConstraints(33),
                 createColumnConstraints(33),
-                createColumnConstraints(34)
-        );
+                createColumnConstraints(34));
 
         labels.setAlignment(Pos.CENTER_LEFT);
         labels.setHgap(10);
