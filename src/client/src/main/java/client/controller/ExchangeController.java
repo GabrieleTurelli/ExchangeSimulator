@@ -3,6 +3,7 @@ package client.controller;
 import client.model.clients.MarketClient;
 import client.model.scheduler.DailyMarketDataUpdateScheduler;
 import client.model.scheduler.HistoricalMarketUpdateScheduler;
+import client.model.scheduler.OrderBookUpdateScheduler;
 import client.model.scheduler.WalletUpdateScheduler;
 import client.model.user.User;
 import client.view.components.ui.CoinMenu;
@@ -16,25 +17,29 @@ public class ExchangeController {
     private ExchangeScreen exchangeScreen;
     // private final SceneManager sceneManager;
     private final User user;
-    private DailyMarketDataUpdateScheduler marketDataUpdateService;
-    private HistoricalMarketUpdateScheduler historicalMarketUpdateService;
-    private WalletUpdateScheduler walletUpdateService;
     private final String[] coins;
     private String currentCoin;
     private final Duration updateInterval = Duration.seconds(1);
 
-    // public ExchangeController(ExchangeScreen exchangeScreen, SceneManager sceneManager, User user) {
-    //     this.exchangeScreen = exchangeScreen;
-    //     this.exchangeScreen.getSubHeader().getCoinMenu().addCoinChangeListener(newCoin -> changeCoin(newCoin.split("/")[0]));
-    //     // this.sceneManager = sceneManager;
-    //     this.user = user;
+    private DailyMarketDataUpdateScheduler marketDataUpdateScheduler;
+    private HistoricalMarketUpdateScheduler historicalMarketUpdateScheduler;
+    private WalletUpdateScheduler walletUpdateScheduler;
+    private OrderBookUpdateScheduler orderBookUpdateScheduler;
 
-    //     System.out.println("Starting market updates");
-    //     initializeMarketUpdates();
-    //     System.out.println("Starting wallet updates");
-    //     initializeWalletUpdates();
-    //     System.out.println("Starting history updates");
-    //     initializeHistoryUpdates();
+    // public ExchangeController(ExchangeScreen exchangeScreen, SceneManager
+    // sceneManager, User user) {
+    // this.exchangeScreen = exchangeScreen;
+    // this.exchangeScreen.getSubHeader().getCoinMenu().addCoinChangeListener(newCoin
+    // -> changeCoin(newCoin.split("/")[0]));
+    // // this.sceneManager = sceneManager;
+    // this.user = user;
+
+    // System.out.println("Starting market updates");
+    // initializeMarketUpdates();
+    // System.out.println("Starting wallet updates");
+    // initializeWalletUpdates();
+    // System.out.println("Starting history updates");
+    // initializeHistoryUpdates();
     // }
 
     public ExchangeController(ExchangeScreen exchangeScreen, SceneManager sceneManager, User user) {
@@ -51,12 +56,13 @@ public class ExchangeController {
         initializeMarketUpdates();
         initializeWalletUpdates();
         initializeHistoryUpdates();
+        initializeOrderBookUpdates();
     }
 
     private void initializeWalletUpdates() {
-        walletUpdateService = new WalletUpdateScheduler(updateInterval, user.getUsername());
+        walletUpdateScheduler = new WalletUpdateScheduler(updateInterval, user.getUsername());
 
-        walletUpdateService.lastValueProperty().addListener((obs, oldData, newData) -> {
+        walletUpdateScheduler.lastValueProperty().addListener((obs, oldData, newData) -> {
             if (newData != null) {
                 Platform.runLater(() -> {
                     // System.out.println("Updating tradepanel with new data: " + newData);
@@ -65,35 +71,14 @@ public class ExchangeController {
             }
         });
 
-        // walletUpdateService.stateProperty().addListener((obs, oldState, newState) ->
-        // {
-        // System.out.println("Wallet update service state changed to: " + newState);
-        // switch (newState) {
-        // case READY:
-        // break;
-        // case SCHEDULED:
-        // break;
-        // case RUNNING:
-        // break;
-        // case SUCCEEDED:
-        // Platform.runLater(() -> {
-        // exchangeScreen.getTradePanelSection().updateDisplay(null);
-        // });
-        // break;
-        // case FAILED:
-        // break;
-        // case CANCELLED:
-        // break;
-        // }
-        // });
         System.out.println("Starting market data update service for {}" + currentCoin);
-        walletUpdateService.start();
+        walletUpdateScheduler.start();
     }
 
     private void initializeMarketUpdates() {
-        marketDataUpdateService = new DailyMarketDataUpdateScheduler(currentCoin, updateInterval);
+        marketDataUpdateScheduler = new DailyMarketDataUpdateScheduler(currentCoin, updateInterval);
 
-        marketDataUpdateService.lastValueProperty().addListener((obs, oldData, newData) -> {
+        marketDataUpdateScheduler.lastValueProperty().addListener((obs, oldData, newData) -> {
             if (newData != null) {
                 Platform.runLater(() -> {
                     // System.out.println("Updating SubHeader with new data: " + newData);
@@ -102,36 +87,14 @@ public class ExchangeController {
             }
         });
 
-        // marketDataUpdateService.stateProperty().addListener((obs, oldState, newState)
-        // -> {
-        // System.out.println("Market data service state changed to: " + newState);
-        // switch (newState) {
-        // case READY:
-        // break;
-        // case SCHEDULED:
-        // break;
-        // case RUNNING:
-        // break;
-        // case SUCCEEDED:
-        // Platform.runLater(() -> {
-        // exchangeScreen.getSubHeader().updateDisplay(null);
-        // });
-        // break;
-        // case FAILED:
-        // break;
-        // case CANCELLED:
-        // break;
-        // }
-        // });
-
         System.out.println("Starting market data update service for {}" + currentCoin);
-        marketDataUpdateService.start();
+        marketDataUpdateScheduler.start();
     }
 
     private void initializeHistoryUpdates() {
-        historicalMarketUpdateService = new HistoricalMarketUpdateScheduler(currentCoin, updateInterval);
+        historicalMarketUpdateScheduler = new HistoricalMarketUpdateScheduler(currentCoin, updateInterval);
 
-        historicalMarketUpdateService.lastValueProperty().addListener((obs, oldData, newData) -> {
+        historicalMarketUpdateScheduler.lastValueProperty().addListener((obs, oldData, newData) -> {
             if (newData != null) {
                 Platform.runLater(() -> {
                     // System.out.println("Updating chart with new data: " + newData);
@@ -140,44 +103,42 @@ public class ExchangeController {
             }
         });
 
-        // historicalMarketUpdateService.stateProperty().addListener((obs, oldState,
-        // newState) -> {
-        // System.out.println("History data service state changed to: " + newState);
-        // switch (newState) {
-        // case READY:
-        // break;
-        // case SCHEDULED:
-        // break;
-        // case RUNNING:
-        // break;
-        // case SUCCEEDED:
-        // break;
-        // case FAILED:
-        // Platform.runLater(() -> {
-        // exchangeScreen.getSubHeader().updateDisplay(null);
-        // });
-        // break;
-        // case CANCELLED:
-        // break;
-        // }
-        // });
+        System.out.println("Starting history data update service for {}" + currentCoin);
+        historicalMarketUpdateScheduler.start();
+    }
+
+    private void initializeOrderBookUpdates() {
+        orderBookUpdateScheduler = new OrderBookUpdateScheduler(currentCoin, updateInterval);
+
+        orderBookUpdateScheduler.lastValueProperty().addListener((obs, oldData, newData) -> {
+            if (newData != null) {
+                Platform.runLater(() -> {
+                    // System.out.println("Updating chart with new data: " + newData);
+                    exchangeScreen.getOrderBookSection().updateDisplay(newData);
+                });
+            }
+        });
 
         System.out.println("Starting history data update service for {}" + currentCoin);
-        historicalMarketUpdateService.start();
+        orderBookUpdateScheduler.start();
     }
 
     public void shutdown() {
         System.out.println("Shutting down market data update service...");
-        if (marketDataUpdateService != null && marketDataUpdateService.isRunning()) {
-            marketDataUpdateService.cancel();
+        if (marketDataUpdateScheduler != null && marketDataUpdateScheduler.isRunning()) {
+            marketDataUpdateScheduler.cancel();
             System.out.println("Market data update service cancelled.");
         }
-        if (historicalMarketUpdateService != null && historicalMarketUpdateService.isRunning()) {
-            historicalMarketUpdateService.cancel();
+        if (historicalMarketUpdateScheduler != null && historicalMarketUpdateScheduler.isRunning()) {
+            historicalMarketUpdateScheduler.cancel();
             System.out.println("Market data update service cancelled.");
         }
-        if (walletUpdateService != null && walletUpdateService.isRunning()) {
-            walletUpdateService.cancel();
+        if (walletUpdateScheduler != null && walletUpdateScheduler.isRunning()) {
+            walletUpdateScheduler.cancel();
+            System.out.println("Market data update service cancelled.");
+        }
+        if (orderBookUpdateScheduler != null && orderBookUpdateScheduler.isRunning()) {
+            orderBookUpdateScheduler.cancel();
             System.out.println("Market data update service cancelled.");
         }
 
@@ -188,27 +149,13 @@ public class ExchangeController {
     }
 
     public void changeCoin(String coin) {
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println("STO CAMBIANDO");
-        System.out.println(coin);
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
         shutdown();
 
         this.currentCoin = coin;
-
-        // this.exchangeScreen = new ExchangeScreen(user, coin);
-        // sceneManager.
-        
-
         initializeHistoryUpdates();
         initializeMarketUpdates();
         initializeWalletUpdates();
+        initializeOrderBookUpdates();
 
     }
 

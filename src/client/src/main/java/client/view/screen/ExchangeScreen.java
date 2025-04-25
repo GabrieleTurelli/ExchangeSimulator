@@ -13,7 +13,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 
-public class ExchangeScreen extends GridPane {
+public final class ExchangeScreen extends GridPane {
     private HeaderSection header;
     private SubHeaderSection subHeader;
     private ChartSection chartSection;

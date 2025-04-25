@@ -1,24 +1,33 @@
 package client.view.components.layout;
 
+import client.model.market.OrderBookData;
+import client.model.market.OrderBookLevelData;
+import client.view.components.ui.orderbook.OrderBook;
+import client.view.theme.Theme;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import client.view.components.ui.orderbook.OrderBook;
-import client.view.theme.Theme;
-import client.model.market.OrderBookLevelData;
-import client.model.market.OrderBookData;
-
-import java.util.ArrayList;
-
 
 public class OrderBookSection extends BaseSection {
-    private ArrayList<OrderBookLevelData> levelData = new ArrayList<OrderBookLevelData>();
+    private OrderBookData bidData;
+    private OrderBookData askData;
 
     public OrderBookSection(GridPane gridPane, double widthMultiplier, double heightMultiplier,
             OrderBookData bid, OrderBookData ask) {
         super(gridPane, Theme.COLOR.BACKGROUND, widthMultiplier, heightMultiplier);
+        this.askData = ask;
+        this.bidData = bid;
+        initUi();
+    }
+
+    public OrderBookSection(GridPane gridPane, double widthMultiplier, double heightMultiplier, String coin) {
+        this(gridPane, widthMultiplier, heightMultiplier, new OrderBookData(coin), new OrderBookData(coin));
+
+    }
+
+    private void initUi() {
 
         VBox container = new VBox();
         Label orderBookLabel = new Label("Order Book");
@@ -53,7 +62,7 @@ public class OrderBookSection extends BaseSection {
                 createColumnConstraints(34));
         container.getChildren().add(itemsLabel);
 
-        OrderBook orderBook = new OrderBook(bid, ask);
+        OrderBook orderBook = new OrderBook(bidData, askData);
         container.getChildren().add(orderBook);
         getChildren().addAll(container);
     }
@@ -62,5 +71,32 @@ public class OrderBookSection extends BaseSection {
         ColumnConstraints constraints = new ColumnConstraints();
         constraints.setPercentWidth(percentWidth);
         return constraints;
+    }
+
+    public OrderBookData getBidData() {
+        return bidData;
+    }
+
+    public OrderBookData getAskData() {
+        return askData;
+    }
+
+    public void updateDisplay(OrderBookData orderBookData) {
+        String coin = orderBookData.getCoin();
+        OrderBookData bid = new OrderBookData(coin);
+        OrderBookData ask = new OrderBookData(coin);
+
+        for(OrderBookLevelData orderBookLevelData: orderBookData) {
+            if(orderBookLevelData.isBid()) {
+                bid.add(orderBookLevelData);
+            } else {
+                ask.add(orderBookLevelData);
+            }
+
+        }
+
+        this.bidData = bid;
+        this.askData = ask;
+        initUi();
     }
 }

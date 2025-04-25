@@ -37,7 +37,7 @@ public class OrderBookLevel extends StackPane {
         Label price = createLabel(String.format("%.2f", data.getPrice()), labelColor, Pos.CENTER_LEFT);
         Label size = createLabel(String.format("%.2f", data.getQuantity()), Theme.COLOR.ON_BACKGROUND.darker(),
                 Pos.CENTER_LEFT);
-        var sum = createLabel(String.format("%.2f", data.getAmount()), Theme.COLOR.ON_BACKGROUND.darker(),
+        Label sum = createLabel(String.format("%.2f", data.getAmount()), Theme.COLOR.ON_BACKGROUND.darker(),
                 Pos.CENTER_LEFT);
 
         labels.add(price, 0, 0);

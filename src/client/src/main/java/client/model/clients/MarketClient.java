@@ -116,7 +116,7 @@ public class MarketClient {
 
     public static OrderBookData getOrderBook(String coin) throws IOException {
         ClientConnection connection = new ClientConnection();
-        connection.sendRequest("\\get-order-book " + coin);
+        connection.sendRequest("\\get-orderbook " + coin);
         String response = connection.readResponse();
 
         OrderBookData orderBook = new OrderBookData(coin);
@@ -133,7 +133,7 @@ public class MarketClient {
             String[] orderBookData = orderBookString.replace(" ","").split(",");
             double price = Double.parseDouble(orderBookData[0].split("=")[1]);
             double quantity = Double.parseDouble(orderBookData[1].split("=")[1]);
-            Boolean isBid = Boolean.parseBoolean(orderBookData[2].split("=")[1]);
+            Boolean isBid = Boolean.valueOf(orderBookData[2].split("=")[1]);
             orderBook.add(new OrderBookLevelData(price, quantity, isBid));
 
         }
