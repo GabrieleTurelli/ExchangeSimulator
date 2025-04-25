@@ -173,9 +173,13 @@ public class CoinDAO {
 
     private double fillOne(PreparedStatement ps, LocalDate d, double prev, Random rnd) throws SQLException {
         double open  = prev;
-        double close = Math.round(open * (1 + (rnd.nextDouble() * 6 - 3) / 100) * 100) / 100.0;
-        double high  = Math.round(Math.max(open, close) * (1 + rnd.nextDouble() * 0.02) * 100) / 100.0;
-        double low   = Math.round(Math.min(open, close) * (1 - rnd.nextDouble() * 0.02) * 100) / 100.0;
+        double changePercent = (rnd.nextDouble() * 20.0 -10.0)/ 100;
+
+        double close = Math.round(open * (1 + changePercent) * 100) / 100.0;
+        double max = Math.max(open, close);
+        double high  = Math.round(max * (1 + rnd.nextDouble() * 0.1) * 100) / 100.0;
+        double min = Math.min(open, close);
+        double low   = Math.round(min * (1 - rnd.nextDouble() * 0.1) * 100) / 100.0;
 
         ps.setString(1, d.format(fmt));
         ps.setDouble(2, open);

@@ -1,9 +1,8 @@
 package client.view.components.ui.orderbook;
-import java.util.ArrayList;
 
 
-import client.view.theme.Theme;
 import client.model.market.OrderBookData;
+import client.view.theme.Theme;
 
 public class Ask extends OrderBookSide{
 

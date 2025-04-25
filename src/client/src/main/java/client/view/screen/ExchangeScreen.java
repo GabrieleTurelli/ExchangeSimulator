@@ -20,7 +20,7 @@ public final class ExchangeScreen extends GridPane {
     private OrderBookSection orderBookSection;
     private TradePanelSection tradePanelSection;
     private BaseSection positionSection;
-    private final String coin;
+    private String coin;
     private final User user;
 
     public ExchangeScreen(User user, String coin) {
@@ -74,20 +74,6 @@ public final class ExchangeScreen extends GridPane {
                 0.6,
                 0.6);
 
-        // ArrayList<OrderBookLevelData> ask = new ArrayList<>();
-        // ask.add(new OrderBookLevelData(10.4, 234.9));
-        // ask.add(new OrderBookLevelData(10.3, 204.8));
-        // ask.add(new OrderBookLevelData(10.2, 134.1));
-        // ask.add(new OrderBookLevelData(10.1, 34.3));
-        // ask.add(new OrderBookLevelData(10.0, 4.2));
-
-        // ArrayList<OrderBookLevelData> bid = new ArrayList<>();
-        // bid.add(new OrderBookLevelData(9.9, 34.9));
-        // bid.add(new OrderBookLevelData(9.8, 104.8));
-        // bid.add(new OrderBookLevelData(9.7, 234.1));
-        // bid.add(new OrderBookLevelData(9.6, 334.3));
-        // bid.add(new OrderBookLevelData(9.5, 524.2));
-
         this.orderBookSection = new OrderBookSection(this,
                 0.2,
                 0.9,
@@ -135,6 +121,10 @@ public final class ExchangeScreen extends GridPane {
 
     public BaseSection getPositionSection() {
         return positionSection;
+    }
+
+    public void setCoin(String coin){
+        this.coin = coin;
     }
 
 }

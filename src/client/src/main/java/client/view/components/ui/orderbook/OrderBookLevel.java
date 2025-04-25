@@ -1,3 +1,4 @@
+// OrderBookLevel.java
 package client.view.components.ui.orderbook;
 
 import client.model.market.OrderBookLevelData;
@@ -12,85 +13,80 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
 public class OrderBookLevel extends StackPane {
-
     public OrderBookLevel(OrderBookLevelData data, Color labelColor, double maxSize) {
+        // 1) build the three-column grid of labels
         GridPane labels = createLabelsGrid(data, labelColor);
+
+        // allow percent-based columns to actually size themselves
+        labels.prefWidthProperty().bind(widthProperty());
+
+        // 2) create the colored bar
         Region background = createBackground(labelColor);
+        // make it fill the row’s height
+        background.prefHeightProperty().bind(labels.heightProperty());
 
-        StackPane backgroundContainer = new StackPane(background);
-        backgroundContainer.setAlignment(Pos.CENTER_RIGHT);
+        // 3) stack them
+        StackPane bgContainer = new StackPane(background);
+        bgContainer.setAlignment(Pos.CENTER_RIGHT);
+        getChildren().addAll(bgContainer, labels);
+        setAlignment(bgContainer, Pos.CENTER_RIGHT);
 
-        getChildren().addAll(backgroundContainer, labels);
-        setAlignment(backgroundContainer, Pos.CENTER_RIGHT);
-
-        layoutBoundsProperty().addListener(
-                (observable, oldBounds, newBounds) -> updateBackgroundWidth(
-                        background,
-                        newBounds.getWidth(),
-                        data.getAmount(),
-                        maxSize));
+        // 4) on resize, update the bar’s width proportionally
+        layoutBoundsProperty().addListener((obs, oldB, newB) -> {
+            double w = newB.getWidth() * (data.getQuantity() / maxSize);
+            background.setMinWidth(w);
+            background.setPrefWidth(w);
+            background.setMaxWidth(w);
+        });
     }
 
     private GridPane createLabelsGrid(OrderBookLevelData data, Color labelColor) {
-        GridPane labels = new GridPane();
+        GridPane grid = new GridPane();
 
-        Label price = createLabel(String.format("%.2f", data.getPrice()), labelColor, Pos.CENTER_LEFT);
-        Label size = createLabel(String.format("%.2f", data.getQuantity()), Theme.COLOR.ON_BACKGROUND.darker(),
-                Pos.CENTER_LEFT);
-        Label sum = createLabel(String.format("%.2f", data.getAmount()), Theme.COLOR.ON_BACKGROUND.darker(),
-                Pos.CENTER_LEFT);
+        Label price = createLabel(String.format("%.2f", data.getPrice()),     labelColor,                    Pos.CENTER_LEFT);
+        Label size  = createLabel(String.format("%.2f", data.getQuantity()), Theme.COLOR.ON_BACKGROUND.darker(), Pos.CENTER_LEFT);
+        Label sum   = createLabel(String.format("%.2f", data.getAmount()),   Theme.COLOR.ON_BACKGROUND.darker(), Pos.CENTER_LEFT);
 
-        labels.add(price, 0, 0);
-        labels.add(size, 1, 0);
-        labels.add(sum, 2, 0);
+        grid.add(price, 0, 0);
+        grid.add(size,  1, 0);
+        grid.add(sum,   2, 0);
 
-        labels.getColumnConstraints().addAll(
-                createColumnConstraints(33),
-                createColumnConstraints(33),
-                createColumnConstraints(34));
+        grid.getColumnConstraints().addAll(
+            createColumnConstraints(33),
+            createColumnConstraints(33),
+            createColumnConstraints(34)
+        );
 
-        labels.setAlignment(Pos.CENTER_LEFT);
-        labels.setHgap(10);
-        labels.setPadding(new Insets(3, 10, 3, 10));
-
-        return labels;
+        grid.setHgap(10);
+        grid.setPadding(new Insets(3, 10, 3, 10));
+        grid.setAlignment(Pos.CENTER_LEFT);
+        return grid;
     }
 
-    private Label createLabel(String text, Color textColor, Pos alignment) {
-        Label label = new Label(text);
-        label.setTextFill(textColor);
-        label.setAlignment(alignment);
-        return label;
+    private Label createLabel(String text, Color color, Pos align) {
+        Label l = new Label(text);
+        l.setTextFill(color);
+        l.setAlignment(align);
+        return l;
     }
 
-    private Region createBackground(Color color) {
-        Region background = new Region();
-        background.setStyle("-fx-background-color: " + toHexString(color) + ";");
-        background.setOpacity(0.1);
-        return background;
+    private Region createBackground(Color c) {
+        Region r = new Region();
+        r.setStyle("-fx-background-color: " + toHexString(c) + ";");
+        r.setOpacity(0.1);
+        return r;
     }
 
-    private ColumnConstraints createColumnConstraints(double percentWidth) {
-        ColumnConstraints constraints = new ColumnConstraints();
-        constraints.setPercentWidth(percentWidth);
-        return constraints;
+    private ColumnConstraints createColumnConstraints(double pct) {
+        ColumnConstraints cc = new ColumnConstraints();
+        cc.setPercentWidth(pct);
+        return cc;
     }
 
-    private void updateBackgroundWidth(Region background, double totalWidth, double size, double maxSize) {
-        if (totalWidth > 0) {
-            double proportion = size / maxSize;
-            double calculatedWidth = totalWidth * proportion;
-
-            background.setPrefWidth(calculatedWidth);
-            background.setMinWidth(calculatedWidth);
-            background.setMaxWidth(calculatedWidth);
-        }
-    }
-
-    private String toHexString(Color color) {
+    private String toHexString(Color c) {
         return String.format("#%02X%02X%02X",
-                (int) (color.getRed() * 255),
-                (int) (color.getGreen() * 255),
-                (int) (color.getBlue() * 255));
+            (int)(c.getRed()   * 255),
+            (int)(c.getGreen() * 255),
+            (int)(c.getBlue()  * 255));
     }
 }

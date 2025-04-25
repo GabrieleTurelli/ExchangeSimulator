@@ -14,7 +14,7 @@ import javafx.util.Duration;
 
 public class ExchangeController {
 
-    private ExchangeScreen exchangeScreen;
+    private final ExchangeScreen exchangeScreen;
     // private final SceneManager sceneManager;
     private final User user;
     private final String[] coins;
@@ -26,21 +26,6 @@ public class ExchangeController {
     private WalletUpdateScheduler walletUpdateScheduler;
     private OrderBookUpdateScheduler orderBookUpdateScheduler;
 
-    // public ExchangeController(ExchangeScreen exchangeScreen, SceneManager
-    // sceneManager, User user) {
-    // this.exchangeScreen = exchangeScreen;
-    // this.exchangeScreen.getSubHeader().getCoinMenu().addCoinChangeListener(newCoin
-    // -> changeCoin(newCoin.split("/")[0]));
-    // // this.sceneManager = sceneManager;
-    // this.user = user;
-
-    // System.out.println("Starting market updates");
-    // initializeMarketUpdates();
-    // System.out.println("Starting wallet updates");
-    // initializeWalletUpdates();
-    // System.out.println("Starting history updates");
-    // initializeHistoryUpdates();
-    // }
 
     public ExchangeController(ExchangeScreen exchangeScreen, SceneManager sceneManager, User user) {
         this.exchangeScreen = exchangeScreen;
@@ -51,6 +36,7 @@ public class ExchangeController {
         coinMenu.addCoins(coins);
 
         this.currentCoin = coins[0];
+        exchangeScreen.setCoin(currentCoin);
         this.user = user;
 
         initializeMarketUpdates();

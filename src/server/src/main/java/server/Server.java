@@ -30,8 +30,13 @@ public class Server {
             Map.of(
                     "BTC", 85015.35,
                     "ETH", 1598.39,
-                    "XRP", 2.10,
-                    "SOL", 113.15));
+                    "BNB", 607.20,
+                    "VH3", 1598.39,
+                    "SOL", 113.15,
+                    "GSO", 4598.39,
+                    "SHL", 258.39,
+                    "ADO", 18.39
+                    ));
 
     private static Connection generatorConnection;
     private static Connection userConnection;

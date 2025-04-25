@@ -3,6 +3,7 @@ package client.controller;
 import java.io.IOException;
 
 import client.model.clients.LoginClient;
+import client.model.clients.MarketClient;
 import client.model.user.User;
 import client.view.screen.ExchangeScreen;
 import client.view.screen.LoginScreen;
@@ -25,7 +26,6 @@ public class LoginController {
             try {
                 handleLogin();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         });
@@ -40,18 +40,16 @@ public class LoginController {
             loginScreen.setErrorMessage("Input cannot be empty");
             return;
         }
-        String response = LoginClient.sendLoginRequest(username, password);
-        String responseStatus = response.split(";")[0];
-        String responseMessage = response.split(";")[1];
-        System.out.println(responseStatus);
-        System.out.println(responseMessage);
-
-        if (responseStatus.equals("ERROR")) {
-            loginScreen.setErrorMessage(responseMessage);
+        if(!LoginClient.sendLoginRequest(username, password)){
+            loginScreen.setErrorMessage("Login failed");
             return;
         }
+
+        String initialCoin = MarketClient.getCoins()[0];
+
+
         User user = new User(username);
-        switchToExchangeScreen(user);
+        switchToExchangeScreen(user, initialCoin);
     }
 
     private void switchToRegisterScreen() {
@@ -59,8 +57,8 @@ public class LoginController {
         switchToScreen(registerController.getRegisterScreen(), "Register Screen", 300, 450, false);
     }
 
-    private void switchToExchangeScreen(User user) {
-        ExchangeController exchangeController = new ExchangeController(new ExchangeScreen(user, "BTC"), sceneManager,
+    private void switchToExchangeScreen(User user, String coin) {
+        ExchangeController exchangeController = new ExchangeController(new ExchangeScreen(user, coin), sceneManager,
                 user);
         switchToScreen(exchangeController.getExchangeScreen(), "Exchange simulator", 1280, 720, true);
     }

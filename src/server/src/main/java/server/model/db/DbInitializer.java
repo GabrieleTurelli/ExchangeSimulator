@@ -9,19 +9,21 @@ import java.util.Map;
 public class DbInitializer {
     private final Connection connection;
     private final Map<String, Double> coins;
-    private final int historyDays           = 50;
+    private final int historyDays = 50;
     private final int orderBookLevelsNumber = 10;
 
     public DbInitializer(Map<String, Double> coins, Connection connection) {
-        this.coins      = coins;
+        this.coins = coins;
         this.connection = connection;
     }
 
     public void initializeDatabase() throws SQLException, IOException {
+        createCoinsTable();
+        createUsersTable();
+
         connection.setAutoCommit(false);
+
         try {
-            createCoinsTable();
-            createUsersTable();
 
             for (String coin : coins.keySet()) {
                 addCoinToCoinsTable(coin);
@@ -29,15 +31,23 @@ public class DbInitializer {
                 createOrderBookTable(coin);
 
                 new CoinDAO(coin, connection)
-                    .populateCoinTable(coins.get(coin), historyDays);
+                        .populateCoinTable(coins.get(coin), historyDays);
 
                 new OrderBookDAO(coin, connection)
-                    .populateOrderBookTable(coins.get(coin), orderBookLevelsNumber);
+                        .populateOrderBookTable(coins.get(coin), orderBookLevelsNumber);
             }
 
-            connection.commit();
         } catch (SQLException e) {
-            connection.rollback();
+
+            try {
+                if (!connection.getAutoCommit()) {
+                    connection.rollback();
+                }
+
+            } catch (SQLException e2) {
+                System.err.println("Rollback failed: " + e2.getMessage());
+
+            }
             throw e;
         } finally {
             connection.setAutoCommit(true);
@@ -46,11 +56,11 @@ public class DbInitializer {
 
     public void createCoinsTable() throws SQLException {
         String sql = """
-            CREATE TABLE IF NOT EXISTS Coins (
-              pair TEXT NOT NULL UNIQUE,
-              PRIMARY KEY(pair)
-            );
-            """;
+                CREATE TABLE IF NOT EXISTS Coins (
+                  pair TEXT NOT NULL UNIQUE,
+                  PRIMARY KEY(pair)
+                );
+                """;
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(sql);
         }
@@ -65,15 +75,15 @@ public class DbInitializer {
 
     public void createCoinTable(String coin) throws SQLException {
         String sql = String.format("""
-            CREATE TABLE IF NOT EXISTS coin_%s (
-              date  TEXT NOT NULL,
-              open  REAL NOT NULL,
-              high  REAL NOT NULL,
-              low   REAL NOT NULL,
-              close REAL NOT NULL,
-              PRIMARY KEY(date)
-            );
-            """, coin);
+                CREATE TABLE IF NOT EXISTS coin_%s (
+                  date  TEXT NOT NULL,
+                  open  REAL NOT NULL,
+                  high  REAL NOT NULL,
+                  low   REAL NOT NULL,
+                  close REAL NOT NULL,
+                  PRIMARY KEY(date)
+                );
+                """, coin);
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(sql);
         }
@@ -81,11 +91,11 @@ public class DbInitializer {
 
     public void createUsersTable() throws SQLException {
         String sql = """
-            CREATE TABLE IF NOT EXISTS Users (
-              username TEXT NOT NULL UNIQUE,
-              password TEXT
-            );
-            """;
+                CREATE TABLE IF NOT EXISTS Users (
+                  username TEXT NOT NULL UNIQUE,
+                  password TEXT
+                );
+                """;
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(sql);
         }
@@ -93,11 +103,11 @@ public class DbInitializer {
 
     public void createUserTable(String username) throws SQLException {
         String sql = String.format("""
-            CREATE TABLE IF NOT EXISTS user_%s (
-              coin     TEXT NOT NULL,
-              quantity REAL NOT NULL
-            );
-            """, username);
+                CREATE TABLE IF NOT EXISTS user_%s (
+                  coin     TEXT NOT NULL,
+                  quantity REAL NOT NULL
+                );
+                """, username);
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(sql);
         }
@@ -105,12 +115,12 @@ public class DbInitializer {
 
     public void createOrderBookTable(String coinName) throws SQLException {
         String sql = String.format("""
-            CREATE TABLE IF NOT EXISTS orderbook_%s (
-              price    REAL PRIMARY KEY,
-              quantity REAL NOT NULL,
-              isBid    BOOLEAN NOT NULL
-            );
-            """, coinName);
+                CREATE TABLE IF NOT EXISTS orderbook_%s (
+                  price    REAL PRIMARY KEY,
+                  quantity REAL NOT NULL,
+                  isBid    BOOLEAN NOT NULL
+                );
+                """, coinName);
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(sql);
         }

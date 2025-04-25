@@ -1,5 +1,7 @@
 package client.view.components.layout;
 
+import java.util.List;
+
 import client.model.market.OrderBookData;
 import client.model.market.OrderBookLevelData;
 import client.view.components.ui.orderbook.OrderBook;
@@ -14,89 +16,92 @@ public class OrderBookSection extends BaseSection {
     private OrderBookData bidData;
     private OrderBookData askData;
 
-    public OrderBookSection(GridPane gridPane, double widthMultiplier, double heightMultiplier,
-            OrderBookData bid, OrderBookData ask) {
+    /** Primary ctor */
+    public OrderBookSection(GridPane gridPane,
+            double widthMultiplier,
+            double heightMultiplier,
+            OrderBookData bid,
+            OrderBookData ask) {
         super(gridPane, Theme.COLOR.BACKGROUND, widthMultiplier, heightMultiplier);
-        this.askData = ask;
+
         this.bidData = bid;
+        this.askData = ask;
+
         initUi();
     }
 
-    public OrderBookSection(GridPane gridPane, double widthMultiplier, double heightMultiplier, String coin) {
-        this(gridPane, widthMultiplier, heightMultiplier, new OrderBookData(coin), new OrderBookData(coin));
-
+    /** Convenience ctor */
+    public OrderBookSection(GridPane gridPane,
+            double widthMultiplier,
+            double heightMultiplier,
+            String coin) {
+        this(gridPane,
+                widthMultiplier,
+                heightMultiplier,
+                new OrderBookData(coin),
+                new OrderBookData(coin));
     }
 
+    /** (Re)builds the full content directly into this StackPane */
     private void initUi() {
+        // Clear any previous children (if you ever re-init)
+        getChildren().removeIf(node -> !(node instanceof javafx.scene.shape.Rectangle));
 
         VBox container = new VBox();
-        Label orderBookLabel = new Label("Order Book");
-        orderBookLabel.setTextFill(Theme.COLOR.ON_BACKGROUND);
-        orderBookLabel.setFont(Theme.FONT_STYLE.BODY);
-        orderBookLabel.setPadding(new Insets(10, 10, 10, 10));
-        container.getChildren().add(orderBookLabel);
 
-        GridPane itemsLabel = new GridPane();
-        Label priceItemLabel = new Label("Price(USDT)");
-        priceItemLabel.setTextFill(Theme.COLOR.ON_BACKGROUND);
-        priceItemLabel.setFont(Theme.FONT_STYLE.CAPTION);
-        priceItemLabel.setTextFill(Theme.COLOR.ON_BACKGROUND.darker());
+        // — Header —
+        Label header = new Label("Order Book");
+        header.setTextFill(Theme.COLOR.ON_BACKGROUND);
+        header.setFont(Theme.FONT_STYLE.BODY);
+        header.setPadding(new Insets(10));
+        container.getChildren().add(header);
 
-        Label sizeItemLabebl = new Label("Size(BTC)");
-        sizeItemLabebl.setTextFill(Theme.COLOR.ON_BACKGROUND);
-        sizeItemLabebl.setFont(Theme.FONT_STYLE.CAPTION);
-        sizeItemLabebl.setTextFill(Theme.COLOR.ON_BACKGROUND.darker());
-
-        Label SumItemLabels = new Label("Sum(BTC)");
-        SumItemLabels.setTextFill(Theme.COLOR.ON_BACKGROUND);
-        SumItemLabels.setFont(Theme.FONT_STYLE.CAPTION);
-        SumItemLabels.setTextFill(Theme.COLOR.ON_BACKGROUND.darker());
-
-        itemsLabel.setPadding(new Insets(10, 10, 10, 10));
-        itemsLabel.add(priceItemLabel, 0, 0);
-        itemsLabel.add(sizeItemLabebl, 1, 0);
-        itemsLabel.add(SumItemLabels, 2, 0);
-        itemsLabel.getColumnConstraints().addAll(
+        // — Column titles —
+        GridPane titles = new GridPane();
+        titles.setPadding(new Insets(10));
+        Label priceTitle = new Label("Price (USDT)");
+        Label sizeTitle = new Label("Size (BTC)");
+        Label sumTitle = new Label("Sum (BTC)");
+        for (Label lbl : List.of(priceTitle, sizeTitle, sumTitle)) {
+            lbl.setFont(Theme.FONT_STYLE.CAPTION);
+            lbl.setTextFill(Theme.COLOR.ON_BACKGROUND.darker());
+        }
+        titles.add(priceTitle, 0, 0);
+        titles.add(sizeTitle, 1, 0);
+        titles.add(sumTitle, 2, 0);
+        titles.getColumnConstraints().addAll(
                 createColumnConstraints(33),
                 createColumnConstraints(33),
                 createColumnConstraints(34));
-        container.getChildren().add(itemsLabel);
+        container.getChildren().add(titles);
 
-        OrderBook orderBook = new OrderBook(bidData, askData);
-        container.getChildren().add(orderBook);
-        getChildren().addAll(container);
+        // — Order book UI —
+        container.getChildren().add(new OrderBook(askData, bidData));
+
+        // Add it on top of the BaseSection’s Rectangle
+        getChildren().add(container);
     }
 
-    private ColumnConstraints createColumnConstraints(double percentWidth) {
-        ColumnConstraints constraints = new ColumnConstraints();
-        constraints.setPercentWidth(percentWidth);
-        return constraints;
+    private ColumnConstraints createColumnConstraints(double pct) {
+        ColumnConstraints cc = new ColumnConstraints();
+        cc.setPercentWidth(pct);
+        return cc;
     }
 
-    public OrderBookData getBidData() {
-        return bidData;
-    }
+    public void updateDisplay(OrderBookData newData) {
+        String coin = newData.getCoin();
+        OrderBookData bids = new OrderBookData(coin);
+        OrderBookData asks = new OrderBookData(coin);
 
-    public OrderBookData getAskData() {
-        return askData;
-    }
-
-    public void updateDisplay(OrderBookData orderBookData) {
-        String coin = orderBookData.getCoin();
-        OrderBookData bid = new OrderBookData(coin);
-        OrderBookData ask = new OrderBookData(coin);
-
-        for(OrderBookLevelData orderBookLevelData: orderBookData) {
-            if(orderBookLevelData.isBid()) {
-                bid.add(orderBookLevelData);
-            } else {
-                ask.add(orderBookLevelData);
-            }
-
+        for (OrderBookLevelData lvl : newData) {
+            if (lvl.isBid())
+                bids.add(lvl);
+            else
+                asks.add(lvl);
         }
+        bidData = bids;
+        askData = asks;
 
-        this.bidData = bid;
-        this.askData = ask;
         initUi();
     }
 }

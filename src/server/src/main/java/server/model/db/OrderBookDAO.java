@@ -88,9 +88,8 @@ public class OrderBookDAO {
 
     public void replaceOrderBook(OrderBook orderBook) throws SQLException {
         String deleteSql = "DELETE FROM " + tableName;
-        String insertSql = "INSERT INTO " + tableName + " (price, quantity, isBid) VALUES (?, ?, ?)";
+        String insertSql = "INSERT OR REPLACE INTO " + tableName + " (price, quantity, isBid) VALUES (?, ?, ?)";
 
-        boolean oldAutoCommit = connection.getAutoCommit();
         connection.setAutoCommit(false);
         try (Statement deleteStmt = connection.createStatement();
                 PreparedStatement insertPs = connection.prepareStatement(insertSql)) {
@@ -110,7 +109,7 @@ public class OrderBookDAO {
             connection.rollback();
             throw e;
         } finally {
-            connection.setAutoCommit(oldAutoCommit);
+            connection.setAutoCommit(true);
         }
     }
 
