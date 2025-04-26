@@ -11,14 +11,15 @@ public class IconButton extends Button{
         ImageView icon = new ImageView(iconPath);
         icon.setFitHeight(size);
         icon.setPreserveRatio(true);
-        this.setGraphic(icon);
-        this.updateStyle(Theme.HEX_COLOR.BACKGROUND, 25);
-        this.setOnMouseEntered( event ->
-                this.updateStyle(Theme.HEX_COLOR.SURFACE, 25)
+        setGraphic(icon);
+        updateStyle(Theme.HEX_COLOR.BACKGROUND, 25);
+        setOnMouseEntered( event ->
+                updateStyle(Theme.HEX_COLOR.SURFACE, 25)
         );
-        this.setOnMouseExited( event ->
-                this.updateStyle(Theme.HEX_COLOR.BACKGROUND, 25)
+        setOnMouseExited( event ->
+                updateStyle(Theme.HEX_COLOR.BACKGROUND, 25)
         );
+        setOnMouseClicked(event -> {System.out.println("\n\n\n\nIconButton clicked!\n\n\n\n\n");});
     }
     
     public final void updateStyle(String backgroundColor, int radius){

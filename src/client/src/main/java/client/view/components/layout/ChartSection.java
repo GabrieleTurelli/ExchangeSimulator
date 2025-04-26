@@ -1,5 +1,7 @@
 package client.view.components.layout;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +43,8 @@ public class ChartSection extends BaseSection {
     public void updateDisplay(KlineHistory klineHistory) {
         chart.clearData();
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd");
+
         List<XYChart.Data<String, Number>> dataPoints = new ArrayList<>();
         List<Kline> klines = new ArrayList<>();
 
@@ -48,7 +52,8 @@ public class ChartSection extends BaseSection {
             Kline kline = klineHistory.get(i);
             klines.add(kline);
 
-            String label = String.valueOf(i); 
+            LocalDate date = LocalDate.now().minusDays(klineHistory.size() - i - 1);
+            String label = date.format(formatter);
             XYChart.Data<String, Number> data = new XYChart.Data<>(label, kline.getClose());
             data.setExtraValue(kline);
             dataPoints.add(data);

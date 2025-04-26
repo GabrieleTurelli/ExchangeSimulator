@@ -17,12 +17,13 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import server.actions.LoginServer;
+import server.actions.MarketActionServer;
 import server.actions.MarketServer;
 import server.actions.RegisterServer;
 import server.actions.UserServer;
 import server.model.db.DbConnector;
 import server.model.db.DbInitializer;
-import server.model.service.RandomPriceGeneratorService;
+import server.model.scheduler.RandomPriceGeneratorScheduler;
 
 public class Server {
     private static final int PORT = 12345;
@@ -45,6 +46,7 @@ public class Server {
     private static RegisterServer registerServer;
     private static UserServer userServer;
     private static MarketServer marketServer;
+    private static MarketActionServer marketActionServer;
 
     // Map.of(),
     // Map.of());
@@ -59,6 +61,7 @@ public class Server {
         registerServer = new RegisterServer(userConnection);
         userServer = new UserServer(userConnection);
         marketServer = new MarketServer(marketConnection);
+        marketActionServer = new MarketActionServer(marketConnection);
 
         // Controlla se viene passsato il flag --init dall run.sh ed in caso inizializza
         // il db
@@ -73,7 +76,7 @@ public class Server {
         // Start del service per la creazione dei prezzi delle kline e dell'orderbook
         // Necessito la generazione a random dei prezzi perche senza interazione con
         // altri utenti i prezzi non si muoverebbero e sarebbe tutto fermo
-        RandomPriceGeneratorService priceService = new RandomPriceGeneratorService(
+        RandomPriceGeneratorScheduler priceService = new RandomPriceGeneratorScheduler(
                 coins.keySet().toArray(String[]::new), generatorConnection);
         priceService.start(1);
 
@@ -148,13 +151,13 @@ public class Server {
 
                     case "\\get-open-position" -> response = userServer.handleGetWallet(trimmedRequest);
 
-                    case "\\buy-market" -> response = userServer.handleGetWallet(trimmedRequest);
+                    case "\\buy-market" -> response = marketActionServer.handleBuyMarket(trimmedRequest);
 
-                    case "\\buy-limit" -> response = userServer.handleGetWallet(trimmedRequest);
+                    case "\\buy-limit" -> response = marketActionServer.handleBuyLimit(trimmedRequest);
 
-                    case "\\sell-market" -> response = userServer.handleGetWallet(trimmedRequest);
+                    case "\\sell-market" -> response = marketActionServer.handleSellMarket(trimmedRequest);
 
-                    case "\\sell-limit" -> response = userServer.handleGetWallet(trimmedRequest);
+                    case "\\sell-limit" -> response = marketActionServer.handleSellLimit(trimmedRequest);
 
                     default -> {
                         System.out.println("Received unknown command '" + command + "' from "

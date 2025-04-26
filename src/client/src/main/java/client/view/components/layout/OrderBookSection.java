@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 public class OrderBookSection extends BaseSection {
     private OrderBookData bidData;
     private OrderBookData askData;
+    private String coin;
 
     /** Primary ctor */
     public OrderBookSection(GridPane gridPane,
@@ -26,6 +27,7 @@ public class OrderBookSection extends BaseSection {
 
         this.bidData = bid;
         this.askData = ask;
+        this.coin = bid.getCoin();
 
         initUi();
     }
@@ -42,26 +44,22 @@ public class OrderBookSection extends BaseSection {
                 new OrderBookData(coin));
     }
 
-    /** (Re)builds the full content directly into this StackPane */
     private void initUi() {
-        // Clear any previous children (if you ever re-init)
         getChildren().removeIf(node -> !(node instanceof javafx.scene.shape.Rectangle));
 
         VBox container = new VBox();
 
-        // — Header —
         Label header = new Label("Order Book");
         header.setTextFill(Theme.COLOR.ON_BACKGROUND);
         header.setFont(Theme.FONT_STYLE.BODY);
         header.setPadding(new Insets(10));
         container.getChildren().add(header);
 
-        // — Column titles —
         GridPane titles = new GridPane();
         titles.setPadding(new Insets(10));
         Label priceTitle = new Label("Price (USDT)");
-        Label sizeTitle = new Label("Size (BTC)");
-        Label sumTitle = new Label("Sum (BTC)");
+        Label sizeTitle = new Label(String.format("Size (%s)", coin));
+        Label sumTitle = new Label(String.format("Sum (%s)", coin));
         for (Label lbl : List.of(priceTitle, sizeTitle, sumTitle)) {
             lbl.setFont(Theme.FONT_STYLE.CAPTION);
             lbl.setTextFill(Theme.COLOR.ON_BACKGROUND.darker());
@@ -75,10 +73,8 @@ public class OrderBookSection extends BaseSection {
                 createColumnConstraints(34));
         container.getChildren().add(titles);
 
-        // — Order book UI —
         container.getChildren().add(new OrderBook(askData, bidData));
 
-        // Add it on top of the BaseSection’s Rectangle
         getChildren().add(container);
     }
 
@@ -89,7 +85,7 @@ public class OrderBookSection extends BaseSection {
     }
 
     public void updateDisplay(OrderBookData newData) {
-        String coin = newData.getCoin();
+        coin = newData.getCoin();
         OrderBookData bids = new OrderBookData(coin);
         OrderBookData asks = new OrderBookData(coin);
 

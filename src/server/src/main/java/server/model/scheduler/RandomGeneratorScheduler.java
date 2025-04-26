@@ -1,4 +1,4 @@
-package server.model.service;
+package server.model.scheduler;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,13 +9,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public abstract class RandomGeneratorService<K> {
+public abstract class RandomGeneratorScheduler<K> {
     private final ScheduledExecutorService scheduler;
     protected final Random random;
     private final List<K> daos;
 
 
-    public RandomGeneratorService(Function<String, K> factory, String[] coins) {
+    public RandomGeneratorScheduler(Function<String, K> factory, String[] coins) {
         this.daos      = Arrays.stream(coins)
                                .map(factory)
                                .collect(Collectors.toList());

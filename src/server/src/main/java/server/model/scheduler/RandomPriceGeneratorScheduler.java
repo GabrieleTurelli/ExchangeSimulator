@@ -1,4 +1,4 @@
-package server.model.service;
+package server.model.scheduler;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -13,13 +13,13 @@ import server.model.db.CoinDAO;
 import server.model.db.OrderBookDAO;
 import server.model.market.Kline;
 
-public class RandomPriceGeneratorService {
+public class RandomPriceGeneratorScheduler {
     private final ArrayList<CoinDAO> coinsDao;
     private final ArrayList<OrderBookDAO> orderBooksDao;
     private final Random random;
     private final ScheduledExecutorService scheduler;
 
-    public RandomPriceGeneratorService(String[] coins, Connection connection) throws IOException, SQLException {
+    public RandomPriceGeneratorScheduler(String[] coins, Connection connection) throws IOException, SQLException {
         this.coinsDao = new ArrayList<>();
         this.orderBooksDao = new ArrayList<>();
         for (String coin : coins) {
@@ -39,7 +39,7 @@ public class RandomPriceGeneratorService {
     private double generateAndUpdateCoinPrice(CoinDAO coinDao) throws SQLException {
 
         Kline currentKline = coinDao.getLastKline();
-        double fluctuation = random.nextDouble() * 2 - 1;
+        double fluctuation = random.nextDouble() * 0.2 - 0.1;
 
         double currentOpen = currentKline.getOpen();
         double currentHigh = currentKline.getHigh();

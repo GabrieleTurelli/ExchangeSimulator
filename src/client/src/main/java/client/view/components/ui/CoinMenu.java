@@ -37,7 +37,6 @@ public class CoinMenu extends HBox {
         this.labelContainer = new HBox(coinTextLabel, chevronLabel);
         setMargin(labelContainer, new Insets(10, 0, 10, 0));
         setupLabelContainer();
-        initializeCoins();
         setupClickHandler();
     }
 
@@ -84,20 +83,11 @@ public class CoinMenu extends HBox {
         return menu;
     }
 
-    private void initializeCoins() {
-        // addCoin("BTC/USDT");
-        // addCoin("ETH/USDT");
-        // addCoin("XRP/USDT");
-        // addCoin("CRO/USDT");
-        // addCoin("ADA/USDT");
-    }
-
     private void addCoin(String coin) {
         coins.add(coin);
 
         Label itemLabel = createLabel(coin, Theme.FONT_SIZE.MEDIUM, Color.WHITE, Pos.CENTER);
         itemLabel.setPrefWidth(labelContainer.getPrefWidth() - 10);
-        // itemLabel.setPadding(new Insets(5));
         itemLabel.setAlignment(Pos.CENTER);
 
         CustomMenuItem menuItem = new CustomMenuItem(itemLabel, true);
@@ -120,17 +110,12 @@ public class CoinMenu extends HBox {
         return label;
     }
 
-    // public void setCoin(String coin) {
-    // coinTextLabel.setText(coin);
-    // }
-
     public String getCurrentCoin() {
         return coinTextLabel.getText();
     }
 
     public void addCoinChangeListener(CoinChangeListener listener) {
         listeners.add(listener);
-        System.out.println("AGGGGGIUNGENDO UN LISTENER");
     }
 
     private void notifyCoinChange(String newCoin) {

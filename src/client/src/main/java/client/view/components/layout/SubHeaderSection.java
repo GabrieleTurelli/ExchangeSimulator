@@ -1,25 +1,22 @@
 // package client.view.components.layout;
 package client.view.components.layout;
 
-import java.text.DecimalFormat; 
+import java.text.DecimalFormat;
 
 import client.model.market.DailyMarketData;
 import client.view.components.ui.CoinMenu;
 import client.view.components.ui.PriceLabel;
 import client.view.components.ui.StatBlock;
 import client.view.components.ui.VerticalSeparator;
-import client.view.theme.Theme; 
+import client.view.theme.Theme;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 
 public class SubHeaderSection extends BaseSection {
-    private String initialCoin;
-    private final Label coinLabel;
     private final PriceLabel priceLabel;
     private final StatBlock changeStatBlock;
     private final StatBlock lowStatBlock;
@@ -27,17 +24,10 @@ public class SubHeaderSection extends BaseSection {
     private final CoinMenu coinMenu;
 
     private final DecimalFormat priceFormat = new DecimalFormat("#,##0.00");
-    // private final DecimalFormat changeFormat = new DecimalFormat("+#,##0.00;-#,##0.00");
     private final DecimalFormat percentFormat = new DecimalFormat("+#,##0.00'%';-#,##0.00'%'");
 
-    public SubHeaderSection(GridPane gridPane, double widthMultiplier, double heightMultiplier) {
+    public SubHeaderSection(GridPane gridPane, double widthMultiplier, double heightMultiplier, String coin) {
         super(gridPane, Theme.COLOR.BACKGROUND, widthMultiplier, heightMultiplier);
-        this.initialCoin = "BTC/USDT";
-
-        this.coinLabel = new Label(initialCoin);
-        coinLabel.setTextFill(Theme.COLOR.ON_BACKGROUND);
-        coinLabel.setFont(Theme.FONT_STYLE.TITLE);
-        coinLabel.setPadding(new Insets(10, 10, 10, 10));
 
         this.priceLabel = new PriceLabel("-.--");
         this.changeStatBlock = new StatBlock("24h Change", "-.-- %", Theme.COLOR.TEXT_PRIMARY);
@@ -49,7 +39,7 @@ public class SubHeaderSection extends BaseSection {
         subHeaderContent.setPadding(new Insets(10));
         subHeaderContent.setAlignment(Pos.CENTER_LEFT);
 
-        this.coinMenu = new CoinMenu(initialCoin);
+        this.coinMenu = new CoinMenu(coin + "/USDT");
 
         subHeaderContent.getChildren().addAll(
                 this.coinMenu,
@@ -90,11 +80,6 @@ public class SubHeaderSection extends BaseSection {
         lowStatBlock.setStatBlock("24h Low", priceFormat.format(data.getDailyLow()), Theme.COLOR.TEXT_PRIMARY);
         highStatBlock.setStatBlock("24h High", priceFormat.format(data.getDailyHigh()), Theme.COLOR.TEXT_PRIMARY);
 
-    }
-
-    public void setInitialCoin(String initialCoin) {
-        this.initialCoin = initialCoin;
-        this.coinLabel.setText(initialCoin);
     }
 
     public CoinMenu getCoinMenu() {

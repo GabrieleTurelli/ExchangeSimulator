@@ -11,7 +11,7 @@ public class LoginClient {
             System.out.println("Request sent : " + response);
             String responseStatus = response.split(";")[0];
 
-            return responseStatus.equals("OK");
+            return responseStatus.equals("OK");            
 
         } catch (IOException e) {
             e.printStackTrace();

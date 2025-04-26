@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import server.model.db.DbConnector;
 import server.model.db.UserDAO;
 import server.model.db.UsersDAO;
 

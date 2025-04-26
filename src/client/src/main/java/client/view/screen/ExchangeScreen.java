@@ -67,7 +67,7 @@ public final class ExchangeScreen extends GridPane {
         this.subHeader = new SubHeaderSection(
                 this,
                 1.0,
-                0.05);
+                0.05, coin);
 
         this.chartSection = new ChartSection(
                 this,
@@ -123,7 +123,7 @@ public final class ExchangeScreen extends GridPane {
         return positionSection;
     }
 
-    public void setCoin(String coin){
+    public void setCoin(String coin) {
         this.coin = coin;
     }
 
