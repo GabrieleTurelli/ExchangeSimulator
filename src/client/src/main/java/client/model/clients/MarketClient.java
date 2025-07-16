@@ -51,7 +51,7 @@ public class MarketClient {
 
     }
 
-    public static DailyMarketData getDailyMarketData(String coin) throws IOException, Exception {
+    public static DailyMarketData getDailyMarketData(String coin) throws IOException  {
         ClientConnection connection = new ClientConnection();
         System.out.println("Requesting price for " + coin);
         connection.sendRequest("\\get-daily-market-data " + coin);
@@ -105,13 +105,6 @@ public class MarketClient {
 
         }
         return klineHistory;
-
-        // } else {
-
-        // System.out.println("Error in getHistory: " + response);
-        // return null;
-        // }
-
     }
 
     public static OrderBookData getOrderBook(String coin) throws IOException {
@@ -130,13 +123,14 @@ public class MarketClient {
         String[] orderBookParts = orderBookResponse.split("\\|");
 
         for (String orderBookString : orderBookParts) {
-            String[] orderBookData = orderBookString.replace(" ","").split(",");
+            String[] orderBookData = orderBookString.replace(" ", "").split(",");
             double price = Double.parseDouble(orderBookData[0].split("=")[1]);
             double quantity = Double.parseDouble(orderBookData[1].split("=")[1]);
             Boolean isBid = Boolean.valueOf(orderBookData[2].split("=")[1]);
             orderBook.add(new OrderBookLevelData(price, quantity, isBid));
 
         }
+        connection.close();
         return orderBook;
 
     }

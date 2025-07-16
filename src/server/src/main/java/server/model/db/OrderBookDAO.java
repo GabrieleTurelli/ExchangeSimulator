@@ -34,6 +34,28 @@ public class OrderBookDAO {
         return orderBook;
     }
 
+    private OrderBook getPartialOrderBook(boolean isBid) throws SQLException {
+        String sql = "SELECT price, quantity, isBid FROM " + tableName + " WHERE isBid = "+ Integer.valueOf(isBid ? 1 : 0);
+        OrderBook orderBook = new OrderBook(tableName.replace("orderbook_", ""));
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                orderBook.add(new OrderBookLevel(
+                        rs.getDouble("price"),
+                        rs.getDouble("quantity"),
+                        rs.getBoolean("isBid")));
+            }
+        }
+        return orderBook;
+    }
+    public OrderBook getBidOrderBook() throws SQLException {
+        return getPartialOrderBook(true);
+    }
+
+    public OrderBook getAskOrderBook() throws SQLException {
+        return getPartialOrderBook(false);
+    }
+
     public OrderBookLevel getOrderBookLevel(double priceTarget) throws SQLException {
         String sql = "SELECT price, quantity, isBid FROM " + tableName + " WHERE price = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {

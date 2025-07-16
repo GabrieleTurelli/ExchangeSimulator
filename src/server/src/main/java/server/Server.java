@@ -52,6 +52,12 @@ public class Server {
     // Map.of());
 
     public static void main(String[] args) throws IOException, SQLException {
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("Shutting down server...");
+            shutdown();
+        }));
+
         DataSource ds = DbConnector.getDataSource();
         userConnection = ds.getConnection();
         marketConnection = ds.getConnection();
@@ -208,5 +214,28 @@ public class Server {
         dbInitializer.dropTable("Coins");
         dbInitializer.initializeDatabase();
 
+    }
+
+    private static void shutdown(){
+        try {
+            if (userConnection != null && !userConnection.isClosed()) {
+                userConnection.close();
+            }
+            if (marketConnection != null && !marketConnection.isClosed()) {
+                marketConnection.close();
+            }
+            if (generatorConnection != null && !generatorConnection.isClosed()) {
+                generatorConnection.close();
+            }
+        } catch (SQLException e) {
+            System.err.println("Error closing database connection: " + e.getMessage());
+            
+        } catch (Exception e) {
+        }
+
+    }
+
+    public static Connection getGeneratorConnection() {
+        return generatorConnection;
     }
 }

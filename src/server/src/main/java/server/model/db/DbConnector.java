@@ -31,17 +31,17 @@ public class DbConnector {
         DS = new HikariDataSource(cfg);
     }
 
-    public static DataSource getDataSource() {
+    public final static DataSource getDataSource() {
         return DS;
     }
 
-    public static Connection getConnection() throws SQLException {
+    public final static Connection getConnection() throws SQLException {
         Connection connection =  DS.getConnection();
         connection.setAutoCommit(false);
         return connection;
     }
 
-    private static void ensureDbExists() throws IOException {
+    private final static void ensureDbExists() throws IOException {
         File dir = new File(DB_DIR);
         if (!dir.exists() && !dir.mkdirs()) {
             throw new IOException("Failed to create directory " + DB_DIR);

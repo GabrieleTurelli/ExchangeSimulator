@@ -49,7 +49,16 @@ public class UserDAO {
         }
     }
 
-    public double getCoin(String coin) throws SQLException {
+    public void updateCoinQuantity(String coin, double amount) throws SQLException {
+        String sql = "INSERT OR INTO " + tableName + " (coin, quantity) VALUES (?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, coin);
+            ps.setDouble(2, amount);
+            ps.executeUpdate();
+        }
+    }
+
+    public double getCoinQuantity(String coin) throws SQLException {
         String sql = "SELECT quantity FROM " + tableName + " WHERE coin = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, coin);
