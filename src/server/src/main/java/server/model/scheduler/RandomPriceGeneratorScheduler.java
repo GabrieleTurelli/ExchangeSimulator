@@ -73,7 +73,7 @@ public class RandomPriceGeneratorScheduler {
         // Ottiene l'ultima kline (quella attuale)
         Kline currentKline = coinDao.getLastKline();
         // Fluttuazione percentuale casuale tra -0.1% e +0.1%
-        double fluctuation = random.nextDouble() * 0.2 - 0.1;
+        double fluctuation = random.nextDouble() * 2 - 1;
 
         double currentOpen = currentKline.getOpen();
         double currentHigh = currentKline.getHigh();
