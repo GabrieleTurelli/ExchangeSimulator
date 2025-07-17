@@ -1,3 +1,9 @@
+/**
+ * Classe che rappresenta i dati di un livello dell'orderbook che verrà 
+ * utilizzato nell'orderbook.
+ * @author Gabriele Turelli
+ * @version 1.0
+ */
 package client.model.market;
 
 public final class OrderBookLevelData {

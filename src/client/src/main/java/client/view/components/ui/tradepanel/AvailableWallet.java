@@ -41,8 +41,8 @@ public class AvailableWallet extends HBox {
 
     public void setAvailableWallet(String coin, double availableCoin, double availableUsdt) {
         this.coinLabel.setText(coin + " : ");
-        this.coinValue.setText(String.valueOf(availableCoin));
-        this.usdtValue.setText(String.valueOf(availableUsdt));
+        this.coinValue.setText(String.format("%.2f", availableCoin));
+        this.usdtValue.setText(String.format("%.2f", availableUsdt));
     }
 
 }

@@ -10,7 +10,7 @@ public class DbInitializer {
     private final Connection connection;
     private final Map<String, Double> coins;
     private final int historyDays = 50;
-    private final int orderBookLevelsNumber = 10;
+    private final int orderBookLevelsNumber = 30;
 
     public DbInitializer(Map<String, Double> coins, Connection connection) {
         this.coins = coins;
@@ -26,6 +26,7 @@ public class DbInitializer {
         try {
 
             for (String coin : coins.keySet()) {
+                System.out.println("Initializing coin: " + coin);
                 addCoinToCoinsTable(coin);
                 createCoinTable(coin);
                 createOrderBookTable(coin);
@@ -59,7 +60,7 @@ public class DbInitializer {
                 CREATE TABLE IF NOT EXISTS Coins (
                   pair TEXT NOT NULL UNIQUE,
                   PRIMARY KEY(pair)
-                );
+                )
                 """;
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(sql);
@@ -82,7 +83,7 @@ public class DbInitializer {
                   low   REAL NOT NULL,
                   close REAL NOT NULL,
                   PRIMARY KEY(date)
-                );
+                )
                 """, coin);
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(sql);
@@ -94,7 +95,7 @@ public class DbInitializer {
                 CREATE TABLE IF NOT EXISTS Users (
                   username TEXT NOT NULL UNIQUE,
                   password TEXT
-                );
+                )
                 """;
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(sql);
@@ -124,6 +125,7 @@ public class DbInitializer {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(sql);
         }
+        System.out.println("Order book table for " + coinName + " created successfully.");
     }
 
     public void dropTable(String tableName) throws SQLException {

@@ -17,14 +17,14 @@ public class UserDAO {
     public void initializeUser() throws SQLException {
         connection.setAutoCommit(false);
         try {
-            String ddl = String.format("""
+            String statement = String.format("""
                                        CREATE TABLE IF NOT EXISTS %s (
-                                         coin TEXT NOT NULL,
+                                         coin TEXT NOT NULL UNIQUE PRIMARY KEY,
                                          quantity REAL NOT NULL
                                        );""",
                 tableName
             );
-            try (PreparedStatement ps = connection.prepareStatement(ddl)) {
+            try (PreparedStatement ps = connection.prepareStatement(statement)) {
                 ps.executeUpdate();
             }
 
@@ -50,7 +50,7 @@ public class UserDAO {
     }
 
     public void updateCoinQuantity(String coin, double amount) throws SQLException {
-        String sql = "INSERT OR INTO " + tableName + " (coin, quantity) VALUES (?, ?)";
+        String sql = "REPLACE INTO " + tableName + " (coin, quantity) VALUES (?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, coin);
             ps.setDouble(2, amount);

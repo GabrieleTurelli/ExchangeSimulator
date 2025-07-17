@@ -48,7 +48,7 @@ public class LoginController {
             try {
                 handleLogin();
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("Error during login: " + e.getMessage());
             }
         });
 

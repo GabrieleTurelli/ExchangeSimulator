@@ -7,7 +7,6 @@
  */
 package client.model.scheduler;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import client.model.clients.MarketClient;
@@ -51,12 +50,10 @@ public class OrderBookUpdateScheduler extends BaseUpdateScheduler<OrderBookData>
              * Metodo chiamato in background per recuperare i dati dell'order book.
              * 
              * @return i dati dell'order book per la "coin"
-             * @throws IOException           durante la chiamata al server si verifica un
-             *                               errore
              * @throws IllegalStateException se il client restituisce dati null
              */
             @Override
-            protected OrderBookData call() throws IllegalStateException, IOException {
+            protected OrderBookData call() throws IllegalStateException {
                 System.out.println("Fetching order book for " + coin);
                 return Optional
                         .ofNullable(MarketClient.getOrderBook(coin))

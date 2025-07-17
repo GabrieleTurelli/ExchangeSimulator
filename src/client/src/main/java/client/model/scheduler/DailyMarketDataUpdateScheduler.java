@@ -7,7 +7,6 @@
  */
 package client.model.scheduler;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import client.model.clients.MarketClient;
@@ -51,12 +50,10 @@ public class DailyMarketDataUpdateScheduler extends BaseUpdateScheduler<DailyMar
              * Metodo chiamato in background per recuperare i dati.
              * 
              * @return i dati di mercato giornalieri per la "coin"
-             * @throws IOException           se durante la chiamata al server si verifica un
-             *                               errore
              * @throws IllegalStateException se il client restituisce dati null
              */
             @Override
-            protected DailyMarketData call() throws IOException, IllegalStateException {
+            protected DailyMarketData call() throws IllegalStateException {
                 System.out.println("Fetching daily market data for " + coin);
                 return Optional
                         .ofNullable(MarketClient.getDailyMarketData(coin))

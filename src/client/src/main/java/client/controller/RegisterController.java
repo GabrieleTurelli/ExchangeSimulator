@@ -46,7 +46,7 @@ public class RegisterController {
                 handleRegister();
 
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("Error during registration: " + e.getMessage());
             }
         });
 
@@ -56,7 +56,7 @@ public class RegisterController {
                 switchToLoginScreen();
 
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("Error switching to login screen: " + e.getMessage());
             }
         });
     }

@@ -35,7 +35,8 @@ public class OrderBookDAO {
     }
 
     private OrderBook getPartialOrderBook(boolean isBid) throws SQLException {
-        String sql = "SELECT price, quantity, isBid FROM " + tableName + " WHERE isBid = "+ Integer.valueOf(isBid ? 1 : 0);
+        String sql = "SELECT price, quantity, isBid FROM " + tableName + " WHERE isBid = "
+                + Integer.valueOf(isBid ? 1 : 0);
         OrderBook orderBook = new OrderBook(tableName.replace("orderbook_", ""));
         try (PreparedStatement ps = connection.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()) {
@@ -48,6 +49,7 @@ public class OrderBookDAO {
         }
         return orderBook;
     }
+
     public OrderBook getBidOrderBook() throws SQLException {
         return getPartialOrderBook(true);
     }
@@ -95,10 +97,21 @@ public class OrderBookDAO {
         }
     }
 
+    public void deleteOrderBookLevel(double price) throws SQLException {
+        String sql = "DELETE FROM " + tableName + " WHERE price = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setDouble(1, price);
+            ps.executeUpdate();
+        }
+    }
+
     public void insertOrderBook(OrderBook orderBook) throws SQLException {
         String sql = "INSERT OR REPLACE INTO " + tableName + " (price, quantity, isBid) VALUES (?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             for (OrderBookLevel lvl : orderBook) {
+                // if (lvl.getQuantity() <= 0) {
+                //     deleteOrderBookLevel(lvl.getPrice());
+                // }
                 ps.setDouble(1, lvl.getPrice());
                 ps.setDouble(2, lvl.getQuantity());
                 ps.setBoolean(3, lvl.getIsBid());

@@ -11,18 +11,15 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 public class TradePanelSection extends BaseSection {
-    private VBox vbox;
+    private final VBox vbox;
     private OrderEntry orderEntry;
     private final ToggleOrderMode toggleOrderMode;
     private final OrderSideEntry orderSideEntry;
-    private AvailableWallet availableWallet;
-    private final String coin;
+    private final AvailableWallet availableWallet;
 
     public TradePanelSection(GridPane gridPane, double widthMultiplier, double heightMultiplier, String coin,
             double usdtAvailable, double coinAvailable) {
         super(gridPane, Theme.COLOR.BACKGROUND, widthMultiplier, heightMultiplier);
-
-        this.coin = coin;
 
         this.vbox = new VBox();
 
@@ -48,12 +45,11 @@ public class TradePanelSection extends BaseSection {
     }
 
     public void updateDisplay(String coin, Wallet wallet) {
-        if (wallet != null){
+        if (wallet != null) {
             availableWallet.setAvailableWallet(coin, wallet.getCoin(coin), wallet.getCoin("USDT"));
 
         }
 
     }
-
 
 }

@@ -1,3 +1,8 @@
+/**
+ * Classe che rappresenta i dati di un Kline 
+ * @author Gabriele Turelli
+ * @version 1.0
+ */
 package client.model.market;
 
 import java.util.HashMap;

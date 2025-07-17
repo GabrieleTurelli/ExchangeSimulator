@@ -44,6 +44,7 @@ public class Main extends Application {
         // Configura il gestore delle scene
         SceneManager sceneManager = new SceneManager(primaryStage);
         LoginScreen loginScreen = new LoginScreen();
+        // @SuppressWarnings("unused")
         new LoginController(loginScreen, sceneManager);
 
         // mostra la scena di login

@@ -6,7 +6,6 @@
  */
 package client.model.scheduler;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import client.model.clients.UserClient;
@@ -49,12 +48,10 @@ public class WalletUpdateScheduler extends BaseUpdateScheduler<Wallet> {
              * Metodo chiamato in background per recuperare i dati del wallet.
              * 
              * @return il wallet dell'utente
-             * @throws IOException           se durante la chiamata al server si verifica un
-             *                               errore
              * @throws IllegalStateException se il client restituisce dati null
              */
             @Override
-            protected Wallet call() throws IOException, IllegalStateException {
+            protected Wallet call() throws IllegalStateException {
                 System.out.println("Fetching wallet for " + username);
                 return Optional
                         .ofNullable(UserClient.getWallet(username))

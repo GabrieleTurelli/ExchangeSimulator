@@ -13,8 +13,8 @@ import com.zaxxer.hikari.HikariDataSource;
 public class DbConnector {
     private static final String DB_DIR  = "db";
     private static final String DB_FILE = "exchange.db";
-    private static final String URL = "jdbc:sqlite:" + DB_DIR + "/" + DB_FILE
-        + "?journal_mode=WAL&cache=shared&busy_timeout=5000";
+    private static final String URL = "jdbc:sqlite:file:" + DB_DIR + "/" + DB_FILE
+        + "?journal_mode=WAL&cache=private&busy_timeout=5000";
 
     private static final HikariDataSource DS;
     static {

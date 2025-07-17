@@ -7,7 +7,6 @@
  */
 package client.model.scheduler;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import client.model.clients.MarketClient;
@@ -51,12 +50,10 @@ public class HistoricalMarketUpdateScheduler extends BaseUpdateScheduler<KlineHi
              * Metodo chiamato in background per recuperare i dati.
              * 
              * @return i dati di mercato storici per la "coin"
-             * @throws IOException           se durante la chiamata al server si verifica un
-             *                               errore
              * @throws IllegalStateException se il client restituisce dati null
              */
             @Override
-            protected KlineHistory call() throws IOException, IllegalStateException {
+            protected KlineHistory call() throws IllegalStateException {
                 System.out.println("Fetching historical data for " + coin);
                 // try {
                 return Optional

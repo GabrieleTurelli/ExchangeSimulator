@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import server.model.db.UserDAO;
+import server.model.db.UserOrderDAO;
 import server.model.db.UsersDAO;
 
 public class RegisterServer {
@@ -25,6 +26,9 @@ public class RegisterServer {
         usersDao.addUser(username, password);
         UserDAO userDao = new UserDAO(username, connection);
         userDao.initializeUser();
+
+        UserOrderDAO userOrderDAO = new UserOrderDAO(username, connection);
+        userOrderDAO.initializeUserOrders();
         return "OK;New user created";
     }
 }
