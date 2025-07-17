@@ -7,15 +7,23 @@
 package client.controller;
 
 import client.model.clients.MarketClient;
+import client.model.clients.UserClient;
+import client.model.market.OrderRequest;
+import client.model.market.OrderSide;
+import client.model.market.OrderType;
 import client.model.scheduler.DailyMarketDataUpdateScheduler;
 import client.model.scheduler.HistoricalMarketUpdateScheduler;
 import client.model.scheduler.OrderBookUpdateScheduler;
 import client.model.scheduler.WalletUpdateScheduler;
 import client.model.user.User;
+import client.view.components.layout.TradePanelSection;
 import client.view.components.ui.CoinMenu;
+import client.view.components.ui.Toast;
+import client.view.components.ui.tradepanel.TradePanel;
 import client.view.screen.ExchangeScreen;
 import client.view.utils.SceneManager;
 import javafx.application.Platform;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class ExchangeController {
@@ -24,6 +32,9 @@ public class ExchangeController {
      * Schermata principale dell'exchange
      */
     private final ExchangeScreen exchangeScreen;
+
+
+    private final TradePanelSection tradePanelSection;
     /**
      * Utente autenticato che utilizza l'exchange
      */
@@ -62,6 +73,14 @@ public class ExchangeController {
         CoinMenu coinMenu = this.exchangeScreen.getSubHeader().getCoinMenu();
         coinMenu.addCoinChangeListener(newCoin -> changeCoin(newCoin.split("/")[0]));
         coinMenu.addCoins(coins);
+
+        // Inizializza la sezione di trade panel che gestisce l'evento di invio
+        // dell'ordine
+        // intercetta l'evento di submit
+        this.tradePanelSection = this.exchangeScreen.getTradePanelSection();
+        tradePanelSection.setOnSubmit(orderRequest -> {
+            sendOrder(orderRequest);
+        });
 
         // Inizialmente vene aperta la schermata di exchange con la prima moneta che
         // fornisce il server
@@ -193,14 +212,48 @@ public class ExchangeController {
         initializeMarketUpdates();
         initializeWalletUpdates();
         initializeOrderBookUpdates();
+        tradePanelSection.setCoin(coin);
     }
 
     /**
-     * Restituisce la criptovaluta attualmente selezionata.
+     * Invia un ordine al server.
+     * 
+     * @param orderRequest oggetto {@link OrderRequest} che contiene i dettagli
+     * 
+     */
+    public void sendOrder(OrderRequest orderRequest) {
+        try {
+            if (orderRequest.getType() == OrderType.LIMIT) {
+                throw new UnsupportedOperationException("Limit orders are not supported yet.");
+            }
+
+            String response;
+            if (orderRequest.getSide() == OrderSide.BUY) {
+                response = UserClient.sendBuyMarketOrder(user.getUsername(), orderRequest);
+            } else {
+                response = UserClient.sendSellMarketOrder(user.getUsername(), orderRequest);
+            }
+            showToast(response);
+
+        } catch (RuntimeException e) {
+            showToast("Error placing order: " + e.getMessage());
+
+        } catch (Exception ex) {
+            showToast("Error: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * Restituisce la coin attualmente selezionata.
      * 
      * @return simbolo della moneta corrente
      */
     public String getCoin() {
         return currentCoin;
+    }
+
+    private void showToast(String message) {
+        Stage stage = (Stage) exchangeScreen.getScene().getWindow();
+        Toast.show(stage, message);
     }
 }

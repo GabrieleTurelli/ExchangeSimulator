@@ -125,6 +125,8 @@ public final class ExchangeScreen extends GridPane {
 
     public void setCoin(String coin) {
         this.coin = coin;
+        // initUi();
     }
+
 
 }

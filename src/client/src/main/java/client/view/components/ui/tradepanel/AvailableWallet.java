@@ -1,5 +1,8 @@
 package client.view.components.ui.tradepanel;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import client.view.theme.Theme;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -41,8 +44,13 @@ public class AvailableWallet extends HBox {
 
     public void setAvailableWallet(String coin, double availableCoin, double availableUsdt) {
         this.coinLabel.setText(coin + " : ");
-        this.coinValue.setText(String.format("%.2f", availableCoin));
-        this.usdtValue.setText(String.format("%.2f", availableUsdt));
+        BigDecimal truncatedCoin = BigDecimal.valueOf(availableCoin)
+                .setScale(2, RoundingMode.DOWN);
+        BigDecimal truncatedUsdt = BigDecimal.valueOf(availableUsdt)
+                .setScale(2, RoundingMode.DOWN);
+
+        this.coinValue.setText(truncatedCoin.toString());
+        this.usdtValue.setText(truncatedUsdt.toString());
     }
 
 }

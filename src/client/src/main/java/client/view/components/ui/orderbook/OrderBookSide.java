@@ -12,7 +12,7 @@ import javafx.scene.paint.Color;
 public class OrderBookSide extends VBox {
 
     /**
-     * Costruttore per visualizzare un lato dell'OrderBook.
+     * Costruttore per visualizzare un lato (ask/bid) dell'OrderBook.
      * 
      * @param orderBookData dati dei livelli dell'order book
      * @param color         colore di riempimento dei livelli
@@ -30,8 +30,8 @@ public class OrderBookSide extends VBox {
 
         // Copia dei dati in lista modificabile
         List<OrderBookLevelData> levels = new ArrayList<>(orderBookData);
-        // Inverti l'ordine per il lato ask (isBid false)
 
+        // vengono mostrati solo i primi 10 livelli
         levels = levels.subList(0, Math.min(10, levels.size()));
 
         if (!isBid) {
@@ -40,6 +40,7 @@ public class OrderBookSide extends VBox {
 
         System.out.println(levels);
         System.out.println(levels.size() + " levels to display");
+
         // Aggiunta dei livelli alla VBox
         for (OrderBookLevelData levelData : levels) {
             getChildren().add(new OrderBookLevel(levelData, color, maxSize));

@@ -14,24 +14,18 @@ import javafx.scene.paint.Color;
 
 public class OrderBookLevel extends StackPane {
     public OrderBookLevel(OrderBookLevelData data, Color labelColor, double maxSize) {
-        // 1) build the three-column grid of labels
         GridPane labels = createLabelsGrid(data, labelColor);
 
-        // allow percent-based columns to actually size themselves
         labels.prefWidthProperty().bind(widthProperty());
 
-        // 2) create the colored bar
         Region background = createBackground(labelColor);
-        // make it fill the row’s height
         background.prefHeightProperty().bind(labels.heightProperty());
 
-        // 3) stack them
         StackPane bgContainer = new StackPane(background);
         bgContainer.setAlignment(Pos.CENTER_RIGHT);
         getChildren().addAll(bgContainer, labels);
         setAlignment(bgContainer, Pos.CENTER_RIGHT);
 
-        // 4) on resize, update the bar’s width proportionally
         layoutBoundsProperty().addListener((obs, oldB, newB) -> {
             double w = newB.getWidth() * (data.getQuantity() / maxSize);
             background.setMinWidth(w);
@@ -43,19 +37,20 @@ public class OrderBookLevel extends StackPane {
     private GridPane createLabelsGrid(OrderBookLevelData data, Color labelColor) {
         GridPane grid = new GridPane();
 
-        Label price = createLabel(String.format("%.2f", data.getPrice()),     labelColor,                    Pos.CENTER_LEFT);
-        Label size  = createLabel(String.format("%.2f", data.getQuantity()), Theme.COLOR.ON_BACKGROUND.darker(), Pos.CENTER_LEFT);
-        Label sum   = createLabel(String.format("%.2f", data.getAmount()),   Theme.COLOR.ON_BACKGROUND.darker(), Pos.CENTER_LEFT);
+        Label price = createLabel(String.format("%.2f", data.getPrice()), labelColor, Pos.CENTER_LEFT);
+        Label size = createLabel(String.format("%.2f", data.getQuantity()), Theme.COLOR.ON_BACKGROUND.darker(),
+                Pos.CENTER_LEFT);
+        Label sum = createLabel(String.format("%.2f", data.getAmount()), Theme.COLOR.ON_BACKGROUND.darker(),
+                Pos.CENTER_LEFT);
 
         grid.add(price, 0, 0);
-        grid.add(size,  1, 0);
-        grid.add(sum,   2, 0);
+        grid.add(size, 1, 0);
+        grid.add(sum, 2, 0);
 
         grid.getColumnConstraints().addAll(
-            createColumnConstraints(33),
-            createColumnConstraints(33),
-            createColumnConstraints(34)
-        );
+                createColumnConstraints(33),
+                createColumnConstraints(33),
+                createColumnConstraints(34));
 
         grid.setHgap(10);
         grid.setPadding(new Insets(3, 10, 3, 10));
@@ -85,8 +80,8 @@ public class OrderBookLevel extends StackPane {
 
     private String toHexString(Color c) {
         return String.format("#%02X%02X%02X",
-            (int)(c.getRed()   * 255),
-            (int)(c.getGreen() * 255),
-            (int)(c.getBlue()  * 255));
+                (int) (c.getRed() * 255),
+                (int) (c.getGreen() * 255),
+                (int) (c.getBlue() * 255));
     }
 }

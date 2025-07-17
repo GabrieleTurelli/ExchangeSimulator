@@ -38,12 +38,18 @@ public class NumericInputEntry extends HBox {
                         "-fx-text-fill: white;" +
                         "-fx-font-size: 12px;" +
                         "-fx-font-weight: bold;" +
-                        "-fx-prompt-text-fill: " + Theme.HEX_COLOR.ON_SURFACE + ";"
-        );
+                        "-fx-prompt-text-fill: " + Theme.HEX_COLOR.ON_SURFACE + ";");
         textField.setAlignment(Pos.CENTER_RIGHT);
 
+        // Filtro per accettare solo numeri e un punto decimale 
         textField.addEventFilter(KeyEvent.KEY_TYPED, event -> {
-            if (!event.getCharacter().matches("\\d")) {
+            String ch = event.getCharacter();
+            // Se non è cifra né punto, blocca
+            if (!ch.matches("\\d") && !ch.equals(".")) {
+                event.consume();
+            }
+            // Se è punto ma il testo già lo contiene, blocca
+            else if (ch.equals(".") && textField.getText().contains(".")) {
                 event.consume();
             }
         });
@@ -52,5 +58,15 @@ public class NumericInputEntry extends HBox {
         textField.setMaxWidth(Double.MAX_VALUE);
 
         getChildren().addAll(label, textField);
+    }
+
+    public double getValue() {
+        TextField textField = (TextField) getChildren().get(1);
+        String text = textField.getText();
+        try {
+            return Double.parseDouble(text);
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
     }
 }

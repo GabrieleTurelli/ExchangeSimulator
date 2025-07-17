@@ -40,7 +40,6 @@ public class MarketActionServer {
         throw new UnsupportedOperationException("Sell limit orders not implemented yet");
     }
 
-
     /**
      * Executes a market order (buy or sell) and returns a formatted response.
      * 

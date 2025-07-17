@@ -25,7 +25,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
-    
+
     // Executor per gestire eventuali task di rete o client
     private ExecutorService executor;
 
@@ -33,14 +33,14 @@ public class Main extends Application {
      * Metodo invocato da JavaFX per avviare l'interfaccia.
      * 
      * @param primaryStage Stage principale su cui montare le scene
-     * @throws IOException   se si verificano errori di I/O
-     * @throws SQLException  se si verificano errori di accesso al database
+     * @throws IOException  se si verificano errori di I/O
+     * @throws SQLException se si verificano errori di accesso al database
      */
     @Override
     public void start(Stage primaryStage) throws IOException, SQLException {
         // Inizializza thread-pool con un singolo thread per il client
         executor = Executors.newSingleThreadExecutor();
-        
+
         // Configura il gestore delle scene
         SceneManager sceneManager = new SceneManager(primaryStage);
         LoginScreen loginScreen = new LoginScreen();
@@ -52,7 +52,7 @@ public class Main extends Application {
         primaryStage.setTitle("Login Screen");
         primaryStage.setResizable(false);
 
-        // quando viene chiuso lo stage, viene fermato anche la connessione del client 
+        // quando viene chiuso lo stage, viene fermato anche la connessione del client
         primaryStage.setOnCloseRequest(event -> stopClient());
         primaryStage.show();
 

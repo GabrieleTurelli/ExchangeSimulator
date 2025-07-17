@@ -12,12 +12,29 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
+/**
+ * Sezione per la visualizzazione dell'Order Book di una determinata moneta.
+ * 
+ * @author Gabriele Turelli
+ * @version 1.0
+ */
 public class OrderBookSection extends BaseSection {
     private OrderBookData bidData;
     private OrderBookData askData;
     private String coin;
 
-    /** Primary ctor */
+    /**
+     * Costruttore primario.
+     * 
+     * @param gridPane         il {@link GridPane} cui legare le dimensioni della
+     *                         sezione
+     * @param widthMultiplier  fattore moltiplicativo applicato alla larghezza del
+     *                         {@code gridPane}
+     * @param heightMultiplier fattore moltiplicativo applicato all'altezza del
+     *                         {@code gridPane}
+     * @param bid              dati iniziali degli ordini di tipo bid
+     * @param ask              dati iniziali degli ordini di tipo ask
+     */
     public OrderBookSection(GridPane gridPane,
             double widthMultiplier,
             double heightMultiplier,
@@ -32,7 +49,17 @@ public class OrderBookSection extends BaseSection {
         initUi();
     }
 
-    /** Convenience ctor */
+    /**
+     * Costruttore di comodità che inizializza bid e ask vuoti per una moneta.
+     * 
+     * @param gridPane         il {@link GridPane} cui legare le dimensioni della
+     *                         sezione
+     * @param widthMultiplier  fattore moltiplicativo applicato alla larghezza del
+     *                         {@code gridPane}
+     * @param heightMultiplier fattore moltiplicativo applicato all'altezza del
+     *                         {@code gridPane}
+     * @param coin             il simbolo della moneta di cui mostrare l'order book
+     */
     public OrderBookSection(GridPane gridPane,
             double widthMultiplier,
             double heightMultiplier,
@@ -44,7 +71,11 @@ public class OrderBookSection extends BaseSection {
                 new OrderBookData(coin));
     }
 
+    /**
+     * Inizializza
+     */
     private void initUi() {
+        // rimuove l'orderbook esistente se presente in modo da ricostruirlo con i nuovi dati
         getChildren().removeIf(node -> !(node instanceof javafx.scene.shape.Rectangle));
 
         VBox container = new VBox();
@@ -78,12 +109,25 @@ public class OrderBookSection extends BaseSection {
         getChildren().add(container);
     }
 
+    /**
+     * Crea e configura i vincoli di colonna per il {@link GridPane} dei titoli.
+     * 
+     * @param pct percentuale di larghezza della colonna sul totale (0-100)
+     * @return i {@link ColumnConstraints} con la percentuale impostata
+     */
     private ColumnConstraints createColumnConstraints(double pct) {
         ColumnConstraints cc = new ColumnConstraints();
         cc.setPercentWidth(pct);
         return cc;
     }
 
+    /**
+     * Aggiorna i dati dell'order book e ricostruisce la UI.
+     * Divide i livelli di ordine in bid e ask, memorizza i nuovi dati e richiama
+     * {@link #initUi()} per rigenerare il contenuto.
+     * 
+     * @param newData i dati aggiornati dell'order book
+     */
     public void updateDisplay(OrderBookData newData) {
         coin = newData.getCoin();
         OrderBookData bids = new OrderBookData(coin);

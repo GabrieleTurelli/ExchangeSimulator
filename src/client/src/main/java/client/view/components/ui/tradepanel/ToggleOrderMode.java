@@ -18,9 +18,13 @@ public class ToggleOrderMode extends VBox {
     public ToggleOrderMode() {
         super();
         setSpacing(10);
-        TextToggleButton marketButton = new TextToggleButton("Market", Theme.HEX_COLOR.ON_SURFACE, Theme.HEX_COLOR.PRIMARY);
-        TextToggleButton limitButton = new TextToggleButton("Limit", Theme.HEX_COLOR.ON_SURFACE, Theme.HEX_COLOR.PRIMARY);
-        HorizontalSeparator spacer = new HorizontalSeparator(235);
+        TextToggleButton marketButton = new TextToggleButton("Market", Theme.HEX_COLOR.ON_SURFACE,
+                Theme.HEX_COLOR.PRIMARY);
+        TextToggleButton limitButton = new TextToggleButton("Limit", Theme.HEX_COLOR.ON_SURFACE,
+                Theme.HEX_COLOR.PRIMARY);
+        HorizontalSeparator spacer = new HorizontalSeparator(0);
+        spacer.endXProperty().bind(this.widthProperty().subtract(10));
+        //
 
         limitButton.toggle();
 
