@@ -28,7 +28,6 @@ public class OrderBookSide extends VBox {
                 .orElse(1);
         System.out.println("Max size: " + maxSize);
 
-        // Copia dei dati in lista modificabile
         List<OrderBookLevelData> levels = new ArrayList<>(orderBookData);
 
         // vengono mostrati solo i primi 10 livelli

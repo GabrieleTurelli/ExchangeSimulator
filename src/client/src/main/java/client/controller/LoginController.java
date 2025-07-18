@@ -75,7 +75,7 @@ public class LoginController {
 
         // Invio richiesta di login al server
         if (!LoginClient.sendLoginRequest(username, password)) {
-            loginScreen.setErrorMessage("Login failed");
+            loginScreen.setErrorMessage("User does not exist or wrong password");
             return;
         }
 

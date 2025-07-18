@@ -28,7 +28,7 @@ public class LoginClient {
             System.out.println("Request sent : " + response);
             String responseStatus = response.split(";")[0];
 
-            return responseStatus.equals("OK");
+            return responseStatus.contains("OK");
 
         } catch (IOException e) {
             System.err.println(password + "Error while sending login request: " + e.getMessage());

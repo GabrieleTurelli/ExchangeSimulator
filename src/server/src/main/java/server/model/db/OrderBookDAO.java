@@ -109,9 +109,11 @@ public class OrderBookDAO {
         String sql = "INSERT OR REPLACE INTO " + tableName + " (price, quantity, isBid) VALUES (?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             for (OrderBookLevel lvl : orderBook) {
-                // if (lvl.getQuantity() <= 0) {
-                //     deleteOrderBookLevel(lvl.getPrice());
-                // }
+                System.out.println("Inserting order book level: " + lvl);
+                if (lvl.getQuantity() <= 0) {
+                    deleteOrderBookLevel(lvl.getPrice());
+                    continue;
+                }
                 ps.setDouble(1, lvl.getPrice());
                 ps.setDouble(2, lvl.getQuantity());
                 ps.setBoolean(3, lvl.getIsBid());

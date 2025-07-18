@@ -19,7 +19,6 @@ import client.model.user.User;
 import client.view.components.layout.TradePanelSection;
 import client.view.components.ui.CoinMenu;
 import client.view.components.ui.Toast;
-import client.view.components.ui.tradepanel.TradePanel;
 import client.view.screen.ExchangeScreen;
 import client.view.utils.SceneManager;
 import javafx.application.Platform;
@@ -32,7 +31,6 @@ public class ExchangeController {
      * Schermata principale dell'exchange
      */
     private final ExchangeScreen exchangeScreen;
-
 
     private final TradePanelSection tradePanelSection;
     /**
@@ -238,8 +236,6 @@ public class ExchangeController {
         } catch (RuntimeException e) {
             showToast("Error placing order: " + e.getMessage());
 
-        } catch (Exception ex) {
-            showToast("Error: " + ex.getMessage());
         }
     }
 

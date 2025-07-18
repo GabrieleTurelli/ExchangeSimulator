@@ -117,7 +117,7 @@ public class RandomPriceGeneratorScheduler {
      */
     private void generateAndUpdateOrderBookPrice(OrderBookDAO orderBookDao, double initialPrice) throws SQLException {
         // Genera 10 livelli di prezzo nell'order book
-        orderBookDao.populateOrderBookTable(initialPrice, 10);
+        orderBookDao.populateOrderBookTable(initialPrice, 30);
     }
 
     /**

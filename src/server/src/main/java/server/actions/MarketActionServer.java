@@ -41,19 +41,20 @@ public class MarketActionServer {
     }
 
     /**
-     * Executes a market order (buy or sell) and returns a formatted response.
+     * Esegue un ordine di mercato che sia buy o sell
      * 
-     * @param username User placing the order
-     * @param coin     Asset symbol
-     * @param amount   Quantity in USDT (if buy) or in asset (if sell)
-     * @param isBuy    true for buy orders, false for sell orders
+     * @param username L"utente che piazza l'ordine
+     * @param coin     Moneta su cui eseguire l'ordine
+     * @param amount   Quantita della moneta da comprare o vendere
+     * @param isBuy    {@code true} se l'ordine e' di tipo buy, {@code false} se e'
+     *                 sell
      */
     private String executeMarketOrder(String username, String coin, double amount, boolean isBuy)
             throws SQLException, IOException {
         UserDAO userDao = new UserDAO(username, connection);
         OrderBookDAO orderBookDao = new OrderBookDAO(coin, connection);
 
-        // Determine balances and load the correct side of the book
+        // Determina se si ha nel wallet abbbastanza coin per eseguire l'operazione
         double baseBalance; // USDT balance if buying, coin balance if selling
         if (isBuy) {
             baseBalance = userDao.getCoinQuantity("USDT");
@@ -108,16 +109,14 @@ public class MarketActionServer {
             }
         }
 
-        // Persist book and update balances
+        // salva l'orderbook aggiornato
         System.out.println(book);
         orderBookDao.insertOrderBook(book);
 
         if (isBuy) {
-            // Deduct USDT and credit coins
             userDao.updateCoinQuantity("USDT", userDao.getCoinQuantity("USDT") - totalUsdt);
             userDao.updateCoinQuantity(coin, userDao.getCoinQuantity(coin) + totalAsset);
         } else {
-            // Deduct coins and credit USDT
             userDao.updateCoinQuantity(coin, userDao.getCoinQuantity(coin) - totalAsset);
             userDao.updateCoinQuantity("USDT", userDao.getCoinQuantity("USDT") + totalUsdt);
         }
